@@ -430,7 +430,7 @@ function populateBindings() {
     bindingItem.innerHTML = `
       <div>
         <strong>${buttonName}</strong>
-        <div style="color: #999; font-size: 14px;">Currently bound to: ${getKeyDisplayName(binding)}</div>
+        <div class="bind-current">Bound to: <span style="color: var(--sidenav-menu-highlight-bg-end);">${getKeyDisplayName(binding)}</span></div>
       </div>
       <button class="bind-button" data-button-id="${buttonId}">
         Rebind
@@ -486,8 +486,8 @@ function handleKeyboardBinding(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  // Don't bind Escape (reserved for cancel with Ctrl)
-  if (event.key === 'Escape' && event.ctrlKey) {
+  // Press Escape alone to cancel binding
+  if (event.key === 'Escape') {
     stopListening();
     showNotificationn('Binding cancelled');
     return;
@@ -498,7 +498,7 @@ function handleKeyboardBinding(event) {
 
   stopListening();
   populateBindings();
-  showNotificationn(`${BUTTON_NAMES[listeningButtonId]} bound to ${getKeyDisplayName(key)}`);
+  showNotificationn(`✓ ${BUTTON_NAMES[listeningButtonId]} → ${getKeyDisplayName(key)}`);
 }
 
 function handleMouseBinding(event) {
@@ -589,11 +589,13 @@ window.resetToDefaults = function() {
 };
 
 window.switchTab = function(tabName) {
-  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-  const activeBtn = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+  // Update tab buttons
+  document.querySelectorAll('.controller-tab').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.querySelector(`.controller-tab[data-tab="${tabName}"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  // Update tab content
+  document.querySelectorAll('.controller-tab-content').forEach(content => content.classList.remove('active'));
   const activeTab = document.getElementById(`${tabName}-tab`);
   if (activeTab) activeTab.classList.add('active');
 };
@@ -604,7 +606,12 @@ function showNotificationn(message) {
     notification.textContent = message;
     notification.classList.add('show');
 
-    setTimeout(() => {
+    // Remove previous timeout if exists
+    if (notification.hideTimeout) {
+      clearTimeout(notification.hideTimeout);
+    }
+
+    notification.hideTimeout = setTimeout(() => {
       notification.classList.remove('show');
     }, 3000);
   } else {
@@ -618,16 +625,23 @@ window.addEventListener('gamepadconnected', (e) => {
 
   const statusElement = document.getElementById('controllerstatus');
   if (statusElement) {
-    statusElement.classList.add('conc');
+    statusElement.classList.remove('disconnected');
+    statusElement.classList.add('connected');
 
     // Friendly names for common controllers
+    let controllerName = 'Controller Connected';
     if (e.gamepad.id.includes('Xbox') || e.gamepad.id.includes('360') || e.gamepad.id.includes('XInput')) {
-      statusElement.textContent = 'Xbox Controller';
+      controllerName = 'Xbox Controller Connected';
     } else if (e.gamepad.id.includes('PlayStation') || e.gamepad.id.includes('DualShock') || e.gamepad.id.includes('DualSense')) {
-      statusElement.textContent = 'PlayStation Controller';
-    } else {
-      statusElement.textContent = e.gamepad.id;
+      controllerName = 'PlayStation Controller Connected';
+    } else if (e.gamepad.id.includes('Pro Controller')) {
+      controllerName = 'Nintendo Pro Controller Connected';
     }
+
+    // Update status with icon
+    statusElement.innerHTML = `<span class="status-dot"></span>${controllerName}`;
+
+    showNotificationn(`🎮 ${controllerName}`);
   }
 });
 
@@ -636,8 +650,11 @@ window.addEventListener('gamepaddisconnected', (e) => {
 
   const statusElement = document.getElementById('controllerstatus');
   if (statusElement) {
-    statusElement.textContent = 'No Controller Connected';
-    statusElement.classList.remove('conc');
+    statusElement.classList.remove('connected');
+    statusElement.classList.add('disconnected');
+    statusElement.innerHTML = '<span class="status-dot"></span>No Controller Connected';
+
+    showNotificationn('Controller disconnected');
   }
 
   // Release all pressed keys and buttons

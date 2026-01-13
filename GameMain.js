@@ -371,8 +371,6 @@ function showError(message) {
   errorElement.textContent = message;
   errorElement.style.display = 'block';
   
-  document.querySelector('.loading-section').style.display = 'none';
-  document.querySelector('.progress-container').style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -570,7 +568,7 @@ function toggleControllerSettings() {
     document.getElementById('settings-container').style.opacity = 1
 
     document.getElementById('settings-container').style.animation = 'showcons 0.5s'
-
+    document.getElementById('menusforgame').classList.add('active')
     document.getElementById('bgcontroller').style.display = 'block'
     document.getElementById('bgcontroller').style.opacity = 1
 
@@ -579,6 +577,7 @@ function toggleControllerSettings() {
     document.getElementById('settings-container').style.animation = ''
 
     document.getElementById('settings-container').style.opacity = 0
+    document.getElementById('menusforgame').classList.remove('active')
 
     document.getElementById('settings-container').style.animation = 'showconh 0.5s'
 

@@ -451,13 +451,13 @@ button.error:hover {
     transition: 0.5s;
 }
 @keyframes showcons {
-    from {transform: translate(-50%, -50%) scale(0.8); opacity: 0;}
-    to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+    from {transform: scale(0.8);  opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
 
 }
 @keyframes showconh {
-    from {transform: translate(-50%, -50%) scale(1); opacity: 1;}
-    to {transform: translate(-50%, -50%) scale(0.8); opacity: 0;}
+    from {transform: scale(1); opacity: 1;}
+    to {transform:  scale(0.8); opacity: 0;}
 
 }
 

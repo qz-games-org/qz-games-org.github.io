@@ -108,9 +108,65 @@
             color: var(--muted);
             min-height: 1.2em;
         }
+
+        .back-home-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--sidenav-icon-btn-border);
+            background: linear-gradient(180deg, var(--sidenav-bg-start) 0%, var(--sidenav-bg-end) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .back-home-btn:hover {
+            border-color: var(--sidenav-icon-btn-border-hover);
+            background: linear-gradient(180deg, var(--sidenav-icon-btn-bg-hover) 0%, var(--sidenav-bg-end) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .back-home-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .back-home-btn {
+                top: 16px;
+                left: 16px;
+                padding: 8px 14px;
+                font-size: 0.9rem;
+            }
+
+            .back-home-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
     </style>
 </head>
 <body>
+    <a href="./index.html" class="back-home-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        <span>Back Home</span>
+    </a>
+
     <div class="unlock-card">
         <h1 class="unlock-title">Unreleased Games</h1>
         <p class="unlock-subtitle">Enter your access code to unlock upcoming titles.</p>

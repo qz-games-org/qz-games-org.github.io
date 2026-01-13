@@ -169,7 +169,7 @@ function createSlide(game, index, isActive = false) {
     const slide = document.createElement('div');
     slide.className = `carousel-slide${isActive ? ' active' : ''}`;
     slide.dataset.index = index;
-    
+
     slide.innerHTML = `
         <div class="game-info">
             <h2 class="game-name">${game.name}</h2>
@@ -180,12 +180,66 @@ function createSlide(game, index, isActive = false) {
             <img src="./covers/${game.cover}" alt="${game.name}" class="cover-image">
         </div>
     `;
-    
-    // Generate gradient from cover image
-    getImageColors('./covers/' + game.cover, (gradient) => {
-        slide.style.background = gradient;
-    });
-    
+
+    // Check if game has a custom video background
+    if (game.videoBackground) {
+        // Create video element for background
+        const video = document.createElement('video');
+        video.className = 'carousel-video-bg';
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true; // Important for mobile
+        video.src = `./covers/${game.videoBackground}`;
+
+        // Style the video to cover the slide
+        video.style.position = 'absolute';
+        video.style.top = '0';
+        video.style.left = '0';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        video.style.zIndex = '0';
+        video.style.pointerEvents = 'none';
+
+        // Add dark overlay for text readability
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.7) 100%)';
+        overlay.style.zIndex = '1';
+        overlay.style.pointerEvents = 'none';
+
+        // Make sure slide has relative positioning
+        slide.style.position = 'relative';
+        slide.style.overflow = 'hidden';
+
+        // Insert video and overlay before other content
+        slide.insertBefore(overlay, slide.firstChild);
+        slide.insertBefore(video, slide.firstChild);
+
+        // Ensure content is above video
+        const gameInfo = slide.querySelector('.game-info');
+        const gameCover = slide.querySelector('.game-cover');
+        if (gameInfo) gameInfo.style.position = 'relative';
+        if (gameInfo) gameInfo.style.zIndex = '2';
+        if (gameCover) gameCover.style.position = 'relative';
+        if (gameCover) gameCover.style.zIndex = '2';
+
+        // Start playing video when slide becomes active
+        if (isActive) {
+            video.play().catch(e => console.log('Video autoplay failed:', e));
+        }
+    } else {
+        // Generate gradient from cover image (legacy behavior)
+        getImageColors('./covers/' + game.cover, (gradient) => {
+            slide.style.background = gradient;
+        });
+    }
+
     return slide;
 }
 
@@ -211,14 +265,27 @@ let autoPlayInterval;
 
 function showSlide(index) {
     slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
+        const isActive = i === index;
+        slide.classList.toggle('active', isActive);
+
+        // Control video playback
+        const video = slide.querySelector('.carousel-video-bg');
+        if (video) {
+            if (isActive) {
+                // Play video when slide becomes active
+                video.play().catch(e => console.log('Video play failed:', e));
+            } else {
+                // Pause video when slide is not active to save resources
+                video.pause();
+            }
+        }
     });
-    
+
     const indicators = document.querySelectorAll('.indicator');
     indicators.forEach((indicator, i) => {
         indicator.classList.toggle('active', i === index);
     });
-    
+
     currentSlide = index;
 }
 
@@ -238,29 +305,70 @@ function stopAutoPlay() {
 // Load games and initialize carousel
 async function loadFeaturedGames() {
     try {
+        let manualGames = [];
+        let autoGames = [];
+
+        // Load manual featured games (featuredM.json)
+        try {
+            const manualResponse = await fetch('featuredM.json');
+            if (manualResponse.ok) {
+                const manualData = await manualResponse.json();
+                if (manualData && Array.isArray(manualData) && manualData.length > 0) {
+                    // Filter only games where present is true
+                    manualGames = manualData
+                        .filter(game => game.present === true || game.present === "true")
+                        .map(game => ({
+                            name: game.name,
+                            catagory: game.catagory || game.category || 'Featured',
+                            link: game.link,
+                            type: game.type,
+                            cover: game.cover,
+                            videoBackground: game.videoBackground || null, // Optional video background
+                            key: game.name.toLowerCase().replace(/\s+/g, '-'),
+                            isManual: true
+                        }));
+                    console.log('Loaded manual featured games (present: true):', manualGames);
+                }
+            }
+        } catch (manualError) {
+            console.log('No manual featured games found or error loading featuredM.json');
+        }
+
+        // Always load auto-selected games
         const response = await fetch('games.json');
         const gamesData = await response.json();
-        
+
         const seed = getYearWeek();
-        const featuredGames = pickItems(gamesData, 3, seed);
-        
+        // If there's a manual game (present: true), show 4 total games (1 manual + 3 auto)
+        // If no manual game, show 3 auto games
+        const hasManualGame = manualGames.length > 0;
+        const autoGamesNeeded = hasManualGame ? 3 : 3;
+        autoGames = pickItems(gamesData, autoGamesNeeded, seed);
+
         console.log('Seed for this week:', seed);
-        console.log('Featured games:', featuredGames);
-        
+        console.log('Has manual game:', hasManualGame);
+        console.log('Auto-selected featured games:', autoGames);
+
+        // Merge manual games first, then auto games
+        // This will give us 4 games when manual game exists, 3 games otherwise
+        const featuredGames = [...manualGames, ...autoGames];
+
+        console.log('Final featured games lineup:', featuredGames);
+
         const container = document.getElementById('carouselContainer');
         container.innerHTML = '';
-        
+
         // Create slides
         featuredGames.forEach((game, index) => {
             const slide = createSlide(game, index, index === 0);
             container.appendChild(slide);
             slides.push(slide);
         });
-        
+
         // Create indicators
         const indicators = createIndicators(featuredGames.length);
         container.appendChild(indicators);
-        
+
         // Add click handlers for indicators
         document.querySelectorAll('.indicator').forEach((indicator, index) => {
             indicator.addEventListener('click', () => {
@@ -269,16 +377,16 @@ async function loadFeaturedGames() {
                 startAutoPlay();
             });
         });
-        
+
         // Add click handlers for slides (pause on hover)
         slides.forEach(slide => {
             slide.addEventListener('mouseenter', stopAutoPlay);
             slide.addEventListener('mouseleave', startAutoPlay);
         });
-        
+
         // Start auto-play
         startAutoPlay();
-        
+
     } catch (error) {
         console.error('Error loading games:', error);
         document.getElementById('carouselContainer').innerHTML = `

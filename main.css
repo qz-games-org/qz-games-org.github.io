@@ -2108,3 +2108,6 @@ body.reduce-effects .optiongamemain,
 body.reduce-effects .optionsettings {
     background-color: rgba(36, 36, 36, 0.9) !important;
 }
+.carousel-video-bg {
+    filter: blur(8px);
+}
