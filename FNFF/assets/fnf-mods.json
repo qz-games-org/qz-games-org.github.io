@@ -32,7 +32,7 @@
   "vs-miku": {
     "name": "Vs Miku",
     "icon": "../FNFF/assets/icons/Miku.webp",
-    "link": "../FNF2/Miku",
+    "link": "../FNF/vsmiku",
     "warning": ""
   },
   "tko-but-matt-goes-all-out": {
