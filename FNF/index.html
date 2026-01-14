@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friday Night Funkin' | QZ Games</title>
+    <link rel="icon" href="../Q.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../styles/default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="./FNF/style.css">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('../service-worker.js');
+        }
+    </script>
+</head>
+<body>
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <span class="material-icons notification-icon">warning</span>
+            <div class="notification-text">
+                <h3 id="notification-title">Warning</h3>
+                <p id="notification-message">Message here</p>
+            </div>
+            <button id="notification-close" class="notification-close">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Launcher Panel (Overlay Menu) -->
+        <aside id="launcher-panel" class="launcher-panel launcher-panel-visible">
+            <!-- Left Column: Header, Cover, Buttons -->
+            <div class="launcher-left">
+                <!-- Launcher Header -->
+                <div class="launcher-header">
+                    <h1 class="launcher-title">Friday Night Funkin'</h1>
+                    <div class="header-buttons">
+                        <button id="close-launcher-btn" class="close-launcher-btn" title="Close Launcher" style="display: none;">
+                            <span class="material-icons">close</span>
+                        </button>
+                        <a href="../index.html" class="home-btn" title="Back to Home">
+                            <span class="material-icons">home</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- FNF Cover -->
+                <div class="fnf-cover-container">
+                    <img id="fnf-cover" class="fnf-cover" src="../covers/fnf.png" alt="Friday Night Funkin'" />
+                </div>
+
+                <!-- Launch Buttons -->
+                <div class="launch-buttons">
+                    <button id="launch-base" class="launch-btn launch-btn-primary">
+                        <span class="material-icons">play_arrow</span>
+                        <span>Launch Base Game</span>
+                    </button>
+                    <button id="launch-mod" class="launch-btn launch-btn-secondary" disabled>
+                        <span class="material-icons">extension</span>
+                        <span>Select a Mod First</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: Mods Section -->
+            <div class="mods-section">
+                <h3 class="mods-title">Available Mods</h3>
+                <div id="mods-grid" class="mods-grid">
+                    <!-- Mods will be loaded dynamically -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Player Panel (Right) -->
+        <main class="player-panel">
+            <!-- Placeholder (shown when no game loaded) -->
+            <div id="player-placeholder" class="player-placeholder">
+                <div class="placeholder-content">
+                    <img src="../Q-BIG.png" alt="QZ Games" class="placeholder-logo">
+                    <h2>Select a game to start</h2>
+                    <p>Choose the base game or a mod from the left panel</p>
+                </div>
+            </div>
+
+            <!-- Game Player (hidden initially) -->
+            <div id="player-container" class="player-container" style="display: none;">
+                <iframe id="game-frame" class="game-frame" allowfullscreen></iframe>
+
+                <!-- HUD Controls -->
+                <div class="hud-wrap">
+                    <div class="hud-pill">
+                        <button id="menu-toggle-btn" class="hud-btn" title="Toggle Menu">
+                            <span class="material-icons">menu</span>
+                        </button>
+
+                        <div class="hud-divider"></div>
+
+                        <a href="../index.html" class="hud-btn hud-btn-link" title="Back to Home">
+                            <span class="material-icons">home</span>
+                        </a>
+
+                        <div class="hud-divider"></div>
+
+                        <button id="fullscreen-btn" class="hud-btn" title="Fullscreen">
+                            <span class="material-icons">fullscreen</span>
+                        </button>
+
+                        <button id="hide-hud-btn" class="hud-btn" title="Hide Controls">
+                            <span class="material-icons">keyboard_arrow_down</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Show HUD Button (visible when HUD is hidden) -->
+                <div class="show-hud-wrap" style="display: none;">
+                    <button id="show-hud-btn" class="show-hud-btn" title="Show Controls">
+                        <span class="material-icons">keyboard_arrow_up</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./FNF/launcher.js"></script>
+</body>
+</html>

@@ -2,11 +2,13 @@
     {
         "name": "Friday Night Funkin'",
         "catagory": "New",
-        "link": "../Games01/example-game",
+        "link": "./FNF/index.html",
         "type": "html",
         "cover": "fnf.png",
         "videoBackground": "/assets/fnfbg.mp4",
-        "present": false
+        "present": true,
+        "customlink": true
+
     },
     {
         "name": "Geometry Dash Lite",

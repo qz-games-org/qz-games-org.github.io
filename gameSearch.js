@@ -505,7 +505,7 @@ class SearchBarHandler {
         if (query.trim().length < this.options.minLength) {
             return;
         }
-
+        
         // Set new timer
         this.debounceTimer = setTimeout(() => {
             this.performSearch(query.trim());
@@ -521,17 +521,17 @@ class SearchBarHandler {
             console.warn('Search engine not initialized yet');
             return;
         }
-
+        
         if (query === '') {
             // Clear search
             clearGameSearch();
         } else {
             // Perform search
             const results = searchGames(query);
-            
+
             // Optional: Log search results
             console.log(`Search for "${query}" returned ${results.length} results`);
-            
+           
             // Optional: Update UI with search stats
             this.updateSearchStats(query, results.length);
         }
@@ -625,3 +625,4 @@ initializeSearchBar('#gamesearch', {
     showSuggestions: true,// Show dropdown suggestions
     clearOnEmpty: true    // Clear results when input is empty
 });
+

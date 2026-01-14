@@ -1,0 +1,15 @@
+{
+    "up now": {
+        "cover": "/temp/covers/upnow.jfif",
+        "musicfile": "/temp/music/upnow.mp3",
+        "artist": "evxnvision",
+        "soundcloud": "https://soundcloud.com/evan-jones-923885757"
+    },
+    "zeze": {
+        "cover": "/temp/covers/upnow.jfif",
+        "musicfile": "/music/assets/music/ZEZE.mp3",
+        "artist": "kodak black",
+        "soundcloud": ""
+    }
+
+}

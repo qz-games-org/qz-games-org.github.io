@@ -1,0 +1,44 @@
+{
+  "base-game": {
+    "name": "Friday Night Funkin'",
+    "icon": "./FNF/assets/icons/fnf.png",
+    "link": "./FNF2/FNF",
+    "warning": ""
+  },
+  "vs-whitty": {
+    "name": "VS Whitty",
+    "icon": "./FNF/assets/icons/Whitty.png",
+    "link": "./FNF/whi-main",
+    "warning": "Contains flashing lights and loud audio"
+  },
+  "vs-sky": {
+    "name": "VS Sky",
+    "icon": "./FNF/assets/icons/Sky.webp",
+    "link": "./FNF/syk-main",
+    "warning": "Contains intense flashing effects and sudden loud noises"
+  },
+  "vs-suicide-mouse": {
+    "name": "VS Suicide Mouse",
+    "icon": "./FNF/assets/icons/SNS.png",
+    "link": "./FNF/Suicidemouse-cutscenes-main",
+    "warning": "Contains intense flashing effects, Screen Shaking and sudden loud noises"
+  },
+  "Neo": {
+    "name": "Neo",
+    "icon": "./FNF/assets/icons/Neo.webp",
+    "link": "./FNF2/FNF-NEO-HTML5-BY-ME",
+    "warning": "Contains intense screen shaking and sudden loud noises"
+  },
+  "vs-miku": {
+    "name": "Vs Miku",
+    "icon": "./FNF/assets/icons/Miku.webp",
+    "link": "./FNF2/Miku",
+    "warning": ""
+  },
+  "tko-but-matt-goes-all-out": {
+    "name": "TKO but matt goes all out",
+    "icon": "./FNF/assets/icons/Matt2.webp",
+    "link": "./FNF/TKO-B-M-G-A-O-main",
+    "warning": ""
+  }
+}

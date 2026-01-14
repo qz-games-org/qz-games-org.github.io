@@ -170,11 +170,16 @@ function createSlide(game, index, isActive = false) {
     slide.className = `carousel-slide${isActive ? ' active' : ''}`;
     slide.dataset.index = index;
 
+    // Determine the link URL based on whether it's a custom link or game link
+    const linkUrl = game.customlink
+        ? game.link
+        : `./Games/game.html?game=${game.link}&type=${game.type}&name=${game.name.toLowerCase()}`;
+
     slide.innerHTML = `
         <div class="game-info">
             <h2 class="game-name">${game.name}</h2>
             <p class="game-category">${game.catagory}</p>
-            <a href="./Games/game.html?game=${game.link}&type=${game.type}&name=${game.name.toLowerCase()}" class="play-button">Play Now</a>
+            <a href="${linkUrl}" class="play-button">Play Now</a>
         </div>
         <div class="game-cover">
             <img src="./covers/${game.cover}" alt="${game.name}" class="cover-image">
@@ -324,6 +329,7 @@ async function loadFeaturedGames() {
                             type: game.type,
                             cover: game.cover,
                             videoBackground: game.videoBackground || null, // Optional video background
+                            customlink: game.customlink || false, // Check if it's a custom link
                             key: game.name.toLowerCase().replace(/\s+/g, '-'),
                             isManual: true
                         }));
