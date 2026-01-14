@@ -527,6 +527,14 @@
         "link": "../Games02/henrystickmin/Henry%20Stickmin%20-%20Breaking%20the%20Bank.swf",
         "type": "flash"   
     },
+    "breaking the bank remastered": {
+        "cover": "btb.png",
+        "name": "Breaking the bank Remastered",
+        "gradient": "lightblue",
+        "catagory": "casual story flash",
+        "link": "../Games03/breaking_the_bankr.swf",
+        "type": "flash"   
+    },
     "escaping the prison": {
         "cover": "estp.png",
         "name": "Escaping The Prison",

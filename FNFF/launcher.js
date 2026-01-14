@@ -33,7 +33,7 @@
     async function init() {
         try {
             // Load mods from JSON
-            const response = await fetch('./FNF/assets/fnf-mods.json');
+            const response = await fetch('../FNFF/assets/fnf-mods.json');
             const data = await response.json();
 
             // Separate base game from mods

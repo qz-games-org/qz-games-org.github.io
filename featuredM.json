@@ -2,7 +2,7 @@
     {
         "name": "Friday Night Funkin'",
         "catagory": "New",
-        "link": "./FNF/index.html",
+        "link": "./FNFF/index.html",
         "type": "html",
         "cover": "fnf.png",
         "videoBackground": "/assets/fnfbg.mp4",
