@@ -700,7 +700,47 @@
         "name": "Boxing Random",
         "gradient": "grey",
         "catagory": "casual sports",
-        "link": "../Games03/Repo4/boxingrandom",
+        "link": "../Games04/Repo4/boxingrandom",
+        "type": "html"   
+    },
+    "boxing physics 2": {
+        "cover": "bp2.png",
+        "name": "Boxing Physics 2",
+        "gradient": "grey",
+        "catagory": "casual sports",
+        "link": "../Games03/REPO3/boxing-physics2/",
+        "type": "html"   
+    },
+    "friendly fire": {
+        "cover": "ff2.png",
+        "name": "Friendly Fire",
+        "gradient": "purple",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/friendlyfire/",
+        "type": "html"   
+    },
+    "soccer random": {
+        "cover": "sr.png",
+        "name": "Soccer Random",
+        "gradient": "green",
+        "catagory": "casual sports",
+        "link": "../Games03/REPO3/soccer-random/",
+        "type": "html"   
+    },
+    "jetpack joyride": {
+        "cover": "jpjr.png",
+        "name": "Jetpack Joyride",
+        "gradient": "lightblue",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/jetpackjoyride/",
+        "type": "html"   
+    },
+    "fireboy and watergirl 1": {
+        "cover": "fbawg1.png",
+        "name": "Fireboy and Watergirl 1",
+        "gradient": "gold",
+        "catagory": "casual multiplayer",
+        "link": "../Games03/REPO3/FBWG1/",
         "type": "html"   
     }
     
