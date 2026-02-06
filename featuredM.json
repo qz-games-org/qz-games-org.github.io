@@ -1,5 +1,16 @@
 [
     {
+        "name": "More Games Being Added Tonight!",
+        "catagory": "News",
+        "link": "#header",
+        "type": "html",
+        "cover": "blank.png",
+        "videoBackground": "",
+        "present": true,
+        "customlink": true
+
+    },
+    {
         "name": "Friday Night Funkin'",
         "catagory": "New",
         "link": "./FNFF/index.html",

@@ -1,0 +1,17 @@
+{
+    "METRO BOOMIN PRESENTS SPIDER-MAN: ACROSS THE SPIDER-VERSE": {
+        "cover": "spiderv.png",
+        "name": "METRO BOOMIN PRESENTS SPIDER-MAN: ACROSS THE SPIDER-VERSE",
+        "artist": "Metro Boomin, Daniel Pemberton, Martin08, ORCH, 2Hooks",
+        "page": "page",
+        "file": "album.json" 
+    },
+    "death race for love": {
+        "cover": "drfl.png",
+        "name": "Death Race for Love",
+        "artist": "Juice WRLD",
+        "page": "page",
+        "file": "album.json" 
+    }
+ 
+}

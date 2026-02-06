@@ -59,6 +59,7 @@
           <li><button class="tab-btn active" data-target="main">General</button></li>
           <li><button class="tab-btn" data-target="custom">Performance</button></li>
           <li><button class="tab-btn" data-target="language">Language</button></li>
+          <li><button class="tab-btn" data-target="weather">Weather</button></li>
           <li><button class="tab-btn" data-target="cache">Cache Control</button></li>
           <li><button class="tab-btn" data-target="theme">Themes</button></li>
           <!--li><button class="tab-btn" data-target="backgrounds">Backgrounds</button></li-->
@@ -170,6 +171,67 @@
               <button class="action-btn" id="resetLangBtn">
                 <span class="material-icons">refresh</span>
                 Reset to Default (English)
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="weather" class="section">
+          <div class="section-header">
+            <h2>Weather Widget</h2>
+            <p class="section-description">Configure weather display preferences</p>
+          </div>
+
+          <div class="settings-group">
+            <div class="toggle-container">
+              <div class="toggle-info">
+                <span class="toggle-label">Enable Weather Widget</span>
+                <span class="toggle-description">Show or hide the weather widget in the sidebar footer.</span>
+              </div>
+              <label class="toggle-switch">
+                <input id="weatherEnabledToggle" type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-container">
+              <div class="toggle-info">
+                <span class="toggle-label">Location Detection Method</span>
+                <span class="toggle-description">Choose how to detect your location for weather updates.</span>
+              </div>
+              <select id="weatherLocationMethod" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 14px; margin-top: 10px;">
+                <option value="geolocation">Browser Geolocation (GPS/WiFi) - Most Accurate</option>
+                <option value="ip" selected>IP Location - Automatic, Less Accurate</option>
+                <option value="manual">Manual Location</option>
+              </select>
+            </div>
+
+            <div class="toggle-container">
+              <div class="toggle-info">
+                <span class="toggle-label">Temperature Unit</span>
+                <span class="toggle-description">Choose between Fahrenheit (°F) or Celsius (°C) for temperature display.</span>
+              </div>
+              <select id="weatherTempUnit" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 14px; margin-top: 10px;">
+                <option value="fahrenheit">Fahrenheit (°F)</option>
+                <option value="celsius">Celsius (°C)</option>
+              </select>
+            </div>
+
+            <div class="info-container">
+              <div class="info-row">
+                <span class="info-label">Current Location</span>
+                <span class="info-value" id="weatherLocation">Loading...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Last Updated</span>
+                <span class="info-value" id="weatherLastUpdate">Never</span>
+              </div>
+            </div>
+
+            <div class="action-buttons-group">
+              <button class="action-btn" id="refreshWeatherBtn">
+                <span class="material-icons">refresh</span>
+                Refresh Weather
               </button>
             </div>
           </div>
@@ -622,6 +684,115 @@ function loadSavedPreferences() {
     customBackgrounds.addEventListener('change', () => {
       setCookie('customBackgrounds', customBackgrounds.checked);
       console.log('Custom Backgrounds:', customBackgrounds.checked);
+    });
+  }
+
+  // Weather Widget Settings
+  const weatherEnabledToggle = document.getElementById('weatherEnabledToggle');
+  const weatherLocationMethod = document.getElementById('weatherLocationMethod');
+  const weatherTempUnit = document.getElementById('weatherTempUnit');
+  const weatherLocationDisplay = document.getElementById('weatherLocation');
+  const weatherLastUpdate = document.getElementById('weatherLastUpdate');
+  const refreshWeatherBtn = document.getElementById('refreshWeatherBtn');
+
+  // Update display info function
+  function updateWeatherInfo() {
+    const savedLocation = localStorage.getItem('weather_location');
+    const lastUpdate = localStorage.getItem('weather_last_update');
+
+    if (savedLocation) {
+      try {
+        const location = JSON.parse(savedLocation);
+        weatherLocationDisplay.textContent = location.name || 'Unknown';
+      } catch (e) {
+        weatherLocationDisplay.textContent = 'Unknown';
+      }
+    } else {
+      weatherLocationDisplay.textContent = 'Not set';
+    }
+
+    if (lastUpdate) {
+      const date = new Date(parseInt(lastUpdate));
+      weatherLastUpdate.textContent = date.toLocaleString();
+    } else {
+      weatherLastUpdate.textContent = 'Never';
+    }
+  }
+
+  // Enable/Disable Weather Widget
+  if (weatherEnabledToggle) {
+    // Load saved preference (default to true)
+    const enabled = localStorage.getItem('weather_enabled');
+    weatherEnabledToggle.checked = enabled === 'false' ? false : true;
+
+    weatherEnabledToggle.addEventListener('change', () => {
+      const isEnabled = weatherEnabledToggle.checked;
+      localStorage.setItem('weather_enabled', isEnabled.toString());
+
+      // Call the weather widget function to update
+      if (typeof window.updateWeatherSettings === 'function') {
+        window.updateWeatherSettings();
+      }
+
+      console.log('Weather Widget Enabled:', isEnabled);
+    });
+  }
+
+  // Location Detection Method
+  if (weatherLocationMethod) {
+    // Load saved preference (default to IP location)
+    const savedMethod = localStorage.getItem('weather_location_method') || 'ip';
+    weatherLocationMethod.value = savedMethod;
+
+    weatherLocationMethod.addEventListener('change', () => {
+      const selectedMethod = weatherLocationMethod.value;
+      localStorage.setItem('weather_location_method', selectedMethod);
+
+      // Call the weather widget function to update
+      if (typeof window.updateWeatherSettings === 'function') {
+        window.updateWeatherSettings();
+      }
+
+      console.log('Weather Location Method:', selectedMethod);
+    });
+  }
+
+  // Temperature Unit Settings
+  if (weatherTempUnit) {
+    // Load saved preference (default to fahrenheit)
+    const savedUnit = localStorage.getItem('weather_temp_unit') || 'fahrenheit';
+    weatherTempUnit.value = savedUnit;
+
+    weatherTempUnit.addEventListener('change', () => {
+      const selectedUnit = weatherTempUnit.value;
+      localStorage.setItem('weather_temp_unit', selectedUnit);
+
+      // Call the weather widget function to update
+      if (typeof window.updateWeatherSettings === 'function') {
+        window.updateWeatherSettings();
+      }
+
+      console.log('Weather Temperature Unit:', selectedUnit);
+    });
+  }
+
+  // Initial display update
+  if (weatherLocationDisplay && weatherLastUpdate) {
+    updateWeatherInfo();
+  }
+
+  // Refresh Weather Button
+  if (refreshWeatherBtn) {
+    refreshWeatherBtn.addEventListener('click', () => {
+      // Force refresh weather widget
+      if (typeof window.updateWeatherSettings === 'function') {
+        window.updateWeatherSettings();
+      }
+
+      // Update display after a short delay
+      setTimeout(() => {
+        updateWeatherInfo();
+      }, 1000);
     });
   }
 

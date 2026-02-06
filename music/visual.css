@@ -1,0 +1,40 @@
+.visualizer {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(45, 45, 48, 0.9), rgba(40, 40, 41, 0.7));
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; transition: box-shadow 0.25s ease, transform 0.25s ease;
+    position: relative; overflow: hidden;
+    box-shadow: 0 0 30px rgba(160, 160, 160, 0.18);
+    pointer-events: auto;
+    will-change: transform, box-shadow;
+    transform: scale(0.45);
+    position: fixed;
+    top: -35px;
+    right: -35px;
+  }
+  .visualizer.active { box-shadow: 0 0 40px rgba(175, 175, 175, 0.35); transform: scale(0.5); }
+
+  .center-bars { display: flex; gap: 4px; align-items: flex-end; height: 40px; z-index: 2; }
+  .center-bar { width: 4px; background: linear-gradient(to top,#7e7e7e,#6d6d6d,#686868);
+    border-radius: 2px; min-height: 2px; box-shadow: 0 0 8px rgba(138, 138, 138, 0.5);
+    will-change: height, opacity; }
+
+  .bass-ring {
+    position: absolute; width: 120px; height: 120px; border-radius: 50%;
+    border: 3px solid transparent;
+    background: conic-gradient(from 0deg,#424242 0deg,#4d4d4d 90deg,#333333 180deg,#292929 270deg,#414141 360deg);
+    background-clip: padding-box; opacity: 0.7; will-change: transform, opacity, filter;
+  }
+  .bass-ring::after {
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    box-shadow: 0 0 calc(var(--peak, 0) * 40px) rgba(138, 138, 138, 0.5); pointer-events: none;
+  }
+
+  .treble-particle { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #00e676;
+    box-shadow: 0 0 6px #00e676; will-change: transform, opacity; }
+  .particle-1 { top: 20px; right: 30px; } .particle-2 { top: 30px; left: 20px; }
+  .particle-3 { bottom: 30px; right: 20px; } .particle-4 { bottom: 20px; left: 30px; }
+  .particle-5 { top: 50%; right: 15px; transform: translateY(-50%); }
+  .particle-6 { top: 50%; left: 15px; transform: translateY(-50%);}

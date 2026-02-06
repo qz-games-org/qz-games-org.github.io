@@ -132,7 +132,7 @@
         "name": "Geometry Dash Lite",
         "gradient": "lightblue",
         "catagory": "casual",
-        "link": "../Games03/Repo4/geometry-dash-lite/",
+        "link": "../Games04/Repo4/geometry-dash-lite/",
         "type": "html"   
     },
     "motox3m": {
@@ -742,7 +742,37 @@
         "catagory": "casual multiplayer",
         "link": "../Games03/REPO3/FBWG1/",
         "type": "html"   
+    },
+    "burrito bison": {
+        "cover": "bllb.png",
+        "name": "Burrito Bison",
+        "gradient": "lightblue",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/bison",
+        "type": "html"   
+    },
+    "sort the court": {
+        "cover": "stc.png",
+        "name": "Sort the Court",
+        "gradient": "lightblue",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/court",
+        "type": "html"   
+    },
+    "crossy road": {
+        "cover": "csr.png",
+        "name": "Crossy Road",
+        "gradient": "lightblue",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/crossy",
+        "type": "html"   
+    },
+    "cell to singularity": {
+        "cover": "ctss.png",
+        "name": "Cell to Singularity",
+        "gradient": "lightblue",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/cell",
+        "type": "html"   
     }
-    
-
 }

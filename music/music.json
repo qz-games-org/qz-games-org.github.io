@@ -1,0 +1,384 @@
+{
+    "lean On": {
+        "cover": "lean-on.png",
+        "name": "Lean On",
+        "artist": "DJ Snake, Major Lazer, and MØ",
+        "ft": "",
+        "file": "Lean-On.mp3" 
+    },
+    "cold water": {
+        "cover": "coldwater.png",
+        "name": "Cold Water",
+        "artist": "Major Lazer",
+        "ft": "Justin Bieber, MØ",
+        "file": "ColdWater.mp3" 
+    },
+    "you know you like it": {
+        "cover": "youknow.png",
+        "name": "You Know You Like It",
+        "artist": "DJ Snake",
+        "ft": " AlunaGeorge",
+        "file": "ykuli.mp3" 
+    },
+    "2 on": {
+        "cover": "2on.png",
+        "name": "2 On",
+        "artist": "Tinashe",
+        "ft": " ScHoolboy Q",
+        "file": "2on.mp3" 
+    },
+    "texas": {
+        "cover": "texas.png",
+        "name": "Texas",
+        "artist": "BigXthaPlug",
+        "ft": "",
+        "file": "texas.mp3" 
+    },
+    "back to the hotel": {
+        "cover": "backt.png",
+        "name": "Back To The Hotel",
+        "artist": "N2Deep",
+        "ft": "",
+        "file": "backt.mp3" 
+    },
+    "low": {
+        "cover": "low.png",
+        "name": "Low",
+        "artist": "Flo Rida",
+        "ft": "",
+        "file": "low.mp3" 
+    },
+    "calling": {
+        "cover": "spiderv.png",
+        "name": "Calling",
+        "artist": "Metro Boomin, Swae Lee, NAV",
+        "ft": "",
+        "file": "calling.mp3" 
+    },
+    "sunflower": {
+        "cover": "spiderv1.png",
+        "name": "Sunflower",
+        "artist": "Post Malone, Swae Lee",
+        "ft": "",
+        "file": "sunflower.mp3" 
+    },
+    "annihilate": {
+        "cover": "spiderv.png",
+        "name": "Annihilate",
+        "artist": "Lil Wayne, Metro Boomin, Swae Lee, Offset",
+        "ft": "",
+        "file": "annihilate.mp3" 
+    },
+    "going up": {
+        "cover": "goingup.png",
+        "name": "Going Up",
+        "artist": "Axuko",
+        "ft": "",
+        "file": "goingup.mp3" 
+    },
+    "juicy": {
+        "cover": "readytodie.png",
+        "name": "Juicy",
+        "artist": "The Notorious B.I.G.",
+        "ft": "",
+        "file": "juicy.mp3" 
+    },
+    "empty": {
+        "cover": "drfl.png",
+        "name": "Empty",
+        "artist": "Juice WRLD",
+        "ft": "",
+        "file": "empty.mp3" 
+    },
+    "lucid dreams": {
+        "cover": "luciddreams.png",
+        "name": "Lucid Dreams",
+        "artist": "Juice WRLD",
+        "ft": "",
+        "file": "luciddreams.mp3" 
+    },
+    "murder on my mind": {
+        "cover": "iamyou.png",
+        "name": "Murder on My Mind",
+        "artist": "YNW Melly",
+        "ft": "",
+        "file": "momym.mp3" 
+    },
+    "223's": {
+        "cover": "223.png",
+        "name": "223's",
+        "artist": "YNW Melly",
+        "ft": "9lokknine",
+        "file": "223.mp3" 
+    },
+    "robbery": {
+        "cover": "drfl.png",
+        "name": "Robbery",
+        "artist": "Juice WRLD",
+        "ft": "",
+        "file": "robbery.mp3" 
+    },
+    "dior freestyle": {
+        "cover": "diorfreestyle.png",
+        "name": "Dior Freestyle",
+        "artist": "OTM",
+        "ft": "",
+        "file": "diorfreestyle.mp3" 
+    },
+    "nobody": {
+        "cover": "nobody.png",
+        "name": "Nobody",
+        "artist": "OTM",
+        "ft": "",
+        "file": "nobody.mp3" 
+    },
+    "rockin": {
+        "cover": "rockin.png",
+        "name": "ROCKIN",
+        "artist": "Fenix Flexin, Shoreline Mafia, OhGeesy",
+        "ft": "",
+        "file": "rockin.mp3" 
+    },
+    "big poppa": {
+        "cover": "readytodie.png",
+        "name": "Big Poppa",
+        "artist": "The Notorious B.I.G.",
+        "ft": "",
+        "file": "bigpoppa.mp3" 
+    },
+    "see you again": {
+        "cover": "seeyouagain.png",
+        "name": "See You Again",
+        "artist": "Tyler, The Creator",
+        "ft": "Kali Uchis",
+        "file": "seeyouagain.mp3" 
+    },
+    "all the way": {
+        "cover": "alltheway.png",
+        "name": "All The Way",
+        "artist": "Bailey Zimmerman, BigXthaPlug",
+        "ft": "",
+        "file": "alltheway.mp3" 
+    }, 
+    "mi decepción": {
+        "cover": "midece.png",
+        "name": "Mi Decepción",
+        "artist": "Lefty Sm, Santa Fe Klan",
+        "ft": "",
+        "file": "midece.mp3" 
+    },
+    "locked away": {
+        "cover": "lockedaway.png",
+        "name": "Locked Away",
+        "artist": "R. City",
+        "ft": "Adam Levine",
+        "file": "lockedaway.mp3" 
+    },
+    "pillowtalk": {
+        "cover": "pillowt.png",
+        "name": "PILLOWTALK",
+        "artist": "Zayn",
+        "ft": "",
+        "file": "pillowt.mp3" 
+    },
+    "rude": {
+        "cover": "rude.png",
+        "name": "Rude",
+        "artist": "MAGIC!",
+        "ft": "",
+        "file": "rude.mp3" 
+    },
+    "it ain't me": {
+        "cover": "itaintme.png",
+        "name": "It Ain't Me",
+        "artist": "Kygo, Selena Gomez",
+        "ft": "",
+        "file": "itaintme.mp3" 
+    },
+    "i love it": {
+        "cover": "iloveit.png",
+        "name": "I Love It",
+        "artist": "Icona Pop",
+        "ft": "Charli xcx",
+        "file": "iloveit.mp3" 
+    },
+    "levitating": {
+        "cover": "levitating.png",
+        "name": "Levitating",
+        "artist": "Dua Lipa",
+        "ft": "DaBaby",
+        "file": "levitating.mp3" 
+    },
+    "transportin": {
+        "cover": "transportin.png",
+        "name": "Transportin",
+        "artist": "Kodak Black",
+        "ft": "",
+        "file": "transportin.mp3" 
+    },
+    "zeze": {
+        "cover": "ZEZE.png",
+        "name": "ZEZE",
+        "artist": "Kodak Black",
+        "ft": "Travis Scott, Offset",
+        "file": "ZEZE.mp3" 
+    },
+    "smack that": {
+        "cover": "smackthat.png",
+        "name": "Smack That",
+        "artist": "Akon",
+        "ft": "Eminem",
+        "file": "smackthat.mp3" 
+    },
+    "24k magic": {
+        "cover": "24km.png",
+        "name": "24K Magic",
+        "artist": "Bruno Mars",
+        "ft": "",
+        "file": "24km.mp3" 
+    },
+    "bottoms up": {
+        "cover": "bottomsup.png",
+        "name": "Bottoms Up",
+        "artist": "Trey Songz",
+        "ft": "Nicki Minaj",
+        "file": "bottomsup.mp3" 
+    },
+    "hips don't lie": {
+        "cover": "hipsdontlie.png",
+        "name": "Hips Don't Lie",
+        "artist": "Shakira",
+        "ft": "Wyclef Jean",
+        "file": "hipsdontlie.mp3" 
+    },
+    "nothin on you": {
+        "cover": "nothinonyou.png",
+        "name": "Nothin on You",
+        "artist": "B.o.B",
+        "ft": "Bruno Mars",
+        "file": "nothinonyou.mp3" 
+    },
+    "dark horse": {
+        "cover": "darkhorse.png",
+        "name": "Dark Horse",
+        "artist": "Katy Perry",
+        "ft": "Juicy J",
+        "file": "darkhorse.mp3" 
+    },
+    "worth it": {
+        "cover": "worthit.png",
+        "name": "Worth It",
+        "artist": "Fifth Harmony",
+        "ft": "Kid Ink",
+        "file": "worthit.mp3" 
+    },
+    "I love it": {
+        "cover": "iloveitt.png",
+        "name": "I Love It",
+        "artist": "Kanye West and Lil Pump",
+        "ft": "",
+        "file": "iloveitt.mp3" 
+    },
+    "this love": {
+        "cover": "thislove.png",
+        "name": "This Love",
+        "artist": "Maroon 5",
+        "ft": "",
+        "file": "thislove.mp3" 
+    },
+    "fresco": {
+        "cover": "fresco.png",
+        "name": "Fresco",
+        "artist": "Milk",
+        "ft": "",
+        "file": "fresco.mp3" 
+    },
+    "post to be": {
+        "cover": "posttobe.png",
+        "name": "Post to Be",
+        "artist": "Chris Brown and Omarion",
+        "ft": "",
+        "file": "posttobe.mp3" 
+    },
+    "super gremlin": {
+        "cover": "superg.png",
+        "name": "Super Gremlin",
+        "artist": "Kodak Black",
+        "ft": "",
+        "file": "superg.mp3" 
+    },
+    "smoke a nigga": {
+        "cover": "smokean.png",
+        "name": "Smoke a Nigga",
+        "artist": "Juicy J",
+        "ft": "Wiz Khalifa",
+        "file": "smokean.mp3" 
+    },
+    "who tf got a problem": {
+        "cover": "wtfgap.png",
+        "name": "WHO TF GOT A PROBLEM",
+        "artist": "MemoTheMafioso",
+        "ft": "",
+        "file": "wtfgap.mp3" 
+    },
+    "volando": {
+        "cover": "volando.png",
+        "name": "Volando",
+        "artist": "Lefty Sm",
+        "ft": "",
+        "file": "Volando.mp3" 
+    },
+    "shorty party": {
+        "cover": "shortyparty.png",
+        "name": "Shorty Party",
+        "artist": "Cartel de Santa",
+        "ft": "",
+        "file": "ShortyParty.mp3" 
+    },
+    "un día estás aquí": {
+        "cover": "song34.png",
+        "name": "Un Día Estás Aquí",
+        "artist": "Kinto Sol",
+        "ft": "",
+        "file": "song34.mp3" 
+    },
+    "dj turn it up": {
+        "cover": "djturnitup.png",
+        "name": "DJ Turn it up",
+        "artist": "Yellow Claw",
+        "ft": "",
+        "file": "djturnitup.mp3" 
+    },
+    "everyday": {
+        "cover": "everyday.png",
+        "name": "Everyday",
+        "artist": "A$AP Rocky",
+        "ft": "Rod Stewart, Mark Ronson, Miguel",
+        "file": "everyday.mp3" 
+    },
+    "r - Cali": {
+        "cover": "rcali.png",
+        "name": "R - Cali",
+        "artist": "A$AP Rocky",
+        "ft": "",
+        "file": "rcali.mp3" 
+    },
+    "believe me": {
+        "cover": "bme.png",
+        "name": "Believe Me",
+        "artist": "Lil Wayne",
+        "ft": " Drake",
+        "file": "bme.mp3" 
+    },
+    "digits": {
+        "cover": "digits.png",
+        "name": "Digits",
+        "artist": "Young Thug",
+        "ft": "",
+        "file": "Digits.mp3" 
+    }
+
+
+
+
+}

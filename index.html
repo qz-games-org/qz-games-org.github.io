@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="./animations.css">
         <link id="themecss" rel="stylesheet" href="./styles/default.css" >
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="./iconcss/weather-icons.min.css">
 
         <!-- Music Player Widget (Temporary Feature) -->
         <link rel="stylesheet" href="./temp/music-player.css">
@@ -389,25 +390,56 @@
                     </div>
                 </nav>
 
-                <!-- Footer -->
+                <!-- Footer - Weather Widget -->
                 <div class="sidenav-footer">
-                    <div class="footer-stats">
-                        <div class="stat-item">
-                            <span class="stat-icon material-icons">sports_esports</span>
-                            <div class="stat-content">
-                                <span class="stat-value">100+</span>
-                                <span class="stat-label">Games</span>
-                            </div>
+                    <div id="weather-widget" class="weather-widget" role="button" tabindex="0" aria-expanded="false">
+                        <!-- Loading indicator -->
+                        <div id="weather-loading" class="weather-loading" style="display: none;">
+                            <span class="material-icons">hourglass_empty</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-icon material-icons">people</span>
-                            <div class="stat-content">
-                                <span class="stat-value">1K+</span>
-                                <span class="stat-label">Players</span>
+
+                        <!-- Weather main display (always visible) -->
+                        <div class="weather-main">
+                            <i id="weather-icon" class="wi wi-day-sunny weather-icon"></i>
+                            <div class="weather-main-info">
+                                <div id="weather-temp" class="weather-temp">--°</div>
+                                <div id="weather-condition" class="weather-condition">Loading...</div>
+                            </div>
+                            <span class="weather-expand-icon material-icons">expand_more</span>
+                        </div>
+
+                        <!-- Expandable content -->
+                        <div class="weather-expandable">
+                            <!-- Location -->
+                            <div id="weather-location" class="weather-location">Detecting location...</div>
+
+                            <!-- Weather details grid -->
+                            <div class="weather-details">
+                                <div class="weather-detail-item">
+                                    <i class="wi wi-humidity weather-detail-icon"></i>
+                                    <div class="weather-detail-content">
+                                        <span id="weather-humidity" class="weather-detail-value">--%</span>
+                                        <span class="weather-detail-label">Humidity</span>
+                                    </div>
+                                </div>
+                                <div class="weather-detail-item">
+                                    <i class="wi wi-strong-wind weather-detail-icon"></i>
+                                    <div class="weather-detail-content">
+                                        <span id="weather-wind" class="weather-detail-value">-- km/h</span>
+                                        <span class="weather-detail-label">Wind</span>
+                                    </div>
+                                </div>
+                                <div class="weather-detail-item">
+                                    <i class="wi wi-thermometer weather-detail-icon"></i>
+                                    <div class="weather-detail-content">
+                                        <span id="weather-feels-like" class="weather-detail-value">--°</span>
+                                        <span class="weather-detail-label">Feels Like</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <p class="footer-text">Made with ❤️ by Qz Games</p>
+                    <p class="footer-text">Powered by Open-Meteo</p>
                 </div>
 
 
@@ -483,6 +515,16 @@
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
 
+        <!-- Greeting Banner -->
+        <div id="greeting-banner" class="greeting-banner">
+            <div class="greeting-content">
+                <span class="greeting-text">Good Morning!</span>
+                <i id="greeting-weather-icon" class="wi wi-day-sunny greeting-weather-icon"></i>
+                <span class="greeting-separator">·</span>
+                <span id="greeting-weather-condition" class="greeting-weather-text">Loading...</span>
+            </div>
+        </div>
+
         <div class="searchoptions" id="searchoptions" >
             <input id="gamesearch" placeholder="Search the site..." type="text" name="text" class="inputSEARCH" aria-label="Search games">
             <div onclick="ToggleFilter()" class="filterbutton" role="button" aria-label="Open filter options" tabindex="0">
@@ -504,6 +546,8 @@
     <script defer src="./gameloader.js"></script>
     <script defer src="./GlobalSettings.js"></script>
     <script defer src="./ftgames.js"></script>
+    <script defer src="./weather-widget.js"></script>
+    <script defer src="./greeting-banner.js"></script>
 
     <script defer src="./bundle.min.js"></script>
 
