@@ -1,8 +1,8 @@
 [
     {
-        "name": "More Games Being Added Tonight!",
-        "catagory": "News",
-        "link": "#header",
+        "name": "Requested Games Status Page",
+        "catagory": "Click the button below to check it out!",
+        "link": "./upcoming.html",
         "type": "html",
         "cover": "blank.png",
         "videoBackground": "",

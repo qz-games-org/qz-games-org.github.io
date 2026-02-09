@@ -1,0 +1,53 @@
+{
+    "Mario kart 64": {
+        "cover": "m64.jpg",
+        "name": "Mario kart 64",
+        "step": 2
+    },
+    "Escape road 1": {
+        "cover": "er1.png",
+        "name": "Escape road 1",
+        "step": 2
+    },
+    "Escape road 2": {
+        "cover": "er2.png",
+        "name": "Escape road 2",
+        "step": 4
+    },
+    "bad monday simulator": {
+        "cover": "bad-monday-simulator.png",
+        "name": "bad monday simulator",
+        "step": 2
+    },
+    "gladdy hoppers": {
+        "cover": "ghrs.png",
+        "name": "gladdy hoppers",
+        "step": 2
+    },
+    "brotato": {
+        "cover": "brotato.png",
+        "name": "brotato",
+        "step": 2
+    },
+    "football bros": {
+        "cover": "football-bros.png",
+        "name": "football bros",
+        "step": 2
+    },
+    "fnf": {
+        "cover": "fnf.png",
+        "name": "FNF",
+        "step": 4
+    },
+    "Slope 3": {
+        "cover": "Slope3.png",
+        "name": "Slope 3",
+        "step": 2
+    },
+    "unicycle hero": {
+        "cover": "unih.png",
+        "name": "unicycle hero",
+        "step": 2
+    }
+  
+}

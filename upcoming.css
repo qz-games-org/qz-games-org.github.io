@@ -1,0 +1,709 @@
+/* Upcoming Games Page Styles - Matching Sidenav Menu */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: rgb(34, 34, 34);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* Main Container */
+.upcoming-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(13, 13, 13, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Back Button */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    transform: translateX(-4px);
+}
+
+.back-arrow {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.back-button:hover .back-arrow {
+    transform: translateX(-2px);
+}
+
+.back-text {
+    white-space: nowrap;
+}
+
+/* Header */
+.upcoming-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upcoming-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.upcoming-subtitle {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+}
+
+/* Games List */
+.games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: visible;
+}
+
+/* Game Card - Matches menu-item style */
+.game-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    animation: slideIn 0.5s ease backwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Shimmer effect like menu items */
+.game-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-position: -100% 0;
+    background-size: 200% 100%;
+    border-radius: 12px;
+    z-index: 0;
+    pointer-events: none;
+    transition: background-position 0.5s ease;
+}
+
+.game-card:hover::before {
+    background-position: 100% 0;
+}
+
+.game-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.game-card:active {
+    transform: translateX(2px) scale(0.98);
+}
+
+/* Staggered animation */
+.game-card:nth-child(1) { animation-delay: 0.05s; }
+.game-card:nth-child(2) { animation-delay: 0.1s; }
+.game-card:nth-child(3) { animation-delay: 0.15s; }
+.game-card:nth-child(4) { animation-delay: 0.2s; }
+.game-card:nth-child(5) { animation-delay: 0.25s; }
+.game-card:nth-child(6) { animation-delay: 0.3s; }
+.game-card:nth-child(7) { animation-delay: 0.35s; }
+.game-card:nth-child(8) { animation-delay: 0.4s; }
+
+/* Game Cover - Smaller size */
+.game-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.game-card:hover .game-cover {
+    transform: scale(1.05);
+}
+
+/* Game Info */
+.game-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+.game-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Progress Bar Container */
+.progress-container {
+    width: 100%;
+    overflow: visible;
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    overflow: visible;
+}
+
+/* Progress Step */
+.progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Step Circle - Smaller */
+.step-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+/* Step Label - Smaller */
+.step-label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Connector Line */
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: calc(100% + 4px);
+    height: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+/* Completed Step */
+.progress-step.completed .step-circle {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #10b981;
+    color: #ffffff;
+}
+
+.progress-step.completed .step-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-step.completed::after {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+/* Current Step */
+.progress-step.current .step-circle {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+    animation: pulse 2s infinite;
+}
+
+.progress-step.current .step-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
+    }
+}
+
+/* Checkmark Icon for Completed Steps */
+.progress-step.completed .step-circle::after {
+    content: '✓';
+    font-size: 12px;
+}
+
+/* Step Numbers (hidden when completed) */
+.progress-step.completed .step-number {
+    display: none;
+}
+
+/* Step Tooltip */
+.step-tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    min-width: 140px;
+    max-width: 280px;
+    white-space: normal;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.step-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.95);
+}
+
+.progress-step:hover .step-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* Adjust tooltip position for first and last steps to avoid clipping */
+.progress-step:first-child .step-tooltip {
+    left: 0;
+    transform: translateX(0);
+}
+
+.progress-step:first-child:hover .step-tooltip {
+    transform: translateX(0) translateY(-4px);
+}
+
+.progress-step:last-child .step-tooltip {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+.progress-step:last-child:hover .step-tooltip {
+    transform: translateX(0) translateY(-4px);
+}
+
+.progress-step:first-child .step-tooltip::after {
+    left: 20px;
+    margin-left: 0;
+}
+
+.progress-step:last-child .step-tooltip::after {
+    left: auto;
+    right: 20px;
+    margin-left: 0;
+}
+
+/* Request Game Section */
+.request-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.request-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.request-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.request-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.request-button:hover::before {
+    left: 100%;
+}
+
+.request-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.request-button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.request-icon {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.empty-state-text {
+    font-size: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+
+    .upcoming-container {
+        padding: 16px;
+    }
+
+    .back-button {
+        padding: 8px 12px;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .back-arrow {
+        font-size: 16px;
+    }
+
+    .upcoming-title {
+        font-size: 24px;
+    }
+
+    .upcoming-subtitle {
+        font-size: 12px;
+    }
+
+    .game-card {
+        padding: 10px 14px;
+        gap: 12px;
+    }
+
+    .game-cover {
+        width: 50px;
+        height: 50px;
+    }
+
+    .game-name {
+        font-size: 14px;
+    }
+
+    .step-circle {
+        width: 20px;
+        height: 20px;
+        font-size: 9px;
+    }
+
+    .step-label {
+        font-size: 8px;
+    }
+
+    .progress-step:not(:last-child)::after {
+        top: 10px;
+    }
+
+    .request-section {
+        margin-top: 24px;
+        padding-top: 20px;
+    }
+
+    .request-text {
+        font-size: 13px;
+    }
+
+    .request-button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .step-tooltip {
+        font-size: 10px;
+        padding: 7px 12px;
+        min-width: 120px;
+        max-width: 240px;
+    }
+
+    .step-tooltip::after {
+        border-width: 5px;
+        margin-left: -5px;
+    }
+
+    .progress-step:first-child .step-tooltip::after {
+        left: 18px;
+    }
+
+    .progress-step:last-child .step-tooltip::after {
+        right: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .back-arrow {
+        font-size: 14px;
+    }
+
+    .upcoming-title {
+        font-size: 20px;
+    }
+
+    .upcoming-subtitle {
+        font-size: 11px;
+    }
+
+    .game-card {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .game-cover {
+        width: 45px;
+        height: 45px;
+    }
+
+    .game-name {
+        font-size: 13px;
+    }
+
+    .step-label {
+        font-size: 7px;
+        max-width: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .step-circle {
+        width: 18px;
+        height: 18px;
+        font-size: 8px;
+    }
+
+    .progress-step:not(:last-child)::after {
+        top: 9px;
+    }
+
+    .progress-bar {
+        gap: 2px;
+    }
+
+    .request-section {
+        margin-top: 20px;
+    }
+
+    .request-text {
+        font-size: 12px;
+    }
+
+    .request-button {
+        padding: 10px 18px;
+        font-size: 13px;
+    }
+
+    .request-icon {
+        font-size: 18px;
+    }
+
+    .step-tooltip {
+        font-size: 9px;
+        padding: 6px 10px;
+        min-width: 100px;
+        max-width: 200px;
+    }
+
+    .step-tooltip::after {
+        border-width: 4px;
+        margin-left: -4px;
+    }
+
+    .progress-step:first-child .step-tooltip::after {
+        left: 16px;
+    }
+
+    .progress-step:last-child .step-tooltip::after {
+        right: 16px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .game-card,
+    .game-card::before,
+    .step-circle,
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .game-card {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .step-circle {
+        border-width: 2px;
+    }
+
+    .step-label {
+        color: #fff;
+    }
+}
