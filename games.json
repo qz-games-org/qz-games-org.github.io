@@ -775,14 +775,6 @@
         "link": "../Games03/REPO3/cell",
         "type": "html"   
     },
-    "escape road 2": {
-        "cover": "er2.png",
-        "name": "Escape Road 2",
-        "gradient": "lightblue",
-        "catagory": "casual",
-        "link": "../Games03/escape-road-2",
-        "type": "html"   
-    },
     "awesome tanks 2": {
         "cover": "awt2.png",
         "name": "Awesome tanks 2",
