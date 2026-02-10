@@ -790,5 +790,37 @@
         "catagory": "casual",
         "link": "../Games04/Repo4/bottle-flip/game.html",
         "type": "html"   
+    },
+    "the binding of isaac": {
+        "cover": "tbois.png",
+        "name": "The Binding Of Isaac",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "../Games04/Repo4/the_binding_of_isaac.swf",
+        "type": "flash"   
+    },
+    "super smash flash 2": {
+        "cover": "ssf2.png",
+        "name": "Super Smash Flash 2",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "../Games04/Repo4/super-smash-flash-2.swf",
+        "type": "flash"   
+    },
+    "chrome dino": {
+        "cover": "cdno.png",
+        "name": "Chrome Dino",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "../Games03/REPO3/chrome-dino",
+        "type": "html"   
+    },
+    "tiny fishing": {
+        "cover": "tnyf.png",
+        "name": "Tiny Fishing",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "../Games02/tiny-fishing",
+        "type": "html"   
     }
 }

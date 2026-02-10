@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upcoming Games - QZ Games</title>
     <link rel="stylesheet" href="upcoming.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" type="image/png" href="./icon.png">
 </head>
 <body>
@@ -20,6 +21,8 @@
         <div class="upcoming-header">
             <h1 class="upcoming-title">Upcoming Games</h1>
             <p class="upcoming-subtitle">See what games are coming soon to QZ Games</p>
+            <p class="upcoming-subtitle">Requested Games are usually are released every Wednesday</p>
+
         </div>
 
         <!-- Games List -->
@@ -34,6 +37,26 @@
                 <span class="request-icon">+</span>
                 <span>Request a Game</span>
             </a>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Game Not Added</h2>
+                <button class="modal-close" aria-label="Close">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">
+                    <span class="material-icons">error_outline</span>
+                </div>
+                <h3 id="modal-game-name" class="modal-game-name"></h3>
+                <p id="modal-reason" class="modal-reason"></p>
+            </div>
         </div>
     </div>
 

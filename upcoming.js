@@ -8,6 +8,7 @@
         JSON_FILE: './upcoming.json',
         COVERS_PATH: './covers/',
         STEPS: {
+            '-1': { name: 'Rejected', tooltip: 'This game could not be added' },
             1: { name: 'Planned', tooltip: 'Game request has been reviewed and is planned to be added' },
             2: { name: 'In Progress', tooltip: 'The game is being prepared for release' },
             3: { name: 'Ready', tooltip: 'Game is ready for release and undergoing final checks' },
@@ -16,17 +17,38 @@
         }
     };
 
+    // DOM Elements for modal
+    let modal = null;
+    let modalGameName = null;
+    let modalReason = null;
+    let modalClose = null;
+    let modalOverlay = null;
+
     // DOM Elements
     let gamesList = null;
 
     // Initialize the page
     function init() {
         gamesList = document.querySelector('.games-list');
+        modal = document.getElementById('details-modal');
+        modalGameName = document.getElementById('modal-game-name');
+        modalReason = document.getElementById('modal-reason');
+        modalClose = modal.querySelector('.modal-close');
+        modalOverlay = modal.querySelector('.modal-overlay');
 
         if (!gamesList) {
             console.error('Games list container not found');
             return;
         }
+
+        // Modal event listeners
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', closeModal);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
 
         // Load and display games
         loadGames();
@@ -106,7 +128,7 @@
         name.textContent = gameData.name;
 
         // Progress bar
-        const progressContainer = createProgressBar(gameData.step);
+        const progressContainer = createProgressBar(gameData.step, gameData);
 
         // Assemble the card
         info.appendChild(name);
@@ -117,10 +139,60 @@
         return card;
     }
 
+    // Open modal with game details
+    function openModal(gameData) {
+        if (!modal || !modalGameName || !modalReason) return;
+
+        modalGameName.textContent = gameData.name;
+        modalReason.textContent = gameData.det || 'No details provided.';
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close modal
+    function closeModal() {
+        if (!modal) return;
+
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
     // Create progress bar with 4 or 5 steps (5 if game is being fixed)
-    function createProgressBar(currentStep) {
+    function createProgressBar(currentStep, gameData) {
         const container = document.createElement('div');
         container.className = 'progress-container';
+
+        // If step is -1 (rejected), show red X and details button instead
+        if (currentStep === -1) {
+            const rejectedDiv = document.createElement('div');
+            rejectedDiv.className = 'rejected-container';
+
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'rejected-status';
+
+            const icon = document.createElement('span');
+            icon.className = 'material-icons rejected-icon';
+            icon.textContent = 'close';
+
+            const text = document.createElement('span');
+            text.className = 'rejected-text';
+            text.textContent = 'Game Could Not Be Added';
+
+            statusDiv.appendChild(icon);
+            statusDiv.appendChild(text);
+
+            const detailsBtn = document.createElement('button');
+            detailsBtn.className = 'details-button';
+            detailsBtn.innerHTML = '<span class="material-icons">info</span><span>See Details</span>';
+            detailsBtn.addEventListener('click', () => openModal(gameData));
+
+            rejectedDiv.appendChild(statusDiv);
+            rejectedDiv.appendChild(detailsBtn);
+            container.appendChild(rejectedDiv);
+
+            return container;
+        }
 
         const progressBar = document.createElement('div');
         progressBar.className = 'progress-bar';
