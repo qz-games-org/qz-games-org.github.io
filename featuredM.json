@@ -22,11 +22,11 @@
 
     },
     {
-        "name": "Geometry Dash Lite",
-        "catagory": "Updated Version",
-        "link": "../Games03/Repo4/geometry-dash-lite/",
+        "name": "Five Nights At Epsteins",
+        "catagory": "Casual | Sensitive Subject",
+        "link": "../Games04/fnae/",
         "type": "html",
-        "cover": "GDASH.png",
+        "cover": "fnae.png",
         "present": true
     }
 ]

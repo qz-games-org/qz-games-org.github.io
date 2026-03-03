@@ -822,5 +822,14 @@
         "catagory": "casual",
         "link": "../Games02/tiny-fishing",
         "type": "html"   
+    },
+    "five nights at epsteins": {
+        "cover": "fnae.png",
+        "name": "Five Nights At Epsteins",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "../Games04/fnae/",
+        "type": "html"   
     }
 }
+

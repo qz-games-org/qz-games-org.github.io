@@ -4,18 +4,6 @@
         "name": "Mario kart 64",
         "step": 2
     },
-    "Escape road 1": {
-        "cover": "er1.png",
-        "name": "Escape road 1",
-        "step": -1,
-        "det": "This game could not be added due to game content being restricted to its original site. We apologize for the inconvenience."
-    },
-    "Escape road 2": {
-        "cover": "er2.png",
-        "name": "Escape road 2",
-        "step": -1,
-        "det": "This game could not be added due to game content being restricted to its original site. We apologize for the inconvenience."
-    },
     "bad monday simulator": {
         "cover": "bad-monday-simulator.png",
         "name": "bad monday simulator",
@@ -34,7 +22,7 @@
     "football bros": {
         "cover": "football-bros.png",
         "name": "football bros",
-        "step": 2
+        "step": 3
     },
     "fnf": {
         "cover": "fnf.png",
@@ -44,12 +32,61 @@
     "Slope 3": {
         "cover": "Slope3.png",
         "name": "Slope 3",
-        "step": 2
+        "step": 3
     },
     "unicycle hero": {
         "cover": "unih.png",
         "name": "unicycle hero",
+        "step": 3
+    },
+    "five nights at epsteins": {
+        "cover": "fnae.png",
+        "name": "Five Nights At Epsteins",
+        "step": 4
+    },
+    "pokerouge": {
+        "cover": "placeholder.png",
+        "name": "Pokerouge",
         "step": 2
+    },
+    "fnaf pizzeria simulator": {
+        "cover": "placeholder.png",
+        "name": "Fnaf pizzeria simulator",
+        "step": 1
+    },
+    "papas pizzaria": {
+        "cover": "placeholder.png",
+        "name": "Papa's Pizzaria",
+        "step": 1
+    },
+    "kart bros": {
+        "cover": "placeholder.png",
+        "name": "Kart bros",
+        "step": 1
+    },
+    "wheelie bike": {
+        "cover": "placeholder.png",
+        "name": "wheelie bike",
+        "step": 1
+    },
+    "bee swarm simulator": {
+        "cover": "placeholder.png",
+        "name": "Bee Swarm Simulator",
+        "step": 1
+    },
+    "ultrakill demo": {
+        "cover": "placeholder.png",
+        "name": "ULTRAKILL demo",
+        "step": 1
+    },
+    "nugget royale": {
+        "cover": "placeholder.png",
+        "name": "Nugget Royale",
+        "step": 1
+    },
+    "hole io": {
+        "cover": "placeholder.png",
+        "name": "Hole io",
+        "step": 1
     }
-
 }
