@@ -193,7 +193,7 @@
     },
     "rocket league": {
         "cover": "rocketl.png",
-        "name": "Rocket League",
+        "name": "Rocket League (fix in progress)",
         "gradient": "blue",
         "catagory": "casual driver",
         "link": "../Games01/Rocket-League",
@@ -801,7 +801,7 @@
     },
     "super smash flash 2": {
         "cover": "ssf2.png",
-        "name": "Super Smash Flash 2",
+        "name": "Super Smash Flash 2 (fix in progress)",
         "gradient": "grey",
         "catagory": "casual",
         "link": "../Games04/Repo4/super-smash-flash-2.swf",
