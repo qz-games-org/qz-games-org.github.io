@@ -1,6 +1,29 @@
 const widget = document.getElementById('gamingWidget');
 let isExpanded = false;
 var openext = false
+function resetWidgetState() {
+    const reciframe = document.getElementById('reciframe');
+    const recContainer = document.getElementById('reccomendationsContainer');
+
+    if (reciframe) {
+        reciframe.style.visibility = 'hidden';
+    }
+    if (recContainer) {
+        recContainer.classList.remove('activebgnavv');
+        recContainer.style.animation = '';
+    }
+
+    document.getElementById('pnavleft')?.classList.remove('activenav');
+    document.getElementById('pnavright')?.classList.remove('activenav');
+    document.getElementById('controller-icon-container')?.classList.remove('expandedmainc');
+    widget.classList.remove('expanded');
+
+    activitytoggled = false;
+    discovertoggled = false;
+    isExpanded = false;
+    openext = false;
+}
+
 widget.addEventListener('click', function(e) {
     if (e.target.classList.contains('left-section') || e.target.classList.contains('right-section')) {
         return; 
@@ -17,7 +40,7 @@ widget.addEventListener('click', function(e) {
             openext=false
         }
     } else {
-        if( document.getElementById('reciframe').style.visibility = 'visible') {
+        if (document.getElementById('reciframe').style.visibility === 'visible') {
              document.getElementById('reciframe').style.visibility = 'hidden'
              openext=true
         }
@@ -35,8 +58,7 @@ widget.addEventListener('click', function(e) {
 
 document.addEventListener('click', function(e) {
     if (!widget.contains(e.target)) {
-        isExpanded = false;
-        widget.classList.remove('expanded');
+        resetWidgetState();
     }
 });
 var activitytoggled = false

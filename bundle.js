@@ -104,6 +104,7 @@ const notedesc      = document.getElementById('descnote');
 const cookiepicnote = document.getElementById('cookiepic');
 const noteclose     = document.getElementById('closenote');
 const notebottom    = document.getElementById('notification-bottom');
+const noteSpinner   = document.getElementById('notification-spinner');
 
 const noteQueue = [];
 let noteBusy = false;
@@ -122,6 +123,7 @@ function closeNote() {
 
   notecont.style.animation = "notehide 0.5s";
   const onEnd = () => {
+    notecont.dataset.noteStyle = '';
     notecont.style.display = "none";
     notecont.removeEventListener("animationend", onEnd);
     showNextNote();
@@ -137,6 +139,10 @@ function showNextNote() {
   noteBusy = true;
 
   const { title, desc, close, type, showLearnMore } = noteQueue.shift();
+  notecont.dataset.noteStyle = '';
+  if (noteSpinner) {
+    noteSpinner.style.display = 'none';
+  }
 
   if (type === "cookie") {
     cookienote = true
@@ -145,7 +151,19 @@ function showNextNote() {
     cookiepicnote.style.display = "block";
     noteclose.style.display     = "block";
     notebottom.style.display    = "block";
+  } else if (type === "theme-loading") {
+    cookienote = false
+    notetitle.textContent = title;
+    notedesc.textContent = desc;
+    notecont.dataset.noteStyle = 'theme-loading';
+    cookiepicnote.style.display = "none";
+    if (noteSpinner) {
+      noteSpinner.style.display = "block";
+    }
+    noteclose.style.display = "none";
+    notebottom.style.display = "none";
   } else {
+    cookienote = false
     notetitle.textContent      = title;
     notedesc.textContent       = desc;
     cookiepicnote.style.display = "none";

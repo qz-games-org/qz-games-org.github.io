@@ -234,12 +234,8 @@
         .loading-overlay {
             position: fixed;
             inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-            background: var(--main-bg-color);
+            overflow: hidden;
+            background: #050608;
             z-index: 2000;
             opacity: 1;
             visibility: visible;
@@ -253,140 +249,236 @@
         .loading-overlay.hidden {
             opacity: 0;
             visibility: hidden;
-            transform: scale(0.95);
+            transform: scale(0.985);
             pointer-events: none;
         }
 
-        /* Loading Card - Glassmorphism */
-        .loading-card {
-            background: linear-gradient(180deg, var(--sidenav-bg-start) 0%, var(--sidenav-bg-end) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 32px;
-            border: 1px solid var(--sidenav-border);
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            width: min(440px, 90vw);
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(0);
-            opacity: 1;
+        .loading-backdrop {
+            position: absolute;
+            inset: -8%;
+            width: 116%;
+            height: 116%;
+            object-fit: cover;
+            filter: blur(30px) saturate(0.9) brightness(0.24);
+            transform: scale(1.08);
+            transform-origin: center;
         }
 
-        .loading-overlay.hidden .loading-card {
-            transform: translateY(-20px);
-            opacity: 0;
+        .loading-scrim {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at center, rgba(8, 10, 13, 0.04) 0%, rgba(8, 10, 13, 0.48) 48%, rgba(4, 5, 7, 0.92) 100%),
+                linear-gradient(180deg, rgba(4, 5, 7, 0.8) 0%, rgba(4, 5, 7, 0.36) 24%, rgba(4, 5, 7, 0.5) 64%, rgba(4, 5, 7, 0.9) 100%);
         }
 
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 18px;
-            margin: 0 auto 24px;
+        .loading-brand {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: #0f1115;
+            border: 1px solid #1c2027;
+        }
+
+        .loading-brand-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             display: block;
         }
 
-        /* Loading Game Hero */
-        .loading-hero {
+        .loading-brand-copy {
             display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .loading-brand-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            letter-spacing: 0.2px;
+        }
+
+        .loading-brand-sub {
+            font-size: 0.58rem;
+            text-transform: uppercase;
+            letter-spacing: 1.15px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+        }
+
+        .loading-stage {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 16px;
-            padding: 16px;
-            border-radius: 16px;
-            background: var(--sidenav-menu-item-bg);
-            border: 1px solid var(--sidenav-menu-item-border);
-            margin-bottom: 24px;
-            text-align: left;
+            padding: 88px 20px 116px;
+            text-align: center;
+        }
+
+        .loading-cover-frame {
+            padding: 8px;
+            border-radius: 14px;
+            background: #0f1115;
+            border: 1px solid #1b1f26;
         }
 
         .loading-cover {
-            width: 80px;
-            height: 80px;
-            border-radius: 14px;
+            width: min(188px, 38vw);
+            height: min(188px, 38vw);
+            border-radius: 10px;
             object-fit: cover;
-            background: #0c0d12;
-            border: 1px solid var(--sidenav-border);
-            flex-shrink: 0;
+            background: #0b0d11;
+            display: block;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
         }
 
         .loading-game-meta {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            gap: 7px;
             min-width: 0;
+            max-width: min(540px, 100%);
         }
 
         .loading-game-label {
-            font-size: 0.7rem;
+            font-size: 0.64rem;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.5);
-            font-weight: 500;
-        }
-
-        .loading-game-name {
-            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.48);
             font-weight: 600;
-            color: var(--text-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .loading-title {
-            font-size: 1.4rem;
-            margin: 0 0 8px;
+            font-size: clamp(1.55rem, 3vw, 2.4rem);
+            line-height: 1.06;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.03em;
+        }
+
+        .loading-game-name {
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--text-color);
+            color: rgba(255, 255, 255, 0.62);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         .loading-subtitle {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.44);
             font-weight: 400;
+            max-width: 420px;
+            line-height: 1.45;
         }
 
-        /* Progress Bar */
+        .loading-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 0;
+        }
+
         .progress-bar-container {
             width: 100%;
-            height: 6px;
-            border-radius: 50px;
-            background: var(--sidenav-menu-item-bg);
+            height: 5px;
+            border-radius: 0;
+            background: #171b21;
             overflow: hidden;
-            border: 1px solid var(--sidenav-menu-item-border);
+            border: none;
         }
 
         .progress-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg,
-                var(--sidenav-menu-highlight-bg-start),
-                var(--sidenav-menu-highlight-bg-end));
-            transition: width 0.3s ease;
-            border-radius: 50px;
+            position: relative;
+            background: linear-gradient(90deg, #6f7680 0%, #959da8 100%);
+            will-change: width;
         }
 
-        /* Loading Actions */
+        .progress-fill::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-100%);
+            animation: loadingBarShine 1.8s linear infinite;
+        }
+
+        @keyframes loadingBarShine {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(160%);
+            }
+        }
+
         .loading-actions {
             display: flex;
-            gap: 12px;
+            align-items: center;
             justify-content: center;
-            margin-top: 24px;
+            gap: 7px;
+            margin-bottom: 9px;
         }
 
-        .loading-actions .btn {
-            width: auto;
-            padding: 10px 20px;
-            border-radius: 12px;
-            gap: 8px;
-            font-size: 0.9rem;
+        .loading-option {
+            min-width: 0;
+            padding: 7px 10px;
+            border-radius: 7px;
+            border: 1px solid #232933;
+            background: #14181e;
+            color: #fff;
+            font: inherit;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
         }
 
-        .loading-actions .btn .material-icons {
-            font-size: 20px;
+        .loading-option:hover {
+            transform: translateY(-1px);
+            border-color: #343c48;
+            background: #191d24;
+        }
+
+        .loading-option .material-icons {
+            font-size: 15px;
+        }
+
+        .loading-option-home {
+            background: #11151a;
+        }
+
+        .loading-option span:not(.material-icons) {
+            white-space: nowrap;
         }
 
         /* Responsive Design */
@@ -425,13 +517,27 @@
                 font-size: 14px;
             }
 
-            .loading-card {
-                padding: 24px;
+            .loading-cover {
+                width: min(164px, 40vw);
+                height: min(164px, 40vw);
             }
 
-            .loading-cover {
-                width: 64px;
-                height: 64px;
+            .loading-brand {
+                padding: 7px 9px;
+            }
+
+            .loading-stage {
+                padding: 82px 16px 96px;
+                gap: 14px;
+            }
+
+            .loading-bottom {
+                bottom: 0;
+            }
+
+            .loading-option {
+                padding: 7px 9px;
+                font-size: 0.72rem;
             }
         }
 
@@ -463,9 +569,58 @@
                 height: 26px;
             }
 
-            .loading-hero {
-                flex-direction: column;
-                text-align: center;
+            .loading-brand-logo {
+                width: 28px;
+                height: 28px;
+            }
+
+            .loading-brand-name {
+                font-size: 0.82rem;
+            }
+
+            .loading-brand-sub {
+                font-size: 0.54rem;
+            }
+
+            .loading-stage {
+                padding: 74px 12px 82px;
+            }
+
+            .loading-cover-frame {
+                padding: 6px;
+                border-radius: 12px;
+            }
+
+            .loading-cover {
+                width: min(140px, 40vw);
+                height: min(140px, 40vw);
+                border-radius: 8px;
+            }
+
+            .loading-title {
+                font-size: clamp(1.3rem, 6vw, 1.8rem);
+            }
+
+            .loading-game-name {
+                font-size: 0.76rem;
+            }
+
+            .loading-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .loading-bottom {
+                bottom: 0;
+            }
+
+            .loading-actions {
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+
+            .loading-option {
+                padding: 7px 8px;
+                font-size: 0.68rem;
             }
         }
 
@@ -1163,33 +1318,42 @@
 
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loading-overlay">
-            <div class="loading-card">
-                <img class="loading-logo" src="../Q.png" alt="Qz Games">
+            <img class="loading-backdrop" id="loading-background" src="../Q-BIG.png" alt="" aria-hidden="true">
+            <div class="loading-scrim"></div>
 
-                <div class="loading-hero">
+            <div class="loading-brand">
+                <img class="loading-brand-logo" src="../Q.png" alt="Qz Games">
+                <div class="loading-brand-copy">
+                    <div class="loading-brand-name">Qz Games</div>
+                </div>
+            </div>
+
+            <div class="loading-stage">
+                <div class="loading-cover-frame">
                     <img class="loading-cover" id="loading-cover" src="../Q-BIG.png" alt="Game cover">
-                    <div class="loading-game-meta">
-                        <div class="loading-game-label">Loading</div>
-                        <div class="loading-game-name" id="loading-game-name">Preparing game...</div>
-                    </div>
                 </div>
 
-                <h1 class="loading-title" id="loading-title">Getting ready</h1>
-                <div class="loading-subtitle" id="loading-subtitle">Setting up your gaming experience</div>
+                <div class="loading-game-meta">
+                    <div class="loading-game-label">Now Loading</div>
+                    <h1 class="loading-title" id="loading-title">Getting ready</h1>
+                    <div class="loading-game-name" id="loading-game-name">Preparing your session</div>
+                    <div class="loading-subtitle" id="loading-subtitle">Setting up your gaming experience</div>
+                </div>
+            </div>
+
+            <div class="loading-bottom">
+                <div class="loading-actions">
+                    <button class="loading-option" onclick="doneloading()">
+                        <span>Skip Loading</span>
+                    </button>
+                    <a class="loading-option loading-option-home" href="../index.html" style="margin-bottom: 10px;">
+                        <span class="material-icons">home</span>
+                        <span>Cancel Load</span>
+                    </a>
+                </div>
 
                 <div class="progress-bar-container">
                     <div class="progress-fill" id="progbar"></div>
-                </div>
-
-                <div class="loading-actions">
-                    <button class="btn" onclick="doneloading()">
-                        <span class="material-icons">play_arrow</span>
-                        <span>Start</span>
-                    </button>
-                    <a class="btn" href="../index.html" style="text-decoration: none;">
-                        <span class="material-icons">home</span>
-                        <span>Home</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -1538,17 +1702,41 @@
 
         // Simulate loading progress (visual feedback only)
         let progress = 0;
-        const progressInterval = setInterval(() => {
-            progress += Math.random() * 15;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(progressInterval);
+        let progressTarget = 0;
+        let progressAnimationFrame;
+
+        function stepLoadingProgress() {
+            progress += (progressTarget - progress) * 0.08;
+
+            if (Math.abs(progressTarget - progress) < 0.08) {
+                progress = progressTarget;
             }
+
             const progressFill = document.getElementById('progbar');
             if (progressFill) {
-                progressFill.style.width = progress + '%';
+                progressFill.style.width = progress.toFixed(2) + '%';
             }
-        }, 200);
+
+            if (progress < 100) {
+                progressAnimationFrame = requestAnimationFrame(stepLoadingProgress);
+            } else {
+                progressAnimationFrame = null;
+            }
+        }
+
+        const progressInterval = setInterval(() => {
+            const remaining = 100 - progressTarget;
+            const step = Math.max(1.25, remaining * (0.08 + Math.random() * 0.12));
+            progressTarget = Math.min(100, progressTarget + step);
+
+            if (!progressAnimationFrame) {
+                progressAnimationFrame = requestAnimationFrame(stepLoadingProgress);
+            }
+
+            if (progressTarget >= 100) {
+                clearInterval(progressInterval);
+            }
+        }, 280);
 
         // Don't call doneloading() from here - let GameMain.js handle it
         // GameMain.js has the proper elements setup and will call doneloading() when ready
@@ -1559,7 +1747,12 @@
         const gameUrl = urlParams.get('game');
         const gameType = urlParams.get('type');
 
-      
+        if (gameName && gameName.trim() !== '') {
+            const loadingTitleEl = document.getElementById('loading-title');
+            if (loadingTitleEl) {
+                loadingTitleEl.textContent = gameName;
+            }
+        }
 
         if (gameName && gameName.trim() !== '') {
             fetch('../games.json')
@@ -1579,28 +1772,36 @@
                         if (gameNameEl) gameNameEl.textContent = displayName;
                         if (hudCoverEl) hudCoverEl.src = coverPath;
 
+                        const loadingTitleEl = document.getElementById('loading-title');
                         const loadingGameNameEl = document.getElementById('loading-game-name');
                         const loadingCoverEl = document.getElementById('loading-cover');
+                        const loadingBackgroundEl = document.getElementById('loading-background');
                         const gameCoverEl = document.getElementById('gameCover');
-                        if (loadingGameNameEl) loadingGameNameEl.textContent = displayName;
+                        if (loadingTitleEl) loadingTitleEl.textContent = displayName;
+                        if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
                         if (loadingCoverEl) loadingCoverEl.src = coverPath;
+                        if (loadingBackgroundEl) loadingBackgroundEl.src = coverPath;
                         if (gameCoverEl) gameCoverEl.src = coverPath;
 
                         document.title = 'Qz Games | ' + displayName;
                     } else {
                         const gameNameEl = document.getElementById('game-name');
+                        const loadingTitleEl = document.getElementById('loading-title');
                         const loadingGameNameEl = document.getElementById('loading-game-name');
                         if (gameNameEl) gameNameEl.textContent = gameName;
-                        if (loadingGameNameEl) loadingGameNameEl.textContent = gameName;
+                        if (loadingTitleEl) loadingTitleEl.textContent = gameName;
+                        if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
                         document.title = 'Qz Games | ' + gameName;
                     }
                 })
                 .catch(error => {
                     console.error('Error loading game data:', error);
                     const gameNameEl = document.getElementById('game-name');
+                    const loadingTitleEl = document.getElementById('loading-title');
                     const loadingGameNameEl = document.getElementById('loading-game-name');
                     if (gameNameEl) gameNameEl.textContent = gameName;
-                    if (loadingGameNameEl) loadingGameNameEl.textContent = gameName;
+                    if (loadingTitleEl) loadingTitleEl.textContent = gameName;
+                    if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
                     document.title = 'Qz Games | ' + gameName;
                 });
         }

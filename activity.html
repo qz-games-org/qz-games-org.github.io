@@ -453,6 +453,43 @@
             }
         }
 
+        function createTextElement(tagName, className, text) {
+            const element = document.createElement(tagName);
+            if (className) {
+                element.className = className;
+            }
+            element.textContent = text;
+            return element;
+        }
+
+        function createDeleteButton(gameKey) {
+            const actionBtn = document.createElement('button');
+            actionBtn.className = 'action-btn delete';
+            actionBtn.type = 'button';
+            actionBtn.textContent = 'Delete';
+            actionBtn.addEventListener('click', () => deleteGame(gameKey));
+            return actionBtn;
+        }
+
+        function createGameCover(gameData) {
+            const coverContainer = document.createElement('div');
+            coverContainer.className = 'game-cover';
+
+            if (gameData.cover) {
+                const coverImg = document.createElement('img');
+                coverImg.src = `/covers/${gameData.cover}`;
+                coverImg.alt = gameData.name;
+                coverImg.addEventListener('error', function() {
+                    coverContainer.textContent = 'game cover';
+                });
+                coverContainer.appendChild(coverImg);
+            } else {
+                coverContainer.textContent = 'game cover';
+            }
+
+            return coverContainer;
+        }
+
         // Function to create game item HTML
         function createGameItem(gameData, activityData) {
             const gameItem = document.createElement('div');
@@ -466,30 +503,26 @@
                 playTimeText = formatPlayTime(activityData.playTimeHours, activityData.playTimeMinutes);
             }
 
-            // Add play count if available
-            let additionalInfo = '';
+            const gameInfo = document.createElement('div');
+            gameInfo.className = 'game-info';
+            gameInfo.appendChild(createTextElement('div', 'game-name', gameData.name));
+            gameInfo.appendChild(createTextElement('div', 'game-playtime', playTimeText));
+
             if (activityData.playCount) {
-                additionalInfo = `<div style="font-size: 12px; color: #888; margin-top: 5px;">Played ${activityData.playCount} time${activityData.playCount !== 1 ? 's' : ''}</div>`;
+                const playCount = createTextElement('div', '', `Played ${activityData.playCount} time${activityData.playCount !== 1 ? 's' : ''}`);
+                playCount.style.fontSize = '12px';
+                playCount.style.color = '#888';
+                playCount.style.marginTop = '5px';
+                gameInfo.appendChild(playCount);
             }
 
-            gameItem.innerHTML = `
-                <div class="game-cover">
-                    ${gameData.cover ?
-                        `<img src="/covers/${gameData.cover}" alt="${gameData.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='game cover';">` :
-                        'game cover'
-                    }
-                </div>
-                <div class="game-info">
-                    <div class="game-name">${gameData.name}</div>
-                    <div class="game-playtime">${playTimeText}</div>
-                    ${additionalInfo}
-                </div>
-                <div class="game-actions">
-                    <button class="action-btn delete" onclick="deleteGame('${activityData.gameKey}')">
-                        Delete
-                    </button>
-                </div>
-            `;
+            const gameActions = document.createElement('div');
+            gameActions.className = 'game-actions';
+            gameActions.appendChild(createDeleteButton(activityData.gameKey));
+
+            gameItem.appendChild(createGameCover(gameData));
+            gameItem.appendChild(gameInfo);
+            gameItem.appendChild(gameActions);
 
             return gameItem;
         }
@@ -553,18 +586,18 @@
                             playTimeText = formatPlayTime(activityItem.playTimeHours, activityItem.playTimeMinutes);
                         }
 
-                        gameItem.innerHTML = `
-                            <div class="game-cover">game cover</div>
-                            <div class="game-info">
-                                <div class="game-name">Unknown Game (${gameKey})</div>
-                                <div class="game-playtime">${playTimeText}</div>
-                            </div>
-                            <div class="game-actions">
-                                <button class="action-btn delete" onclick="deleteGame('${gameKey}')">
-                                    Delete
-                                </button>
-                            </div>
-                        `;
+                        const gameInfo = document.createElement('div');
+                        gameInfo.className = 'game-info';
+                        gameInfo.appendChild(createTextElement('div', 'game-name', `Unknown Game (${gameKey})`));
+                        gameInfo.appendChild(createTextElement('div', 'game-playtime', playTimeText));
+
+                        const gameActions = document.createElement('div');
+                        gameActions.className = 'game-actions';
+                        gameActions.appendChild(createDeleteButton(gameKey));
+
+                        gameItem.appendChild(createTextElement('div', 'game-cover', 'game cover'));
+                        gameItem.appendChild(gameInfo);
+                        gameItem.appendChild(gameActions);
                         gameListElement.appendChild(gameItem);
                     }
                 });
@@ -575,17 +608,19 @@
                     // Add clear all button
                     const clearAllContainer = document.createElement('div');
                     clearAllContainer.className = 'clear-all-container';
-                    clearAllContainer.innerHTML = `
-                        <button class="clear-all-btn" onclick="clearAllActivity()">
-                            Clear All Activity
-                        </button>
-                    `;
+                    const clearAllButton = document.createElement('button');
+                    clearAllButton.className = 'clear-all-btn';
+                    clearAllButton.type = 'button';
+                    clearAllButton.textContent = 'Clear All Activity';
+                    clearAllButton.addEventListener('click', clearAllActivity);
+                    clearAllContainer.appendChild(clearAllButton);
                     gameListElement.appendChild(clearAllContainer);
                 }
                 
             } catch (error) {
                 console.error('Error loading game activity:', error);
-                gameListElement.innerHTML = `<div class="error">Error loading game activity: ${error.message}</div>`;
+                gameListElement.innerHTML = '';
+                gameListElement.appendChild(createTextElement('div', 'error', `Error loading game activity: ${error.message}`));
             }
         }
 

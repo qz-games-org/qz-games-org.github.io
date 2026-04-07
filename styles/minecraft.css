@@ -67,58 +67,58 @@
     --note-border: rgb(36, 36, 36);
     --note-shadow: rgb(26, 26, 26);
 
-    --notification-bg-start: rgba(40, 40, 40, 0.95);
-    --notification-bg-end: rgba(25, 25, 25, 0.95);
-    --notification-border: rgba(255, 255, 255, 0.15);
-    --notification-accent-start: #4A9EFF;
-    --notification-accent-mid: #7289DA;
-    --notification-accent-end: #9B59B6;
-    --notification-btn-bg-start: rgba(74, 158, 255, 0.2);
-    --notification-btn-bg-end: rgba(114, 137, 218, 0.2);
-    --notification-btn-border: rgba(74, 158, 255, 0.3);
-    --notification-btn-bg-hover-start: rgba(74, 158, 255, 0.3);
-    --notification-btn-bg-hover-end: rgba(114, 137, 218, 0.3);
-    --notification-btn-border-hover: rgba(74, 158, 255, 0.5);
+    --notification-bg-start: rgba(74, 51, 30, 0.96);
+    --notification-bg-end: rgba(46, 31, 18, 0.96);
+    --notification-border: rgba(185, 185, 185, 0.35);
+    --notification-accent-start: #7bbf4f;
+    --notification-accent-mid: #a4d469;
+    --notification-accent-end: #d4e38f;
+    --notification-btn-bg-start: rgba(123, 191, 79, 0.22);
+    --notification-btn-bg-end: rgba(164, 212, 105, 0.22);
+    --notification-btn-border: rgba(195, 219, 139, 0.35);
+    --notification-btn-bg-hover-start: rgba(123, 191, 79, 0.34);
+    --notification-btn-bg-hover-end: rgba(164, 212, 105, 0.34);
+    --notification-btn-border-hover: rgba(212, 227, 143, 0.5);
 
-    --sidenav-bg-start: rgba(26, 26, 26, 0.66);
-    --sidenav-bg-end: #0d0d0d;
-    --sidenav-border: rgba(255, 255, 255, 0.1);
-    --sidenav-header-bg-start: #2a2a2a;
-    --sidenav-header-bg-end: #1a1a1a;
-    --sidenav-icon-btn-bg: rgba(255, 255, 255, 0.05);
-    --sidenav-icon-btn-bg-hover: rgba(255, 255, 255, 0.1);
-    --sidenav-icon-btn-border: rgba(255, 255, 255, 0.1);
-    --sidenav-icon-btn-border-hover: rgba(255, 255, 255, 0.2);
-    --sidenav-menu-item-bg: rgba(255, 255, 255, 0.03);
-    --sidenav-menu-item-bg-hover: rgba(255, 255, 255, 0.08);
-    --sidenav-menu-item-border: rgba(255, 255, 255, 0.05);
-    --sidenav-menu-item-border-hover: rgba(255, 255, 255, 0.15);
-    --sidenav-menu-highlight-bg-start: rgba(140, 0, 255, 0.15);
-    --sidenav-menu-highlight-bg-end: rgba(143, 0, 187, 0.15);
-    --sidenav-menu-highlight-border: rgba(140, 0, 255, 0.3);
-    --sidenav-menu-highlight-bg-hover-start: rgba(140, 0, 255, 0.25);
-    --sidenav-menu-highlight-bg-hover-end: rgba(143, 0, 187, 0.25);
-    --sidenav-menu-highlight-border-hover: rgba(140, 0, 255, 0.5);
-    --sidenav-menu-warning-bg-start: rgba(255, 111, 15, 0.15);
-    --sidenav-menu-warning-bg-end: rgba(206, 168, 1, 0.15);
-    --sidenav-menu-warning-border: rgba(255, 111, 15, 0.3);
-    --sidenav-menu-warning-bg-hover-start: rgba(255, 111, 15, 0.25);
-    --sidenav-menu-warning-bg-hover-end: rgba(206, 168, 1, 0.25);
-    --sidenav-menu-warning-border-hover: rgba(255, 111, 15, 0.5);
-    --sidenav-menu-discord-bg-start: rgba(114, 137, 218, 0.15);
-    --sidenav-menu-discord-bg-end: rgba(132, 152, 223, 0.15);
-    --sidenav-menu-discord-border: rgba(114, 137, 218, 0.3);
-    --sidenav-menu-discord-bg-hover-start: rgba(114, 137, 218, 0.25);
-    --sidenav-menu-discord-bg-hover-end: rgba(132, 152, 223, 0.25);
-    --sidenav-menu-discord-border-hover: rgba(114, 137, 218, 0.5);
-    --sidenav-footer-bg-start: #0d0d0d;
-    --sidenav-footer-bg-end: #1a1a1a;
-    --sidenav-stat-bg: rgba(255, 255, 255, 0.05);
-    --sidenav-badge-discord: #7289DA;
+    --sidenav-bg-start: rgba(70, 49, 28, 0.95);
+    --sidenav-bg-end: rgba(46, 31, 18, 0.98);
+    --sidenav-border: rgba(188, 188, 188, 0.34);
+    --sidenav-header-bg-start: #6b8f3b;
+    --sidenav-header-bg-end: #4e6d2b;
+    --sidenav-icon-btn-bg: rgba(33, 23, 13, 0.78);
+    --sidenav-icon-btn-bg-hover: rgba(70, 104, 35, 0.82);
+    --sidenav-icon-btn-border: rgba(186, 186, 186, 0.28);
+    --sidenav-icon-btn-border-hover: rgba(218, 233, 167, 0.55);
+    --sidenav-menu-item-bg: rgba(44, 30, 18, 0.72);
+    --sidenav-menu-item-bg-hover: rgba(103, 143, 55, 0.34);
+    --sidenav-menu-item-border: rgba(178, 178, 178, 0.22);
+    --sidenav-menu-item-border-hover: rgba(212, 227, 143, 0.45);
+    --sidenav-menu-highlight-bg-start: rgba(106, 161, 56, 0.3);
+    --sidenav-menu-highlight-bg-end: rgba(75, 112, 38, 0.3);
+    --sidenav-menu-highlight-border: rgba(183, 214, 118, 0.45);
+    --sidenav-menu-highlight-bg-hover-start: rgba(122, 187, 65, 0.42);
+    --sidenav-menu-highlight-bg-hover-end: rgba(89, 137, 45, 0.42);
+    --sidenav-menu-highlight-border-hover: rgba(222, 235, 165, 0.6);
+    --sidenav-menu-warning-bg-start: rgba(137, 96, 42, 0.34);
+    --sidenav-menu-warning-bg-end: rgba(101, 67, 28, 0.34);
+    --sidenav-menu-warning-border: rgba(226, 183, 113, 0.4);
+    --sidenav-menu-warning-bg-hover-start: rgba(165, 117, 54, 0.46);
+    --sidenav-menu-warning-bg-hover-end: rgba(120, 82, 36, 0.46);
+    --sidenav-menu-warning-border-hover: rgba(240, 203, 145, 0.58);
+    --sidenav-menu-discord-bg-start: rgba(67, 89, 147, 0.28);
+    --sidenav-menu-discord-bg-end: rgba(44, 58, 100, 0.28);
+    --sidenav-menu-discord-border: rgba(140, 158, 222, 0.42);
+    --sidenav-menu-discord-bg-hover-start: rgba(82, 108, 177, 0.4);
+    --sidenav-menu-discord-bg-hover-end: rgba(53, 70, 119, 0.4);
+    --sidenav-menu-discord-border-hover: rgba(174, 189, 239, 0.58);
+    --sidenav-footer-bg-start: #372414;
+    --sidenav-footer-bg-end: #20140b;
+    --sidenav-stat-bg: rgba(28, 20, 12, 0.62);
+    --sidenav-badge-discord: #91a8ff;
 }
 @font-face {
     font-family: "Monocraft";
-    src: url("./scripts/assets/Monocraft.ttf") format("truetype");
+    src: url("../scripts/assets/Monocraft.ttf") format("truetype");
   }
   
   * {
@@ -384,4 +384,54 @@ input:hover {
         0 12px 48px rgba(0, 0, 0, 0.5),
         0 8px 24px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.sidenav-dev,
+.sidenav-header,
+.sidenav-footer,
+.filtercontainer,
+.translatecontainer,
+.widget,
+.controller-icon-container,
+.notafication-v2[data-note-style="theme-loading"] {
+    border-color: #aaa #565656 #565656 #aaa !important;
+    outline: 2px solid #000 !important;
+    border-radius: 0 !important;
+}
+
+.sidenav-dev,
+.filtercontainer,
+.translatecontainer {
+    background-image: url(../scripts/assets/dirt.webp) !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.sidenav-header,
+.sidenav-footer,
+.sidenav-icon-btn,
+.menu-item,
+.menu-item-highlight,
+.menu-item-warning,
+.menu-item-discord,
+.widget,
+.controller-icon-container,
+.notafication-v2[data-note-style="theme-loading"] {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMQAAAAPCAAAAACe4j/AAAAEuElEQVRIx1WWS5Ibuw5EtddrdRRJJE4iSKrb4c2/AUuy30iK+jEBHCTwAICMCgAKiGhKVQUwKzJHQo4mQGBy7AIvk1E2AQKhFt6bUGD1gILy0DkD4dmzACkGyzCScgFgQmLZr4LpQpC56QB2wgSYE8i1fd6xd1yPHIAKwAs14Undx2LIHK0X6vdFbzTa6CNBLQE8Y5rapn7oAl3KSDKC6cLfL6sLnIVG7ffnyUgvQ6rwLjUZdIVqWz0iEXXCZ+TJsV8feUdoPHDk+a/IeAbq0ldLT59jtHweHwmKS6gFSUYCqKcVsPami1pEnqolkCMBiAS87FXTICp03geYUr8TV8un3KuyC0BfTUzihOCdwjUya1bkT9VWe+AaFOoJzHdtERXRe/eulyEDhC6pjYwr+JQuIDU9/0wQBnJEAkd+9i6IRTJrV7YWnGfwLA6ESphkBoCu88M0YH1CTTOiRUpDdwpGkkP5yL9phhwn+QVxDarAXq513y9bLKgxBGR/CjDyMl4ECd6lO82CaMLbEHGHp1R8ePDERj392ssaCOigNjJ+dXXl6OLUFfVx6dA1BFJLlHpkUHPam095C3QJLIjn6OLIOB3xe0JS85Zd+govg1/z/UhtG3RdVW98yxNp5I0Vtf/U+6y/dJ/yHtSK4q7G9ARscC3/Df/kXTwiT3d6ovjEISLJIVEvBwWeCXlALZTbpy85xqWuf3sNiBBUmYjI+BqN6aNQqDWpipSYf3W1nOV/WALoykjIiCPreSn97UigsjZdPA5s3AmCDIxaVO0Fa1fV/qkaiijPPz/bEeRyLSBDI8K8j37TO8aH7vmOqUUQ1DboYhvqd+FlFGEo+2T75MbLGnjvPeu7Pl521Ap14dcR3h7p75qv4xieqnNDoyCPLt/yKkf5gOUXl+6S3d9Syq/982fz+fhpsm28C5EhJcxsWWQke6KoPMA7tqm7kKcrn6FLhWcoqCNCxDPyQ8wEKR73nIlEX8GpARSJX7/rzeNtWPD/Dl2IwtOYMwV7osGsHYJanzeU7KqIZVCTcrT0IEbyD4d1e1dkBtW2qLhLXK7a1ogDqsjI1DR4PY7nHEqfF9tn8HUJL+eQ/lGOXdwI1++57CqgmDaReM9CZYLAk4D4ymqti4KZI9Htz9OnrcuOhCQEqJfXaxHPAFG/l/ee1GFJPXmPryYUiUGPutnRGXkagmnjHk5RNpm7xxiclm6CjJEQ4+MD4xPmuT9Ef4b3YT3B51a7d4Np76PF0cavuC+SoaH6PlilipEakoJBJETWT3k7Hf+1REPj2fIx95t5ct6u9S5v3KM2fv2Ve29ax9yC98zT2IZot61MHyYtdPF92nguZ29xfcVxSu9Nj5Gl8G3wcVoW8n1Q/f6BHFEAyy5R2aRIdYH8XfV4453vHKcnqarXPD6mdrD0rlVV5xBPF2xuJM5Oo0SdaaqGMjJva7ii6bYv74IzPMo5pGebpu72ghypwTR+WWDuhQOkFijGyAzF3GXh11lEH0hkPINZivpTqLEtVm2j1hVcn/S0//q0es5dbyxOErxKivQ+bHotvzcT3/XztPf20XqG6fJZMePT2X6ts+nlm9LoSYHMiHuJjGXniB7v2fo/5qT4nuxYg6AAAAAASUVORK5CYII=) !important;
+}
+
+.sidenav-logo,
+#navicon,
+#headericon {
+    image-rendering: pixelated;
+}
+
+.sidenav-icon-btn:hover,
+.menu-item:hover,
+.menu-item-highlight:hover,
+.menu-item-warning:hover,
+.menu-item-discord:hover,
+.widget:hover {
+    border-color: #bdc6ff #59639a #59639a #bdc6ff !important;
 }

@@ -40,5 +40,43 @@
     "icon": "../FNFF/assets/icons/Matt2.webp",
     "link": "../FNF/TKO-B-M-G-A-O-main",
     "warning": ""
+  },
+  "vs tabi": {
+    "name": "Vs Tabi",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF/tabi",
+    "warning": "Contains Flashing lights, shaking, and flashing effects"
+  },
+  "sunday": {
+    "name": "Sunday",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF/sunday",
+    "warning": "Contains Flashing lights and shaking"
+  },
+  "super idol": {
+    "name": "Super Idol",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF/Super-Idol-main",
+    "warning": ""
+  },
+  "vs cg5": {
+    "name": "Vs CG5",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF2/FNF-CG5-Better-Ver-main/",
+    "warning": ""
+  },
+  "vs henry": {
+    "name": "Vs Henry",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF2/henry/",
+    "warning": ""
+  },
+  "return of garcello": {
+    "name": "Return of Garcello",
+    "icon": "../FNFF/assets/icons/fnf.png",
+    "link": "../FNF3/RETURN-OF-GAR-main/",
+    "warning": ""
   }
+  
+
 }

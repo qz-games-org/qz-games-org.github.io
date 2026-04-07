@@ -11,21 +11,30 @@ function loadScript(url, type) {
 function loadThemeCSS() {
     const theme = getCookie('theme');  
     let cssFile;
-    loadingcssfile();
+    let themeNoteClosed = false;
+    let loadFallbackTimer;
+
+    function finishThemeLoadingNote() {
+        if (themeNoteClosed) {
+            return;
+        }
+        themeNoteClosed = true;
+        if (loadFallbackTimer) {
+            clearTimeout(loadFallbackTimer);
+        }
+        setTimeout(() => {
+            closeNote();
+        }, 1000);
+    }
 
     function loadcssfile() {
-        
-        setTimeout(() => {
-            console.log(`Loaded stylesheet: ${cssFile}`)
-            closeNote()    
-        }, 1000);
-        
-        
+        console.log(`Loaded stylesheet: ${cssFile}`)
+        finishThemeLoadingNote();
     }
 
     function loadingcssfile() {
         console.log(`Loading stylesheet: ${cssFile}`)
-        issuenote('Loading Theme...', 'This may take a second', false, 'note')
+        issuenote('Loading Theme...', 'Applying your style', false, 'theme-loading')
     }
   
     switch (theme) {
@@ -50,8 +59,11 @@ function loadThemeCSS() {
       default:
         cssFile = './styles/default.css';
     }
+
+    loadingcssfile();
   
     const link = document.getElementById('themecss');
+    const previousHref = link.getAttribute('href');
     link.setAttribute('href', cssFile);
     if(cssFile==='./styles/space.css') {
         //loadScript('./scripts/blackhole.js')
@@ -73,8 +85,23 @@ function loadThemeCSS() {
         loadScript('./scripts/earth.js', 'module')
     }
     console.log ('crazy')
-    link.addEventListener('load',  loadcssfile());
-    link.onerror = () => issuenote('Failed', 'Theme file failed to load.', true, 'note');
+    link.addEventListener('load', loadcssfile, { once: true });
+    link.onerror = () => {
+        if (loadFallbackTimer) {
+            clearTimeout(loadFallbackTimer);
+        }
+        themeNoteClosed = true;
+        issuenote('Failed', 'Theme file failed to load.', true, 'note');
+    };
+
+    if (previousHref === cssFile) {
+        finishThemeLoadingNote();
+        return;
+    }
+
+    loadFallbackTimer = setTimeout(() => {
+        finishThemeLoadingNote();
+    }, 1600);
     
 
 }

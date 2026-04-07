@@ -137,6 +137,8 @@
             <p class="section-description">Configure automatic translation and language preferences</p>
           </div>
 
+          <div id="google_translate_element" style="display: none;"></div>
+
           <div class="settings-group">
             <div class="toggle-container">
               <div class="toggle-info">
@@ -1071,6 +1073,13 @@ function loadSavedPreferences() {
 
   // Initialize Google Translate Element (needed to get language list)
   window.googleTranslateElementInit = function() {
+    let translateMount = document.getElementById('google_translate_element');
+    if (!translateMount) {
+      translateMount = document.createElement('div');
+      translateMount.id = 'google_translate_element';
+      translateMount.style.display = 'none';
+      document.body.appendChild(translateMount);
+    }
     new google.translate.TranslateElement({
       pageLanguage: 'en',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE
@@ -1098,7 +1107,12 @@ function loadSavedPreferences() {
 
   // Populate language dropdown and handle selection
   function populateLanguages() {
-    setTimeout(() => {
+    let attempts = 0;
+    const maxAttempts = 20;
+
+    function tryPopulateLanguages() {
+      attempts++;
+
       const translateElement = document.querySelector('.goog-te-combo');
       if (translateElement && languageSelect) {
         const options = translateElement.options;
@@ -1114,15 +1128,23 @@ function loadSavedPreferences() {
           }
         }
 
-        // Set current selection from localStorage
         const savedLang = localStorage.getItem('preferredLanguage');
         if (savedLang) {
           languageSelect.value = savedLang;
           updateCurrentLangDisplay(savedLang);
         }
-      } else {
-        setTimeout(populateLanguages, 500);
+        return;
       }
+
+      if (attempts < maxAttempts) {
+        setTimeout(tryPopulateLanguages, 500);
+      } else if (languageSelect) {
+        updateCurrentLangDisplay(localStorage.getItem('preferredLanguage') || 'en');
+      }
+    }
+
+    setTimeout(() => {
+      tryPopulateLanguages();
     }, 1000);
   }
 
