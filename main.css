@@ -84,6 +84,244 @@ body {
     margin-bottom: 20px;
     text-align: center;
 }
+
+.header-changelog-btn {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border: 1px solid var(--sidenav-border, rgba(255, 255, 255, 0.1));
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.06)) 0%, var(--sidenav-menu-item-bg, rgba(255, 255, 255, 0.03)) 100%);
+    color: var(--text-color);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+    z-index: 2;
+}
+
+.header-changelog-btn .material-icons {
+    font-size: 18px;
+}
+
+.header-changelog-icon-wrap {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+}
+
+.header-changelog-icon-wrap .material-icons {
+    display: block;
+    line-height: 1;
+}
+
+.header-changelog-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--sidenav-icon-btn-border-hover, rgba(255, 255, 255, 0.18));
+    background: linear-gradient(180deg, var(--sidenav-icon-btn-bg-hover, rgba(255, 255, 255, 0.1)) 0%, var(--sidenav-menu-item-bg-hover, rgba(255, 255, 255, 0.06)) 100%);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+}
+
+.header-changelog-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sidenav-menu-highlight-bg-start, rgba(255, 255, 255, 0.18)) 80%, transparent), 0 14px 32px rgba(0, 0, 0, 0.28);
+}
+
+body.changelog-open {
+    overflow: hidden;
+}
+
+.changelog-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+    z-index: 10004;
+}
+
+.changelog-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.changelog-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 9, 13, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.changelog-panel {
+    position: relative;
+    width: min(720px, calc(100vw - 32px));
+    max-height: min(82vh, 760px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(180deg, var(--sidenav-bg-start, rgba(25, 25, 25, 0.97)) 0%, var(--sidenav-bg-end, rgba(18, 18, 18, 0.98)) 100%);
+    border: 1px solid var(--sidenav-border, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 26px 56px rgba(0, 0, 0, 0.4);
+    color: var(--text-color);
+}
+
+.changelog-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 18px 16px;
+    border-bottom: 1px solid var(--sidenav-border, rgba(255, 255, 255, 0.08));
+    background: linear-gradient(180deg, var(--sidenav-header-bg-start, rgba(255, 255, 255, 0.04)) 0%, var(--sidenav-header-bg-end, rgba(255, 255, 255, 0.01)) 100%);
+}
+
+.changelog-panel-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.changelog-panel-icon-wrap {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.08)) 0%, var(--sidenav-menu-item-bg, rgba(255, 255, 255, 0.04)) 100%);
+    border: 1px solid var(--sidenav-icon-btn-border, rgba(255, 255, 255, 0.08));
+}
+
+.changelog-panel-icon {
+    display: block;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-color);
+}
+
+.changelog-panel-title {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.1;
+}
+
+.changelog-panel-subtitle {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: color-mix(in srgb, var(--text-color) 66%, transparent);
+}
+
+.changelog-panel-subtitle code {
+    font-size: 11px;
+}
+
+.changelog-close-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--sidenav-icon-btn-border, rgba(255, 255, 255, 0.08));
+    background: var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.04));
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.changelog-close-btn:hover {
+    transform: translateY(-1px);
+    background: var(--sidenav-icon-btn-bg-hover, rgba(255, 255, 255, 0.08));
+    border-color: var(--sidenav-icon-btn-border-hover, rgba(255, 255, 255, 0.16));
+}
+
+.changelog-close-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sidenav-menu-highlight-bg-start, rgba(255, 255, 255, 0.18)) 80%, transparent);
+}
+
+.changelog-panel-body {
+    padding: 18px;
+    overflow: auto;
+}
+
+.changelog-panel-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.changelog-panel-body::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--text-color) 18%, transparent);
+    border-radius: 999px;
+}
+
+.changelog-content {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--text-color) 92%, transparent);
+}
+
+@media (max-width: 700px) {
+    .header-changelog-btn {
+        right: 14px;
+        bottom: 14px;
+        padding: 10px 14px;
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .changelog-modal {
+        padding: 12px;
+    }
+
+    .changelog-panel {
+        width: calc(100vw - 24px);
+        max-height: min(84vh, 760px);
+        border-radius: 20px;
+    }
+
+    .changelog-panel-header {
+        padding: 14px;
+    }
+
+    .changelog-panel-title {
+        font-size: 18px;
+    }
+
+    .changelog-panel-body {
+        padding: 14px;
+    }
+
+    .changelog-content {
+        font-size: 13px;
+        line-height: 1.65;
+    }
+}
 .sidenavcontold {
     width: 100%;
     position: fixed;

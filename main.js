@@ -1,118 +1,141 @@
-var sidenavstatus = false
-var translatemenustatus = false
-var filtermenustatus = false
+(function() {
+    const state = {
+        sidenavOpen: false,
+        translateOpen: false,
+        filterOpen: false,
+        initialized: false
+    };
 
+    function getElements() {
+        return {
+            sidenavContainer: document.getElementById('sidenavcont'),
+            sideBackdrop: document.getElementById('backdropside'),
+            sidenav: document.getElementById('sidenav'),
+            filterMenu: document.getElementById('filterM'),
+            translateMenu: document.getElementById('translateM')
+        };
+    }
 
-//elements
-
-var sidenavcont = document.getElementById('sidenavcont')
-
-var backdropside = document.getElementById('backdropside')
-
-var sidenav = document.getElementById('sidenav')
-
-var filtermenu = document.getElementById('filterM')
-
-
-var translatemenu = document.getElementById('translateM')
-
-//functions
-
-function ToggleSideNav() {
-    if (!sidenavstatus) {
-      // OPEN 
-      sidenavcont.style.visibility = 'visible';
-      backdropside.style.visibility = 'visible';
-      backdropside.style.opacity    = '1';
-      sidenav.style.animation       = 'sidenavin 0.5s forwards';
-      sidenavstatus = true;
-    } else {
-      // CLOSE 
-      sidenavstatus = false;
-      backdropside.style.opacity = '0';
-  
-      function onNavDone(e) {
-        if (e.animationName === 'sidenavout') {
-          sidenavcont.style.visibility  = 'hidden';
-          backdropside.style.visibility = 'hidden';
-          sidenav.removeEventListener('animationend', onNavDone);
+    function hideMenu(menu, animationName) {
+        if (!menu) {
+            return;
         }
-      }
-      sidenav.addEventListener('animationend', onNavDone);
 
-      sidenav.style.animation    = 'sidenavout 0.5s forwards';
+        menu.style.opacity = '0';
+        menu.style.animation = animationName;
 
-    }
-  }
-  
-
-
-function ToggleTranslate() {
-    if(translatemenustatus===false) {
-        loadGoogleTranslate();
-
-        translatemenustatus = true
-
-        translatemenu.style.visibility = 'visible'
-
-        translatemenu.style.opacity = 1
-
-        translatemenu.style.animation = 'translatemenuin 0.5s'
-
-    } else if (translatemenustatus===true) {
-        translatemenustatus = false
-
-        translatemenu.style.opacity = 0
-
-        translatemenu.style.animation = 'translatemenuout 0.5s'
-
-        setTimeout(() => {
-            translatemenu.style.visibility = 'hidden'
+        window.setTimeout(() => {
+            menu.style.visibility = 'hidden';
         }, 450);
-
     }
-}
 
-// Load Google Translate script (used by both manual and auto-translate)
-function loadGoogleTranslate() {
-    if(document.getElementById('translatescript')) {
-        return;
+    function loadGoogleTranslate() {
+        if (document.getElementById('translatescript')) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        script.type = 'text/javascript';
+        script.id = 'translatescript';
+        document.body.appendChild(script);
     }
-    var translatesc = document.createElement('script')
-    translatesc.setAttribute('src', 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit')
-    translatesc.type = 'text/javascript'
-    translatesc.id = "translatescript"
-    document.body.appendChild(translatesc)
-}
 
-// Auto-load translate script if auto-translate is enabled
-if (window.autoTranslate && window.autoTranslate.isAutoTranslateEnabled()) {
-    loadGoogleTranslate();
-}
+    function toggleSideNav() {
+        const { sidenavContainer, sideBackdrop, sidenav } = getElements();
+        if (!sidenavContainer || !sideBackdrop || !sidenav) {
+            return;
+        }
 
-function ToggleFilter() {
-    if(filtermenustatus===false) {    
-        filtermenustatus = true
+        if (!state.sidenavOpen) {
+            sidenavContainer.style.visibility = 'visible';
+            sideBackdrop.style.visibility = 'visible';
+            sideBackdrop.style.opacity = '1';
+            sidenav.style.animation = 'sidenavin 0.5s forwards';
+            state.sidenavOpen = true;
+            return;
+        }
 
-        filtermenu.style.visibility = 'visible'
+        state.sidenavOpen = false;
+        sideBackdrop.style.opacity = '0';
 
-        filtermenu.style.opacity = 1
+        function handleAnimationEnd(event) {
+            if (event.animationName === 'sidenavout') {
+                sidenavContainer.style.visibility = 'hidden';
+                sideBackdrop.style.visibility = 'hidden';
+                sidenav.removeEventListener('animationend', handleAnimationEnd);
+            }
+        }
 
-        filtermenu.style.animation = 'filterwin 0.5s'
-
-    } else if (filtermenustatus===true) {
-        
-
-        filtermenu.style.opacity = 0
-
-        filtermenu.style.animation = 'filterwout 0.5s'
-        filtermenustatus = false
-        setTimeout(() => {
-            filtermenu.style.visibility = 'hidden'
-        }, 450);
-
+        sidenav.addEventListener('animationend', handleAnimationEnd);
+        sidenav.style.animation = 'sidenavout 0.5s forwards';
     }
-}
 
+    function toggleTranslate() {
+        const { translateMenu } = getElements();
+        if (!translateMenu) {
+            return;
+        }
 
+        if (!state.translateOpen) {
+            loadGoogleTranslate();
+            state.translateOpen = true;
+            translateMenu.style.visibility = 'visible';
+            translateMenu.style.opacity = '1';
+            translateMenu.style.animation = 'translatemenuin 0.5s';
+            return;
+        }
 
+        state.translateOpen = false;
+        hideMenu(translateMenu, 'translatemenuout 0.5s');
+    }
+
+    function toggleFilter() {
+        const { filterMenu } = getElements();
+        if (!filterMenu) {
+            return;
+        }
+
+        if (!state.filterOpen) {
+            state.filterOpen = true;
+            filterMenu.style.visibility = 'visible';
+            filterMenu.style.opacity = '1';
+            filterMenu.style.animation = 'filterwin 0.5s';
+            return;
+        }
+
+        state.filterOpen = false;
+        hideMenu(filterMenu, 'filterwout 0.5s');
+    }
+
+    function init() {
+        if (state.initialized) {
+            return;
+        }
+
+        state.initialized = true;
+
+        if (window.autoTranslate && typeof window.autoTranslate.isAutoTranslateEnabled === 'function') {
+            if (window.autoTranslate.isAutoTranslateEnabled()) {
+                loadGoogleTranslate();
+            }
+        }
+    }
+
+    window.ToggleSideNav = toggleSideNav;
+    window.ToggleTranslate = toggleTranslate;
+    window.ToggleFilter = toggleFilter;
+    window.loadGoogleTranslate = loadGoogleTranslate;
+    window.QZHomeUI = {
+        init,
+        toggleSideNav,
+        toggleTranslate,
+        toggleFilter
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+        init();
+    }
+})();

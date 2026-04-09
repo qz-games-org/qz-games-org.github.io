@@ -73,8 +73,6 @@
               }
             })
         </script>
-        <script defer src="./background-custom/backgroundcustomhandle.js"></script>
-
         <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
         <script defer src="./errorgen.js"></script>
@@ -428,6 +426,13 @@
                 <p style="margin: -15px; font-size: 25px; left: 50%; transform: translateX(-5%); position: relative;">Beta</p>
             </div>
 
+            <button id="changelogButton" class="header-changelog-btn" type="button" aria-haspopup="dialog" aria-controls="changelogModal">
+                <span class="header-changelog-icon-wrap" aria-hidden="true">
+                    <span class="material-icons notranslate">history</span>
+                </span>
+                <span>Changelog</span>
+            </button>
+
             <div id="featgamescont" class="ftgamescont">
 
                 <div id="topft" style="position: relative;">
@@ -474,24 +479,41 @@
 
         </div>
 
+        <div id="changelogModal" class="changelog-modal" hidden aria-hidden="true">
+            <div id="changelogBackdrop" class="changelog-modal-backdrop"></div>
+            <section class="changelog-panel" role="dialog" aria-modal="true" aria-labelledby="changelogTitle">
+                <div class="changelog-panel-header">
+                    <div class="changelog-panel-title-wrap">
+                        <span class="changelog-panel-icon-wrap" aria-hidden="true">
+                            <span class="material-icons changelog-panel-icon notranslate">update</span>
+                        </span>
+                        <div>
+                            <h2 id="changelogTitle" class="changelog-panel-title">Changelog</h2>
+                            <p class="changelog-panel-subtitle">Latest site updates from <code>chnglog.txt</code></p>
+                        </div>
+                    </div>
+                    <button id="changelogClose" class="changelog-close-btn" type="button" aria-label="Close changelog">
+                        <span class="material-icons notranslate" aria-hidden="true">close</span>
+                    </button>
+                </div>
+                <div class="changelog-panel-body">
+                    <pre id="changelogContent" class="changelog-content">Loading changelog...</pre>
+                </div>
+            </section>
+        </div>
+
     </body>
 
     <!-- Additional scripts loaded after page content -->
     <script defer src="./accessibility.js"></script>
     <script defer src="./discord-callout.js"></script>
     <script defer src="./useractivity.js"></script>
+    <script defer src="./gameSearch.js"></script>
     <script defer src="./gameloader.js"></script>
     <script defer src="./GlobalSettings.js"></script>
     <script defer src="./ftgames.js"></script>
-
-    <script defer src="./bundle.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initBackgroundHandler('#backgroundarea');
-
-            loadSelectedBackground();
-        });
-    </script>
+    <script defer src="./main.js"></script>
+    <script defer src="./note.js"></script>
+    <script defer src="./globalscripts/homepage-init.js"></script>
 
 </html>

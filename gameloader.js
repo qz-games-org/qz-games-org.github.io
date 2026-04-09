@@ -1,104 +1,39 @@
-/* let gamesData = null;
-
-function fetchGames() {
-  if (gamesData) {
-    renderGames(gamesData);
-  } else {
-    fetch('games.json')
-      .then(response => response.json())
-      .then(data => {
-        gamesData = data;
-        renderGames(gamesData);
-      })
-      .catch(error => console.error('Error fetching games:', error));
-  }
-}
-
-function renderGames(data) {
-  const container = document.getElementById('games');
-  container.innerHTML = '';
-
-  Object.keys(data).forEach(key => {
-    const game = data[key];
-    const coverLink = `./covers/${game.cover}`;
-    let gameLink = game.link;
-
-    if (game.type === 'html') {
-      gameLink = `./Games/game.html?game=${game.link}`;
-    } else if (game.type === 'unity') {
-      gameLink = `./Games/unity.html?game=${game.link}`;
-    } else if (game.type === 'flash') {
-      gameLink = `./Games/Flash.html?game=${game.link}`;
-    }
-
-    const gameItem = document.createElement('div');
-    gameItem.classList.add('gameitem');
-    gameItem.classList.add('hide');
-    gameItem.innerHTML = `
-      <a href="${gameLink}">
-        <div class="gametextover">${game.name}</div>
-        <!-- no src yet, only data-src, and add "loading" class -->
-        <img 
-          class="gamecover loading" 
-          data-src="${coverLink}" 
-          alt="${game.name} Cover"
-        >
-      </a>
-    `;
-    container.appendChild(gameItem);
-  });
-
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const img = entry.target;
-      img.parentElement.parentElement.classList.remove('hide')
-      img.parentElement.parentElement.style.animation = 'showGame 0.5s'
-      img.addEventListener('load', () => img.classList.remove('loading'), { once: true });
-      img.src = img.getAttribute('data-src');
-      obs.unobserve(img);
-    });
-  }, {
-    threshold: 0.1
-  });
-
-  document.querySelectorAll('.gamecover').forEach(img => {
-    observer.observe(img);
-  });
-}
-
-fetchGames();
-*/
 let gamesData = null;
 
 const AD_CONFIG = {
-  frequency: 9, 
-  client: 'ca-pub-1654900800235927', 
-  slot: '8647420788', 
+  frequency: 9,
+  client: 'ca-pub-1654900800235927',
+  slot: '8647420788',
   format: 'auto',
   responsive: true,
 };
 
-function fetchGames() {
-  if (gamesData) {
-    renderGames(gamesData);
-  } else {
-    fetch('games.json')
-      .then(response => response.json())
-      .then(data => {
-        gamesData = data;
-        renderGames(gamesData);
-      })
-      .catch(error => console.error('Error fetching games:', error));
+function ensureCatalogHelper() {
+  if (window.GameCatalog) {
+    return Promise.resolve(window.GameCatalog);
   }
-}
-function createAdElement(adIndex) {
-  const gameItem = document.createElement('div');
-  gameItem.classList.add('gameitem');
-  gameItem.classList.add('ad-item');
-  gameItem.classList.add('hide');
 
-  // Create the container with proper constraints
+  return new Promise((resolve, reject) => {
+    const existing = document.getElementById('game-catalog-helper');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.GameCatalog));
+      existing.addEventListener('error', () => reject(new Error('Failed to load game catalog helper')));
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'game-catalog-helper';
+    script.src = './globalscripts/game-catalog.js';
+    script.onload = () => resolve(window.GameCatalog);
+    script.onerror = () => reject(new Error('Failed to load game catalog helper'));
+    document.head.appendChild(script);
+  });
+}
+
+function createAdElement() {
+  const gameItem = document.createElement('div');
+  gameItem.classList.add('gameitem', 'ad-item', 'hide');
+
   const adContainer = document.createElement('div');
   adContainer.style.cssText = `
     position: relative;
@@ -133,59 +68,48 @@ function createAdElement(adIndex) {
   return gameItem;
 }
 
+function loadAdSenseScript() {
+  if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CONFIG.client}`;
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+  }
+}
+
 function renderGames(data, isSearch = false) {
   const container = document.getElementById('games');
-  container.innerHTML = ''; // clear everything (removes ads too)
+  if (!container || !window.GameCatalog) {
+    return;
+  }
+
+  container.innerHTML = '';
 
   const gameKeys = Object.keys(data);
+  const fragment = document.createDocumentFragment();
   let gameCount = 0;
 
   gameKeys.forEach((key, index) => {
     const game = data[key];
-    const coverLink = `./covers/${game.cover}`;
-    let gameLink = game.link;
+    const gameItem = window.GameCatalog.createGameCard(game, {
+      onClick: typeof trackActivity === 'function' ? trackActivity : null,
+    });
 
-    if (game.type === 'html') {
-      gameLink = `./Games/game.html?game=${game.link}&type=html&name=${game.name.toLowerCase()}`;
-    } else if (game.type === 'buckshot') {
-      gameLink = `./Games/Buckshot-Roulette.html`;
-    } else if (game.type === 'unity') {
-      gameLink = `./Games/game.html?game=${game.link}&type=unity&name=${game.name.toLowerCase()}`;
-    } else if (game.type === 'flash') {
-      gameLink = `./Games/game.html?game=${game.link}&type=flash&name=${game.name.toLowerCase()}`;
-    }
-
-    const gameItem = document.createElement('div');
-    gameItem.classList.add('gameitem', 'hide');
-    gameItem.id = game.name;
-    gameItem.setAttribute('tags', game.catagory);
-    gameItem.addEventListener('click', trackActivity);
-
-    gameItem.innerHTML = `
-      <a href="${gameLink}">
-        <div class="gametextover">${game.name}</div>
-        <img 
-          class="gamecover loading" 
-          data-src="${coverLink}" 
-          alt="${game.name} Cover"
-        >
-      </a>
-    `;
-    container.appendChild(gameItem);
+    fragment.appendChild(gameItem);
     gameCount++;
 
-    // 👉 Insert ads only if NOT in search mode
     if (!isSearch && gameCount % AD_CONFIG.frequency === 0 && index < gameKeys.length - 1) {
-      const adElement = createAdElement(Math.floor(gameCount / AD_CONFIG.frequency));
-      container.appendChild(adElement);
+      fragment.appendChild(createAdElement());
     }
   });
+
+  container.appendChild(fragment);
 
   if (typeof initializeGameSearch === 'function') {
     initializeGameSearch();
   }
 
-  // Lazy loading observer
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -219,30 +143,45 @@ function renderGames(data, isSearch = false) {
     });
   }, { threshold: 0.1 });
 
-  // Attach observer to games and ads
   document.querySelectorAll('.gamecover').forEach(img => observer.observe(img));
   if (!isSearch) {
     document.querySelectorAll('.ad-lazy').forEach(ad => observer.observe(ad));
   }
 }
 
-
-function loadAdSenseScript() {
-  if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1654900800235927`;
-    script.crossOrigin = 'anonymous';
-    document.head.appendChild(script);
+function fetchGames() {
+  if (!window.GameCatalog) {
+    return Promise.reject(new Error('Game catalog helper not available'));
   }
+
+  return window.GameCatalog.fetchGamesData()
+    .then(data => {
+      gamesData = data;
+      window.GameCatalog.setGamesData(data);
+      renderGames(data);
+      return data;
+    })
+    .catch(error => {
+      console.error('Error fetching games:', error);
+      throw error;
+    });
 }
 
-loadAdSenseScript();
-fetchGames();
+function startCatalog() {
+  loadAdSenseScript();
+  fetchGames();
+}
+
+ensureCatalogHelper()
+  .then(() => {
+    startCatalog();
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
 window.restoreAds = function() {
   if (gamesData) {
-    renderGames(gamesData, false); // full render with ads
+    renderGames(gamesData, false);
   }
-}
-
+};

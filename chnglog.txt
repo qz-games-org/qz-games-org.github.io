@@ -1,0 +1,25 @@
+2026-04-08
+
+Updates
+- Added a changelog button to the homepage hero header.
+- Added an in-site changelog viewer that loads directly from this file.
+- Improved the recommendation engine with stronger personalization and reranking.
+- Continued internal cleanup work across the homepage and shared scripts.
+- Resumed game requests. Expect new games this Friday.
+- Updated the game player UI.
+- Shipped performance improvements.
+- Started testing parts of a broader UI refresh.
+
+Coming Soon
+- Improve the error report system.
+- Better mobile UI.
+- More performance improvements.
+- More themes.
+- More FNF mods.
+- Exclusive Discord server game codes.
+- Tab cloaking.
+- Better controller support.
+- Fix more broken games.
+- Possible major UI redesign.
+- Better game and page caching.
+- Migrate game files to new server.

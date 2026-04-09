@@ -1,176 +1,250 @@
-function loadScript(url, type) {
-    const script = document.createElement('script');
-    script.src = url;
-    if(type) {
-        script.type = type
-    }
-    script.onerror = () => issuenote('Failed', 'Theme scripts have failed to load.', true, 'note');
-    document.head.appendChild(script);
-}
-  
-function loadThemeCSS() {
-    const theme = getCookie('theme');  
-    let cssFile;
+(function() {
+    const THEME_CONFIG = {
+        space: { css: './styles/space.css' },
+        spaceearth: {
+            css: './styles/spaceearth.css',
+            importMap: {
+                id: 'theme-importmap-earth',
+                imports: {
+                    three: 'https://unpkg.com/three@0.150.0/build/three.module.js'
+                }
+            },
+            script: {
+                id: 'theme-script-earth',
+                src: './scripts/earth.js',
+                type: 'module'
+            }
+        },
+        mc: {
+            css: './styles/minecraft.css',
+            script: {
+                id: 'theme-script-minecraft',
+                src: './scripts/minecraft.js'
+            }
+        },
+        'midnight-purple': { css: './styles/midnight-purple.css' },
+        mlg: {
+            css: './styles/mlg.css',
+            script: {
+                id: 'theme-script-mlg',
+                src: './scripts/mlgscript.js'
+            }
+        },
+        light: { css: './styles/white.css' },
+        default: { css: './styles/default.css' }
+    };
+
+    const BACKGROUND_MAP = {
+        mountain: './background-custom/backgrounds/mountain.json',
+        space: './background-custom/backgrounds/space.json',
+        forest: './background-custom/backgrounds/forest.json',
+        ocean: './background-custom/backgrounds/ocean.json',
+        desert: './background-custom/backgrounds/desert.json',
+        city: './background-custom/backgrounds/city.json',
+        abstract: './background-custom/backgrounds/abstract.json'
+    };
+
     let themeNoteClosed = false;
-    let loadFallbackTimer;
+    let loadFallbackTimer = null;
+
+    function getThemeName() {
+        if (typeof getCookie !== 'function') {
+            return 'default';
+        }
+
+        return getCookie('theme') || 'default';
+    }
+
+    function getThemeConfig(themeName) {
+        return THEME_CONFIG[themeName] || THEME_CONFIG.default;
+    }
+
+    function ensureScript(scriptConfig) {
+        if (!scriptConfig) {
+            return;
+        }
+
+        if (document.getElementById(scriptConfig.id)) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.id = scriptConfig.id;
+        script.src = scriptConfig.src;
+        if (scriptConfig.type) {
+            script.type = scriptConfig.type;
+        }
+
+        script.onerror = () => {
+            if (typeof issuenote === 'function') {
+                issuenote('Failed', 'Theme scripts have failed to load.', true, 'note');
+            }
+        };
+
+        document.head.appendChild(script);
+    }
+
+    function ensureImportMap(importMapConfig) {
+        if (!importMapConfig || document.getElementById(importMapConfig.id)) {
+            return;
+        }
+
+        const importMap = document.createElement('script');
+        importMap.id = importMapConfig.id;
+        importMap.type = 'importmap';
+        importMap.textContent = JSON.stringify({ imports: importMapConfig.imports });
+        document.head.appendChild(importMap);
+    }
+
+    function ensureThemeAssets(themeConfig) {
+        if (themeConfig.importMap) {
+            ensureImportMap(themeConfig.importMap);
+        }
+
+        if (themeConfig.script) {
+            ensureScript(themeConfig.script);
+        }
+    }
+
+    function clearFallbackTimer() {
+        if (loadFallbackTimer) {
+            window.clearTimeout(loadFallbackTimer);
+            loadFallbackTimer = null;
+        }
+    }
 
     function finishThemeLoadingNote() {
         if (themeNoteClosed) {
             return;
         }
+
         themeNoteClosed = true;
-        if (loadFallbackTimer) {
-            clearTimeout(loadFallbackTimer);
-        }
-        setTimeout(() => {
-            closeNote();
+        clearFallbackTimer();
+
+        window.setTimeout(() => {
+            if (typeof closeNote === 'function') {
+                closeNote();
+            }
         }, 1000);
     }
 
-    function loadcssfile() {
-        console.log(`Loaded stylesheet: ${cssFile}`)
-        finishThemeLoadingNote();
-    }
-
-    function loadingcssfile() {
-        console.log(`Loading stylesheet: ${cssFile}`)
-        issuenote('Loading Theme...', 'Applying your style', false, 'theme-loading')
-    }
-  
-    switch (theme) {
-      case 'space':
-        cssFile = './styles/space.css';
-        break;
-      case 'spaceearth':
-        cssFile = './styles/spaceearth.css';
-        break;
-      case 'mc':
-        cssFile = './styles/minecraft.css';
-        break;
-      case 'midnight-purple':
-        cssFile = './styles/midnight-purple.css';
-        break;
-      case 'mlg':
-        cssFile = './styles/mlg.css';
-        break;
-      case 'light':
-        cssFile = './styles/white.css';
-        break;
-      default:
-        cssFile = './styles/default.css';
-    }
-
-    loadingcssfile();
-  
-    const link = document.getElementById('themecss');
-    const previousHref = link.getAttribute('href');
-    link.setAttribute('href', cssFile);
-    if(cssFile==='./styles/space.css') {
-        //loadScript('./scripts/blackhole.js')
-    } else if(cssFile==='./styles/mlg.css') {
-        loadScript('./scripts/mlgscript.js')
-    } else if(cssFile==='./styles/minecraft.css') {
-        loadScript('./scripts/minecraft.js')
-    } else if(cssFile==='./styles/spaceearth.css') {
-        const importMap = {
-            imports: {
-              "three": "https://unpkg.com/three@0.150.0/build/three.module.js"
-            }
-        };
-        const mapScript = document.createElement("script");
-        mapScript.type = "importmap";
-        mapScript.textContent = JSON.stringify(importMap);
-        console.log('loadlol');
-        document.head.appendChild(mapScript); 
-        loadScript('./scripts/earth.js', 'module')
-    }
-    console.log ('crazy')
-    link.addEventListener('load', loadcssfile, { once: true });
-    link.onerror = () => {
-        if (loadFallbackTimer) {
-            clearTimeout(loadFallbackTimer);
+    function showThemeLoadingNote() {
+        if (typeof issuenote === 'function') {
+            issuenote('Loading Theme...', 'Applying your style', false, 'theme-loading');
         }
+    }
+
+    function showThemeLoadError() {
         themeNoteClosed = true;
-        issuenote('Failed', 'Theme file failed to load.', true, 'note');
+        clearFallbackTimer();
+
+        if (typeof issuenote === 'function') {
+            issuenote('Failed', 'Theme file failed to load.', true, 'note');
+        }
+    }
+
+    function applyStylesheet(linkElement, href) {
+        return new Promise((resolve, reject) => {
+            const previousHref = linkElement.getAttribute('href');
+            if (previousHref === href) {
+                resolve(true);
+                return;
+            }
+
+            function cleanup() {
+                linkElement.removeEventListener('load', handleLoad);
+                linkElement.removeEventListener('error', handleError);
+            }
+
+            function handleLoad() {
+                cleanup();
+                resolve(false);
+            }
+
+            function handleError() {
+                cleanup();
+                reject(new Error('Theme stylesheet failed to load.'));
+            }
+
+            linkElement.addEventListener('load', handleLoad, { once: true });
+            linkElement.addEventListener('error', handleError, { once: true });
+            linkElement.setAttribute('href', href);
+        });
+    }
+
+    async function loadThemeCSS() {
+        const linkElement = document.getElementById('themecss');
+        if (!linkElement) {
+            return;
+        }
+
+        const themeName = getThemeName();
+        const themeConfig = getThemeConfig(themeName);
+
+        themeNoteClosed = false;
+        showThemeLoadingNote();
+        ensureThemeAssets(themeConfig);
+
+        loadFallbackTimer = window.setTimeout(() => {
+            finishThemeLoadingNote();
+        }, 1600);
+
+        try {
+            const alreadyApplied = await applyStylesheet(linkElement, themeConfig.css);
+            if (alreadyApplied) {
+                finishThemeLoadingNote();
+                return;
+            }
+
+            finishThemeLoadingNote();
+        } catch (error) {
+            console.error(error);
+            showThemeLoadError();
+        }
+    }
+
+    function loadSelectedBackground() {
+        if (typeof backgroundHandler === 'undefined' || !backgroundHandler) {
+            return;
+        }
+
+        const customBackgroundsEnabled = typeof getCookie !== 'function' || getCookie('customBackgrounds') !== 'false';
+        if (!customBackgroundsEnabled) {
+            backgroundHandler.setEnabled(false);
+            backgroundHandler.clear();
+            return;
+        }
+
+        backgroundHandler.setEnabled(true);
+
+        const selectedBackground = (typeof getCookie === 'function' && getCookie('selectedBackground')) || 'none';
+        if (selectedBackground === 'none') {
+            backgroundHandler.clear();
+            return;
+        }
+
+        const backgroundPath = BACKGROUND_MAP[selectedBackground];
+        if (!backgroundPath) {
+            backgroundHandler.clear();
+            return;
+        }
+
+        loadBackgroundFromJSON(backgroundPath).catch((error) => {
+            console.log(`Failed to load background: ${selectedBackground}`, error);
+            backgroundHandler.clear();
+        });
+    }
+
+    window.loadThemeCSS = loadThemeCSS;
+    window.loadSelectedBackground = loadSelectedBackground;
+    window.QZThemeManager = {
+        loadThemeCSS,
+        loadSelectedBackground
     };
 
-    if (previousHref === cssFile) {
-        finishThemeLoadingNote();
-        return;
-    }
-
-    loadFallbackTimer = setTimeout(() => {
-        finishThemeLoadingNote();
-    }, 1600);
-    
-
-}
-  
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadThemeCSS);
-} else {
-    loadThemeCSS();
-}
-
-/**
- * Load selected background (independent from theme)
- * Backgrounds are now separate from themes - user selects them independently
- */
-function loadSelectedBackground() {
-    // Check if background system is available
-    if (typeof backgroundHandler === 'undefined' || !backgroundHandler) {
-        console.log('Background handler not initialized');
-        return;
-    }
-
-    // Check if custom backgrounds are enabled
-    const customBackgroundsEnabled = getCookie('customBackgrounds') !== 'false';
-    if (!customBackgroundsEnabled) {
-        console.log('Custom backgrounds disabled in settings');
-        backgroundHandler.setEnabled(false);
-        backgroundHandler.clear();
-        return;
-    }
-
-    // Enable background handler
-    backgroundHandler.setEnabled(true);
-
-    // Get selected background (independent from theme)
-    const selectedBackground = getCookie('selectedBackground') || 'none';
-
-    if (selectedBackground === 'none') {
-        console.log('No background selected');
-        backgroundHandler.clear();
-        return;
-    }
-
-    // Map background names to their JSON files
-    const backgroundMap = {
-        'mountain': './background-custom/backgrounds/mountain.json',
-        'space': './background-custom/backgrounds/space.json',
-        'forest': './background-custom/backgrounds/forest.json',
-        'ocean': './background-custom/backgrounds/ocean.json',
-        'desert': './background-custom/backgrounds/desert.json',
-        'city': './background-custom/backgrounds/city.json',
-        'abstract': './background-custom/backgrounds/abstract.json'
-    };
-
-    const bgPath = backgroundMap[selectedBackground];
-
-    if (bgPath) {
-        loadBackgroundFromJSON(bgPath)
-            .then(() => {
-                console.log(`Background loaded: ${selectedBackground}`);
-            })
-            .catch(err => {
-                console.log(`Failed to load background: ${selectedBackground}`, err);
-                // Clear any existing background on error
-                if (backgroundHandler) {
-                    backgroundHandler.clear();
-                }
-            });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadThemeCSS, { once: true });
     } else {
-        console.log('Background not found:', selectedBackground);
-        backgroundHandler.clear();
+        loadThemeCSS();
     }
-}
+})();

@@ -1219,6 +1219,174 @@
             pointer-events: all;
         }
 
+        .help-modal {
+            width: min(760px, 92vw);
+        }
+
+        .help-content {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .help-intro {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--sidenav-border);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .help-intro .material-icons {
+            font-size: 22px;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .help-intro-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .help-intro-copy strong {
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .help-intro-copy p {
+            margin: 0;
+            font-size: 0.84rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .help-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--sidenav-border);
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .help-card .material-icons {
+            font-size: 20px;
+            color: var(--text-color);
+            opacity: 0.85;
+            margin-top: 1px;
+        }
+
+        .help-card-copy h4 {
+            margin: 0 0 4px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .help-card-copy p {
+            margin: 0;
+            font-size: 0.8rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        .help-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .help-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.84rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.74);
+        }
+
+        .help-list li .material-icons {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.72);
+            margin-top: 1px;
+            flex: 0 0 auto;
+        }
+
+        .help-shortcuts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .help-problem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 193, 7, 0.22);
+            background: linear-gradient(180deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.03) 100%);
+        }
+
+        .help-problem-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .help-problem-copy h4 {
+            margin: 0;
+            font-size: 0.94rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .help-problem-copy p {
+            margin: 0;
+            font-size: 0.82rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .help-problem-action {
+            flex: 0 0 auto;
+            min-width: 132px;
+            padding: 12px 16px;
+        }
+
+        .help-shortcut {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--sidenav-icon-btn-border);
+            background: var(--sidenav-icon-btn-bg);
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.74rem;
+            font-weight: 500;
+        }
+
+        .help-shortcut .material-icons {
+            font-size: 15px;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .controller-modal {
@@ -1261,6 +1429,19 @@
             .controller-footer {
                 flex-direction: column;
             }
+
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .help-problem {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .help-problem-action {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -1301,6 +1482,9 @@
                     <button class="btn" onclick="reportIssue()" aria-label="Report issue" title="Report issue">
                         <span class="material-icons">bug_report</span>
                     </button>
+                    <button class="btn" onclick="toggleHelpWindow()" aria-label="Help" title="Help">
+                        <span class="material-icons">help_outline</span>
+                    </button>
                     <button class="btn" onclick="toggleControllerSettings()" aria-label="Settings" title="Settings">
                         <span class="material-icons">settings</span>
                     </button>
@@ -1336,8 +1520,8 @@
                 <div class="loading-game-meta">
                     <div class="loading-game-label">Now Loading</div>
                     <h1 class="loading-title" id="loading-title">Getting ready</h1>
-                    <div class="loading-game-name" id="loading-game-name"></div>
-                    <div class="loading-subtitle" id="loading-subtitle"></div>
+                    <div class="loading-game-name" id="loading-game-name">Preparing your session</div>
+                    <div class="loading-subtitle" id="loading-subtitle">Setting up your gaming experience</div>
                 </div>
             </div>
 
@@ -1485,6 +1669,137 @@
             <div class="controller-notification" id="notificationn"></div>
         </div>
 
+        <div id="helpModalOverlay" class="controller-modal-overlay">
+            <div class="controller-backdrop" onclick="toggleHelpWindow()"></div>
+
+            <div class="controller-modal help-modal" id="help-modal">
+                <div class="controller-header">
+                    <div class="controller-header-left">
+                        <span class="material-icons">help_outline</span>
+                        <div class="controller-header-text">
+                            <h1>Player Help</h1>
+                            <p class="controller-status disconnected">
+                                <span class="status-dot"></span>
+                                Tips for using the Qz Games player
+                            </p>
+                        </div>
+                    </div>
+                    <button class="controller-close-btn" onclick="toggleHelpWindow()" aria-label="Close help">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+
+                <div class="controller-content help-content">
+                    <div class="help-intro">
+                        <span class="material-icons">info</span>
+                        <div class="help-intro-copy">
+                            <strong>Quick help for the game player</strong>
+                            <p>Use the controls below to manage fullscreen, report issues, open controller settings, or return home. If something feels broken, this window is the fastest place to check what to do next.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="section-title">
+                            <span class="material-icons">warning_amber</span>
+                            Known Problem
+                        </h3>
+                        <div class="help-problem">
+                            <div class="help-problem-copy">
+                                <h4>Game not loading?</h4>
+                                <p>Some games can occasionally get stuck during startup. A quick page reload usually fixes it and lets the player restart cleanly.</p>
+                            </div>
+                            <button class="controller-action-btn secondary help-problem-action" onclick="window.location.reload()">
+                                <span class="material-icons">refresh</span>
+                                <span>Reload Now</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="section-title">
+                            <span class="material-icons">bolt</span>
+                            Quick Actions
+                        </h3>
+                        <div class="help-grid">
+                            <article class="help-card">
+                                <span class="material-icons">fullscreen</span>
+                                <div class="help-card-copy">
+                                    <h4>Fullscreen</h4>
+                                    <p>Use the fullscreen button in the HUD for a cleaner game view without browser chrome.</p>
+                                </div>
+                            </article>
+                            <article class="help-card">
+                                <span class="material-icons">sports_esports</span>
+                                <div class="help-card-copy">
+                                    <h4>Controller Settings</h4>
+                                    <p>Open settings to adjust sensitivity, deadzone, invert Y-axis, and custom button bindings.</p>
+                                </div>
+                            </article>
+                            <article class="help-card">
+                                <span class="material-icons">bug_report</span>
+                                <div class="help-card-copy">
+                                    <h4>Report an Issue</h4>
+                                    <p>If a game fails to load, saves incorrectly, or controls break, use the bug report button so it can be fixed faster.</p>
+                                </div>
+                            </article>
+                            <article class="help-card">
+                                <span class="material-icons">arrow_back</span>
+                                <div class="help-card-copy">
+                                    <h4>Return Home</h4>
+                                    <p>Use the back button any time to leave the player and return to the main site.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="section-title">
+                            <span class="material-icons">tips_and_updates</span>
+                            Helpful Notes
+                        </h3>
+                        <ul class="help-list">
+                            <li>
+                                <span class="material-icons">save</span>
+                                <span>Some games may not save correctly if they are closed abruptly. If a game supports saving, exit it carefully when possible.</span>
+                            </li>
+                            <li>
+                                <span class="material-icons">visibility_off</span>
+                                <span>You can hide the player HUD with the arrow button if you want a cleaner screen while playing.</span>
+                            </li>
+                            <li>
+                                <span class="material-icons">cached</span>
+                                <span>If a game seems stuck on load, try skipping the loading screen first. If it still fails, report it.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="section-title">
+                            <span class="material-icons">keyboard</span>
+                            Common Shortcuts
+                        </h3>
+                        <div class="help-shortcuts">
+                            <span class="help-shortcut"><span class="material-icons">fullscreen</span>Fullscreen</span>
+                            <span class="help-shortcut"><span class="material-icons">bug_report</span>Report Issue</span>
+                            <span class="help-shortcut"><span class="material-icons">settings</span>Settings</span>
+                            <span class="help-shortcut"><span class="material-icons">expand_more</span>Hide HUD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controller-footer">
+                    <button class="controller-action-btn secondary" onclick="reportIssue()">
+                        <span class="material-icons">bug_report</span>
+                        <span>Report Issue</span>
+                    </button>
+                    <button class="controller-action-btn primary" onclick="toggleHelpWindow()">
+                        <span class="material-icons">check</span>
+                        <span>Got It</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="notification-container"></div>
         <div class="reminderclose" id="reminderclose">
             <div style="top: 50%; position: absolute; left: 50%; transform: translate(-50%, -50%);">
@@ -1498,316 +1813,11 @@
     </div>
 
  
-
-    <script>
-        // Global error handler - show notification and allow bug report
-        window.addEventListener('error', function(e) {
-            console.error('Error occurred:', e.error);
-            showErrorNotification();
-        });
-
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Promise rejection:', e.reason);
-            showErrorNotification();
-        });
-
-        // Show error notification
-        function showErrorNotification() {
-            // Check if notification already exists
-            if (document.getElementById('error-notification-overlay')) return;
-
-            const overlay = document.createElement('div');
-            overlay.id = 'error-notification-overlay';
-            overlay.style.cssText = `
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.8);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 10000;
-            `;
-
-            const card = document.createElement('div');
-            card.style.cssText = `
-                background: linear-gradient(180deg, var(--sidenav-bg-start, rgba(26, 26, 26, 0.95)) 0%, var(--sidenav-bg-end, #0d0d0d) 100%);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border-radius: 20px;
-                padding: 40px;
-                border: 1px solid var(--sidenav-border, rgba(255, 255, 255, 0.1));
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-                width: min(400px, 90vw);
-                text-align: center;
-                font-family: 'Poppins', Arial, sans-serif;
-            `;
-
-            card.innerHTML = `
-                <span class="material-icons" style="font-size: 64px; color: #ff6b6b; margin-bottom: 16px;">error_outline</span>
-                <h2 style="margin: 0 0 12px; font-size: 1.5rem; color: white; font-weight: 600;">An Error Occurred</h2>
-                <p style="margin: 0 0 28px; font-size: 0.95rem; color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                    Something went wrong while loading the game. Please report this issue and return to the home page.
-                </p>
-                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="reportIssue()" style="
-                        background: var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.05));
-                        border: 1px solid var(--sidenav-icon-btn-border, rgba(255, 255, 255, 0.1));
-                        color: white;
-                        padding: 12px 24px;
-                        border-radius: 12px;
-                        font-size: 0.9rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-family: 'Poppins', Arial, sans-serif;
-                    " onmouseover="this.style.background='var(--sidenav-icon-btn-bg-hover, rgba(255, 255, 255, 0.1))'" onmouseout="this.style.background='var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.05))'">
-                        <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 6px;">bug_report</span>
-                        Report Bug
-                    </button>
-                    <button onclick="document.getElementById('error-notification-overlay').remove(); doneloading();" style="
-                        background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.3));
-                        border: 1px solid rgba(255, 193, 7, 0.4);
-                        color: white;
-                        padding: 12px 24px;
-                        border-radius: 12px;
-                        font-size: 0.9rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-family: 'Poppins', Arial, sans-serif;
-                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 193, 7, 0.4))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.3))'">
-                        <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 6px;">play_arrow</span>
-                        Continue Anyway
-                    </button>
-                    <button onclick="window.location.href='../index.html'" style="
-                        background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.3));
-                        border: 1px solid rgba(255, 107, 107, 0.4);
-                        color: white;
-                        padding: 12px 24px;
-                        border-radius: 12px;
-                        font-size: 0.9rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-family: 'Poppins', Arial, sans-serif;
-                    " onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 107, 107, 0.4))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.3))'">
-                        <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 6px;">home</span>
-                        Return Home
-                    </button>
-                </div>
-            `;
-
-            overlay.appendChild(card);
-            document.body.appendChild(overlay);
-        }
-
-        // Set up compatibility bridge for GameMain.js
-        // Link loading-overlay to loadingcont for backward compatibility
-        (function() {
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const loadingcont = document.getElementById('loadingcont');
-
-            if (loadingOverlay && loadingcont) {
-                // When GameMain.js tries to hide loadingcont, hide loading-overlay instead
-                Object.defineProperty(loadingcont.style, 'display', {
-                    set: function(value) {
-                        if (value === 'none') {
-                            // Add hidden class to trigger transition
-                            loadingOverlay.classList.add('hidden');
-                            // Wait for transition to complete before setting display: none
-                            setTimeout(() => {
-                                loadingOverlay.style.display = 'none';
-                            }, 600); // Match transition duration
-                        }
-                    },
-                    get: function() {
-                        return loadingOverlay.classList.contains('hidden') ? 'none' : 'flex';
-                    }
-                });
-            }
-        })();
-
-        // Hide loading overlay - will be overridden by GameMain.js
-        // This is just a fallback in case GameMain.js doesn't load
-        if (typeof window.doneloading === 'undefined') {
-            window.doneloading = function() {
-                const overlay = document.getElementById('loading-overlay') || document.getElementById('loadingcont');
-                if (overlay) {
-                    overlay.classList.add('hidden');
-                    // Wait for transition to complete before setting display: none
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                    }, 600);
-                }
-            };
-        }
-
-        // Toggle fullscreen
-        function ToggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-
-        // Back to home
-        function Backhome() {
-            window.location.href = '../index.html';
-        }
-
-        // Report issue
-        function reportIssue() {
-            window.open('https://forms.gle/yLyC7rFkY1xeNk3TA', '_blank', 'noopener');
-        }
-
-        // Toggle HUD visibility
-        function toggleHud() {
-            const wrap = document.getElementById('hud-wrap');
-            if (wrap) {
-                wrap.classList.toggle('hud-hidden');
-            }
-        }
-
-        // Toggle controller settings modal
-        function toggleControllerSettings() {
-            console.log('toggleControllerSettings called');
-            const modal = document.getElementById('menusforgame');
-            console.log('Modal element:', modal);
-
-            if (modal) {
-                console.log('Before toggle - classes:', modal.className);
-                const isActive = modal.classList.toggle('active');
-                console.log('After toggle - classes:', modal.className);
-                console.log('Is active:', isActive);
-
-                // Prevent body scroll when modal is open
-                if (isActive) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-
-                // Also check computed styles
-                const styles = window.getComputedStyle(modal);
-                console.log('Computed opacity:', styles.opacity);
-                console.log('Computed display:', styles.display);
-                console.log('Computed pointer-events:', styles.pointerEvents);
-            } else {
-                console.error('Controller settings modal not found!');
-            }
-        }
-
-        // Simulate loading progress (visual feedback only)
-        let progress = 0;
-        let progressTarget = 0;
-        let progressAnimationFrame;
-
-        function stepLoadingProgress() {
-            progress += (progressTarget - progress) * 0.08;
-
-            if (Math.abs(progressTarget - progress) < 0.08) {
-                progress = progressTarget;
-            }
-
-            const progressFill = document.getElementById('progbar');
-            if (progressFill) {
-                progressFill.style.width = progress.toFixed(2) + '%';
-            }
-
-            if (progress < 100) {
-                progressAnimationFrame = requestAnimationFrame(stepLoadingProgress);
-            } else {
-                progressAnimationFrame = null;
-            }
-        }
-
-        const progressInterval = setInterval(() => {
-            const remaining = 100 - progressTarget;
-            const step = Math.max(1.25, remaining * (0.08 + Math.random() * 0.12));
-            progressTarget = Math.min(100, progressTarget + step);
-
-            if (!progressAnimationFrame) {
-                progressAnimationFrame = requestAnimationFrame(stepLoadingProgress);
-            }
-
-            if (progressTarget >= 100) {
-                clearInterval(progressInterval);
-            }
-        }, 280);
-
-        // Don't call doneloading() from here - let GameMain.js handle it
-        // GameMain.js has the proper elements setup and will call doneloading() when ready
-
-        // Get game info from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameName = urlParams.get('name');
-        const gameUrl = urlParams.get('game');
-        const gameType = urlParams.get('type');
-
-        if (gameName && gameName.trim() !== '') {
-            const loadingTitleEl = document.getElementById('loading-title');
-            if (loadingTitleEl) {
-                loadingTitleEl.textContent = gameName;
-            }
-        }
-
-        if (gameName && gameName.trim() !== '') {
-            fetch('../games.json')
-                .then(response => response.json())
-                .then(gamesData => {
-                    const gameKey = Object.keys(gamesData).find(key =>
-                        key.toLowerCase() === gameName.toLowerCase()
-                    );
-
-                    if (gameKey && gamesData[gameKey]) {
-                        const gameData = gamesData[gameKey];
-                        const displayName = gameData.name;
-                        const coverPath = `../covers/${gameData.cover}`;
-
-                        const gameNameEl = document.getElementById('game-name');
-                        const hudCoverEl = document.getElementById('hud-cover');
-                        if (gameNameEl) gameNameEl.textContent = displayName;
-                        if (hudCoverEl) hudCoverEl.src = coverPath;
-
-                        const loadingTitleEl = document.getElementById('loading-title');
-                        const loadingGameNameEl = document.getElementById('loading-game-name');
-                        const loadingCoverEl = document.getElementById('loading-cover');
-                        const loadingBackgroundEl = document.getElementById('loading-background');
-                        const gameCoverEl = document.getElementById('gameCover');
-                        if (loadingTitleEl) loadingTitleEl.textContent = displayName;
-                        if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-                        if (loadingCoverEl) loadingCoverEl.src = coverPath;
-                        if (loadingBackgroundEl) loadingBackgroundEl.src = coverPath;
-                        if (gameCoverEl) gameCoverEl.src = coverPath;
-
-                        document.title = 'Qz Games | ' + displayName;
-                    } else {
-                        const gameNameEl = document.getElementById('game-name');
-                        const loadingTitleEl = document.getElementById('loading-title');
-                        const loadingGameNameEl = document.getElementById('loading-game-name');
-                        if (gameNameEl) gameNameEl.textContent = gameName;
-                        if (loadingTitleEl) loadingTitleEl.textContent = gameName;
-                        if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-                        document.title = 'Qz Games | ' + gameName;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading game data:', error);
-                    const gameNameEl = document.getElementById('game-name');
-                    const loadingTitleEl = document.getElementById('loading-title');
-                    const loadingGameNameEl = document.getElementById('loading-game-name');
-                    if (gameNameEl) gameNameEl.textContent = gameName;
-                    if (loadingTitleEl) loadingTitleEl.textContent = gameName;
-                    if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-                    document.title = 'Qz Games | ' + gameName;
-                });
-        }
-
-       
-    </script>
+    <script src="./game-runtime.js"></script>
+    <script src="../globalscripts/game-main-core.js"></script>
+    <script src="../globalscripts/game-main-loading.js"></script>
+    <script src="../globalscripts/game-main-controller.js"></script>
+    <script src="../globalscripts/game-main-player.js"></script>
     <script src="../GameMain.js"></script>
     <script src="../GameInput.js"></script>
     <script src="../GlobalSettings.js"></script>

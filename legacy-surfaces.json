@@ -1,0 +1,20 @@
+{
+  "active_pages": [
+    "index.html",
+    "settings.html",
+    "activity.html",
+    "upcoming.html",
+    "Games/game.html",
+    "FNF.html"
+  ],
+  "legacy_directories": [
+    "Legacy pages",
+    "legacy scripts"
+  ],
+  "legacy_pages": [
+    "Games/game-old.html",
+    "Games/game-v2.html",
+    "Games/game-v3.html"
+  ],
+  "note": "Legacy surfaces are retained for reference or backward compatibility and should not receive new feature work unless promoted back into the active set."
+}
