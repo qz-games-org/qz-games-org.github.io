@@ -1,4 +1,17 @@
 (function() {
+  const SETTINGS_ROOT_BASE = getSettingsRootBase();
+
+  function getSettingsRootBase() {
+    const currentScript = document.currentScript;
+    if (currentScript && currentScript.src) {
+      return new URL('../', currentScript.src).href;
+    }
+
+    return window.location.pathname.includes('/Games/')
+      ? '../'
+      : './';
+  }
+
   function getThemeVariantStorageKey(themeName) {
     return `themeVariant_${String(themeName).replace(/[^a-z0-9_-]/gi, '_')}`;
   }
@@ -239,6 +252,118 @@
     summaryEl.textContent = currentConfig ? (currentConfig.title || 'Custom cloak active') : 'Disabled';
   }
 
+  function findExistingScriptBySrc(src) {
+    const absoluteSrc = new URL(src, window.location.href).href;
+    return Array.from(document.scripts).find((script) => (
+      script.src === absoluteSrc
+      || script.getAttribute('src') === src
+      || script.src.endsWith('/globalscripts/tab-cloak.js')
+    ));
+  }
+
+  function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+      const existingScript = findExistingScriptBySrc(src);
+      if (existingScript && existingScript.dataset.loadFailed !== 'true') {
+        if (existingScript.dataset.loaded === 'true' || window.QZTabCloak) {
+          resolve();
+          return;
+        }
+
+        existingScript.addEventListener('load', resolve, { once: true });
+        existingScript.addEventListener('error', reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.dataset.qzSettingsHelper = 'tab-cloak';
+      script.addEventListener('load', () => {
+        script.dataset.loaded = 'true';
+        resolve();
+      }, { once: true });
+      script.addEventListener('error', reject, { once: true });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function ensureTabCloakReady() {
+    if (window.QZTabCloak) {
+      return window.QZTabCloak;
+    }
+
+    if (window.QZGlobalSettings && window.QZGlobalSettings.ready) {
+      try {
+        await window.QZGlobalSettings.ready;
+      } catch (error) {
+        console.error('Global settings helpers did not finish loading.', error);
+      }
+    }
+
+    if (!window.QZTabCloak) {
+      await loadScriptOnce(`${SETTINGS_ROOT_BASE}globalscripts/tab-cloak.js`);
+    }
+
+    return window.QZTabCloak || null;
+  }
+
+  function getTabCloakPreset(profile) {
+    if (!window.QZTabCloak || typeof window.QZTabCloak.getProfiles !== 'function') {
+      return { title: '', favicon: '' };
+    }
+
+    const profiles = window.QZTabCloak.getProfiles();
+    return profiles[profile] || profiles.default || { title: '', favicon: '' };
+  }
+
+  function syncTabCloakFormFromConfig(profileSelect, titleInput, faviconInput) {
+    const currentConfig = window.QZTabCloak.getCurrentConfig();
+
+    if (!currentConfig) {
+      profileSelect.value = 'default';
+      profileSelect.dataset.lastProfile = 'default';
+      titleInput.value = '';
+      faviconInput.value = '';
+      return;
+    }
+
+    const profile = currentConfig.profile || 'default';
+    const preset = getTabCloakPreset(profile);
+
+    profileSelect.value = profile;
+    profileSelect.dataset.lastProfile = profile;
+    titleInput.value = currentConfig.title && currentConfig.title !== preset.title ? currentConfig.title : '';
+    faviconInput.value = currentConfig.favicon && currentConfig.favicon !== preset.favicon ? currentConfig.favicon : '';
+  }
+
+  function handleTabCloakProfileChange(profileSelect, titleInput, faviconInput) {
+    const previousProfile = profileSelect.dataset.lastProfile || 'default';
+    const previousPreset = getTabCloakPreset(previousProfile);
+    const titleValue = titleInput.value.trim();
+    const faviconValue = faviconInput.value.trim();
+
+    if (!titleValue || titleValue === previousPreset.title) {
+      titleInput.value = '';
+    }
+
+    if (!faviconValue || faviconValue === previousPreset.favicon) {
+      faviconInput.value = '';
+    }
+
+    profileSelect.dataset.lastProfile = profileSelect.value || 'default';
+  }
+
+  function setTabCloakControlsEnabled(enabled) {
+    const applyButton = document.getElementById('applyTabCloakBtn');
+    const resetButton = document.getElementById('resetTabCloakBtn');
+    if (applyButton) {
+      applyButton.disabled = !enabled;
+    }
+    if (resetButton) {
+      resetButton.disabled = !enabled;
+    }
+  }
+
   function initTabCloakControls() {
     const profileSelect = document.getElementById('tabCloakProfile');
     const titleInput = document.getElementById('tabCloakTitle');
@@ -250,20 +375,50 @@
       return;
     }
 
-    if (!window.QZTabCloak) {
-      applyButton.disabled = true;
-      resetButton.disabled = true;
+    if (applyButton.dataset.bound === 'true') {
+      refreshTabCloakSummary();
+      setTabCloakControlsEnabled(Boolean(window.QZTabCloak));
       return;
     }
 
-    const currentConfig = window.QZTabCloak.getCurrentConfig();
-    if (currentConfig) {
-      profileSelect.value = currentConfig.profile || 'default';
-      titleInput.value = currentConfig.title || '';
-      faviconInput.value = currentConfig.favicon || '';
+    if (!window.QZTabCloak) {
+      applyButton.disabled = true;
+      resetButton.disabled = true;
+      const summaryEl = document.getElementById('tabCloakCurrent');
+      if (summaryEl) {
+        summaryEl.textContent = 'Loading...';
+      }
+
+      ensureTabCloakReady()
+        .then((tabCloak) => {
+          if (!tabCloak) {
+            if (summaryEl) {
+              summaryEl.textContent = 'Unavailable';
+            }
+            return;
+          }
+
+          initTabCloakControls();
+        })
+        .catch((error) => {
+          console.error('Failed to initialize tab cloak controls.', error);
+          if (summaryEl) {
+            summaryEl.textContent = 'Unavailable';
+          }
+        });
+      return;
     }
 
+    applyButton.dataset.bound = 'true';
+    resetButton.dataset.bound = 'true';
+    setTabCloakControlsEnabled(true);
+    syncTabCloakFormFromConfig(profileSelect, titleInput, faviconInput);
+
     refreshTabCloakSummary();
+
+    profileSelect.addEventListener('change', () => {
+      handleTabCloakProfileChange(profileSelect, titleInput, faviconInput);
+    });
 
     applyButton.addEventListener('click', () => {
       const profile = profileSelect.value || 'default';
@@ -278,6 +433,7 @@
       }
 
       window.QZTabCloak.setProfile(profile, { title, favicon });
+      syncTabCloakFormFromConfig(profileSelect, titleInput, faviconInput);
       refreshTabCloakSummary();
       notifyUser('Tab Cloak Applied', 'Your selected cloak is now active.', true, 'success');
     });

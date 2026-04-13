@@ -32,7 +32,10 @@
         script.dataset.loaded = 'true';
         resolve();
       }, { once: true });
-      script.addEventListener('error', reject, { once: true });
+      script.addEventListener('error', () => {
+        script.dataset.loadFailed = 'true';
+        reject(new Error(`Failed to load global helper: ${src}`));
+      }, { once: true });
       document.head.appendChild(script);
     });
   }
@@ -51,11 +54,19 @@
     }
   }
 
-  window.QZGlobalSettings = {
-    init
-  };
-
-  init().catch((error) => {
+  const ready = init().then(() => {
+    window.dispatchEvent(new CustomEvent('qz:global-settings-ready'));
+    return true;
+  }).catch((error) => {
     console.error('Failed to bootstrap global settings helpers.', error);
+    window.dispatchEvent(new CustomEvent('qz:global-settings-error', {
+      detail: { error }
+    }));
+    return false;
   });
+
+  window.QZGlobalSettings = {
+    init,
+    ready
+  };
 })();
