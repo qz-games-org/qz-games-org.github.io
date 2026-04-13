@@ -1,0 +1,117 @@
+:root {
+    --text-color: #fff8ef;
+
+    --main-bg-color: #1f1512;
+    --main-topnav-color: rgba(42, 24, 19, 0.72);
+    --main-topnav-shadow: #1a0f0d;
+    --main-header-color: #38211b;
+    --main-backdrop-side: rgba(23, 12, 10, 0.62);
+
+    --side-nav-bg: #4a2b22;
+    --side-nav-border: rgba(255, 196, 146, 0.22);
+    --side-nav-shadow: #120908;
+
+    --side-nav-top: rgba(71, 39, 29, 0.82);
+    --side-nav-top-shadow: #22110d;
+    --side-nav-icons-border: rgba(255, 214, 184, 0.12);
+    --side-nav-icons-shadow: rgba(15, 8, 7, 0.42);
+
+    --side-nav-options-bg: linear-gradient(to top right, #7d3b2f, #d66d43);
+    --side-nav-options-border: #3d211a;
+    --side-nav-options-shadow: #2b1612;
+    --side-nav-options-icon-shadow: rgba(0, 0, 0, 0.55);
+
+    --translate-container-bg: rgba(55, 28, 22, 0.86);
+    --translate-container-shadow: #1f0d09;
+    --translate-container-border: rgba(255, 192, 137, 0.22);
+
+    --feat-games-bg: none;
+    --feat-games-border: none;
+
+    --input-bg: rgba(78, 41, 31, 0.92);
+    --input-border: rgba(255, 200, 158, 0.14);
+    --input-txt-color: var(--text-color);
+    --input-border-hover: rgba(255, 210, 177, 0.24);
+    --input-focus: rgba(255, 149, 84, 0.55);
+
+    --filter-btn-bg: #62362a;
+    --filter-btn-border: #3d211a;
+    --filter-btn-shadow: #24110d;
+
+    --filter-container-bg: rgba(28, 14, 11, 0.92);
+
+    --filter-radio-group-bg: rgba(255, 180, 128, 0.14);
+    --filter-radio-group-shadoow: rgba(0, 0, 0, 0.3);
+    --filter-radio-container-bg: rgba(255, 255, 255, 0.12);
+    --filter-radio-container-shadow: rgba(0, 0, 0, 0.18);
+    --filter-radio-container-bg-hover: rgba(255, 255, 255, 0.18);
+    --filter-radio-container-shadow-hover: rgba(0, 0, 0, 0.28);
+
+    --filter-radio-checkmark-border: #fff1de;
+    --filter-radio-checkmark-bg: rgba(0, 0, 0, 0.32);
+    --filter-radio-checkmark-shadow: rgba(0, 0, 0, 0.36);
+    --filter-radio-checkmark-after: #d87042;
+
+    --filter-radio-checkmark-shadow-pulse: rgba(255, 180, 125, 0.18);
+
+    --game-item-shadow: rgba(6, 3, 2, 0.72);
+    --game-item-shadow-hover: rgba(255, 171, 110, 0.42);
+
+    --game-item-text-over-bg-old: rgba(34, 17, 13, 0.95);
+    --game-item-text-over-bg: rgba(34, 17, 13, 0.78);
+    --game-item-text-over-shadow: rgba(0, 0, 0, 0.55);
+    --game-item-text-over-text-color: #fff7ee;
+
+    --note-bg: rgba(38, 18, 14, 0.9);
+    --note-border: rgba(255, 197, 152, 0.16);
+    --note-shadow: rgba(0, 0, 0, 0.45);
+
+    --notification-bg-start: rgba(62, 31, 22, 0.96);
+    --notification-bg-end: rgba(26, 13, 10, 0.96);
+    --notification-border: rgba(255, 214, 178, 0.16);
+    --notification-accent-start: #ff9f5c;
+    --notification-accent-mid: #ff7d4f;
+    --notification-accent-end: #f0b35f;
+    --notification-btn-bg-start: rgba(255, 159, 92, 0.18);
+    --notification-btn-bg-end: rgba(255, 125, 79, 0.18);
+    --notification-btn-border: rgba(255, 159, 92, 0.3);
+    --notification-btn-bg-hover-start: rgba(255, 159, 92, 0.28);
+    --notification-btn-bg-hover-end: rgba(255, 125, 79, 0.28);
+    --notification-btn-border-hover: rgba(255, 159, 92, 0.46);
+
+    --sidenav-bg-start: rgba(54, 28, 21, 0.8);
+    --sidenav-bg-end: #160c0a;
+    --sidenav-border: rgba(255, 208, 177, 0.12);
+    --sidenav-header-bg-start: #5c3024;
+    --sidenav-header-bg-end: #2d1712;
+    --sidenav-icon-btn-bg: rgba(255, 255, 255, 0.06);
+    --sidenav-icon-btn-bg-hover: rgba(255, 255, 255, 0.12);
+    --sidenav-icon-btn-border: rgba(255, 218, 189, 0.1);
+    --sidenav-icon-btn-border-hover: rgba(255, 218, 189, 0.22);
+    --sidenav-menu-item-bg: rgba(255, 255, 255, 0.035);
+    --sidenav-menu-item-bg-hover: rgba(255, 255, 255, 0.09);
+    --sidenav-menu-item-border: rgba(255, 255, 255, 0.06);
+    --sidenav-menu-item-border-hover: rgba(255, 255, 255, 0.14);
+    --sidenav-menu-highlight-bg-start: rgba(255, 133, 74, 0.22);
+    --sidenav-menu-highlight-bg-end: rgba(240, 179, 95, 0.2);
+    --sidenav-menu-highlight-border: rgba(255, 181, 129, 0.32);
+    --sidenav-menu-highlight-bg-hover-start: rgba(255, 133, 74, 0.32);
+    --sidenav-menu-highlight-bg-hover-end: rgba(240, 179, 95, 0.28);
+    --sidenav-menu-highlight-border-hover: rgba(255, 181, 129, 0.42);
+    --sidenav-menu-warning-bg-start: rgba(255, 111, 15, 0.18);
+    --sidenav-menu-warning-bg-end: rgba(206, 168, 1, 0.18);
+    --sidenav-menu-warning-border: rgba(255, 111, 15, 0.3);
+    --sidenav-menu-warning-bg-hover-start: rgba(255, 111, 15, 0.28);
+    --sidenav-menu-warning-bg-hover-end: rgba(206, 168, 1, 0.28);
+    --sidenav-menu-warning-border-hover: rgba(255, 111, 15, 0.48);
+    --sidenav-menu-discord-bg-start: rgba(114, 137, 218, 0.15);
+    --sidenav-menu-discord-bg-end: rgba(132, 152, 223, 0.15);
+    --sidenav-menu-discord-border: rgba(114, 137, 218, 0.3);
+    --sidenav-menu-discord-bg-hover-start: rgba(114, 137, 218, 0.25);
+    --sidenav-menu-discord-bg-hover-end: rgba(132, 152, 223, 0.25);
+    --sidenav-menu-discord-border-hover: rgba(114, 137, 218, 0.5);
+    --sidenav-footer-bg-start: #1a0d0a;
+    --sidenav-footer-bg-end: #2a140f;
+    --sidenav-stat-bg: rgba(255, 255, 255, 0.05);
+    --sidenav-badge-discord: #7289DA;
+}

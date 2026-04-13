@@ -26,6 +26,31 @@ const POPULAR_GAME_PRIORS = {
     fnaf: 0.76,
     'fnaf 2': 0.75
 };
+const GAME_STATUS_DETAILS = {
+    bugged: {
+        label: 'Bugged',
+        message: 'This game may have loading or gameplay issues.'
+    },
+    broken: {
+        label: 'Broken',
+        message: 'This game is currently not working correctly.'
+    },
+    maintenance: {
+        label: 'Fixing',
+        message: 'This game is being worked on and may change soon.'
+    }
+};
+const GAME_STATUS_ALIASES = {
+    issue: 'bugged',
+    issues: 'bugged',
+    buggy: 'bugged',
+    unstable: 'bugged',
+    down: 'broken',
+    disabled: 'broken',
+    unavailable: 'broken',
+    wip: 'maintenance',
+    repair: 'maintenance'
+};
 
 let gamesData = {};
 let recommender;
@@ -37,6 +62,57 @@ const batchSize = DEFAULT_BATCH_SIZE;
 
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
+}
+
+function isEnabledFlag(value) {
+    if (value === true || value === 1) return true;
+    if (typeof value === 'string') return ['true', '1', 'yes', 'y', 'on'].includes(value.trim().toLowerCase());
+    return false;
+}
+
+function normalizeGameStatusKey(game) {
+    if (!game) return '';
+    const rawStatus = String(game.status || '').trim().toLowerCase().replace(/[\s_]+/g, '-');
+    const normalizedStatus = GAME_STATUS_ALIASES[rawStatus] || rawStatus;
+    if (normalizedStatus && normalizedStatus !== 'ok' && normalizedStatus !== 'working' && GAME_STATUS_DETAILS[normalizedStatus]) return normalizedStatus;
+    if (isEnabledFlag(game.gameisbroken) || isEnabledFlag(game.isBroken)) return 'broken';
+    if (isEnabledFlag(game.gameisbugged) || isEnabledFlag(game.isBugged)) return 'bugged';
+    if (isEnabledFlag(game.maintenance)) return 'maintenance';
+    return '';
+}
+
+function getGameStatus(game) {
+    const statusKey = normalizeGameStatusKey(game);
+    const statusDetails = GAME_STATUS_DETAILS[statusKey];
+    if (!statusDetails) return null;
+    return {
+        key: statusKey,
+        label: game.statusLabel || statusDetails.label,
+        message: game.statusMessage || game.brokenMessage || statusDetails.message,
+        updated: game.statusUpdated || ''
+    };
+}
+
+function createGameStatusBadge(status) {
+    if (!status) return null;
+    const badge = document.createElement('span');
+    const message = status.updated ? `${status.message} Updated ${status.updated}.` : status.message;
+    badge.className = `game-status-badge game-status-badge--${status.key}`;
+    badge.title = message;
+    badge.setAttribute('aria-label', `${status.label}: ${message}`);
+
+    const marker = document.createElement('span');
+    marker.className = 'game-status-badge-mark';
+    marker.setAttribute('aria-hidden', 'true');
+    marker.textContent = '!';
+    badge.appendChild(marker);
+
+    const label = document.createElement('span');
+    label.className = 'game-status-badge-label';
+    label.textContent = status.label;
+    badge.appendChild(label);
+
+    return badge;
 }
 
 function getCookie(name) {
@@ -601,11 +677,26 @@ function setIntroState(title, description) {
 
 function buildGameLink(game) {
     if (!game) return '';
-    if (game.type === 'html') return `Games/game.html?game=${game.link}&type=html&name=${game.name.toLowerCase()}`;
-    if (game.type === 'buckshot') return 'Games/Buckshot-Roulette.html';
-    if (game.type === 'unity') return `Games/game.html?game=${game.link}&type=unity&name=${game.name.toLowerCase()}`;
-    if (game.type === 'flash') return `Games/game.html?game=${game.link}&type=flash&name=${game.name.toLowerCase()}`;
-    if (game.key && !game.link) return `Games/game.html?game=${game.key}&type=html&name=${game.name.toLowerCase()}`;
+    const gameId = game.key || String(game.name || '')
+        .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/[._-]+/g, ' ')
+        .replace(/[^a-z0-9() ]+/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    if (game.type === 'html' || game.type === 'unity' || game.type === 'flash') {
+        return `Games/game.html?id=${encodeURIComponent(gameId)}`;
+    }
+
+    if (game.type === 'buckshot') {
+        return `Games/Buckshot-Roulette.html?id=${encodeURIComponent(gameId)}`;
+    }
+
+    if (game.key && !game.link) {
+        return `Games/game.html?id=${encodeURIComponent(game.key)}`;
+    }
+
     return game.link || '';
 }
 
@@ -615,6 +706,11 @@ async function initializePage() {
         const response = await fetch('games.json');
         if (!response.ok) throw new Error('Failed to fetch games data');
         gamesData = await response.json();
+        Object.entries(gamesData).forEach(([key, game]) => {
+            if (game && !game.key) {
+                game.key = key;
+            }
+        });
         userActivity = getUserActivityFromCookie();
         recommender = new GameRecommendationEngine(gamesData);
         window.setTimeout(() => { generateRecommendations(); hideLoadingScreen(); setupScrollListener(); }, 900);
@@ -674,6 +770,16 @@ function createGameCard(game) {
     const thumb = document.createElement('div');
     thumb.className = 'game-thumb';
     thumb.style.backgroundImage = `url('/covers/${game.cover}')`;
+
+    const status = getGameStatus(game);
+    if (status) {
+        const badge = createGameStatusBadge(status);
+        card.classList.add('has-game-status', `game-status-card--${status.key}`);
+        card.dataset.gameStatus = status.key;
+        card.title = [card.title, `${status.label}: ${status.message}`].filter(Boolean).join(' | ');
+        if (badge) thumb.appendChild(badge);
+    }
+
     card.appendChild(thumb);
 
     const body = document.createElement('div');

@@ -93,6 +93,7 @@ function renderGames(data, isSearch = false) {
   gameKeys.forEach((key, index) => {
     const game = data[key];
     const gameItem = window.GameCatalog.createGameCard(game, {
+      gameId: key,
       onClick: typeof trackActivity === 'function' ? trackActivity : null,
     });
 

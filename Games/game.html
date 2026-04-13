@@ -8,15 +8,11 @@
     <link rel="icon" href="../Q.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="../styles/default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="../styles/default.css" id="themecss">
     <link rel="stylesheet" href="../gamecss.css">
+    <script src="../themeshandler.js"></script>
 
     <!-- Scripts -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('../service-worker.js');
-        }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
     <script src="../useractivity.js"></script>
@@ -39,7 +35,8 @@
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: var(--main-bg-color);
             color: var(--text-color);
-            height: 100vh;
+            min-height: 100dvh;
+            height: 100dvh;
             overflow: hidden;
             position: relative;
         }
@@ -47,8 +44,9 @@
         /* Player Shell */
         .player-shell {
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            min-height: 100dvh;
+            height: 100dvh;
         }
 
         .player-frame {
@@ -69,7 +67,7 @@
         .hud-wrap {
             position: fixed;
             left: 50%;
-            bottom: 32px;
+            bottom: calc(20px + env(safe-area-inset-bottom));
             transform: translateX(-50%);
             z-index: 1000;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -88,7 +86,7 @@
             gap: 10px;
             padding: 6px 14px;
             height: 48px;
-            width: min(520px, 88vw);
+            width: min(520px, calc(100vw - 28px));
             background: linear-gradient(180deg, var(--sidenav-bg-start) 0%, var(--sidenav-bg-end) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -197,7 +195,7 @@
         .hud-toggle {
             position: fixed;
             left: 50%;
-            bottom: 20px;
+            bottom: calc(12px + env(safe-area-inset-bottom));
             transform: translateX(-50%);
             display: none;
             align-items: center;
@@ -251,6 +249,178 @@
             visibility: hidden;
             transform: scale(0.985);
             pointer-events: none;
+        }
+
+        .game-selector-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(3, 5, 8, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 2100;
+        }
+
+        .game-selector-overlay.active {
+            display: flex;
+        }
+
+        .game-selector-card {
+            width: min(760px, 100%);
+            max-height: min(82vh, 820px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 24px;
+            border: 1px solid var(--sidenav-border);
+            background: linear-gradient(180deg, var(--sidenav-bg-start) 0%, var(--sidenav-bg-end) 100%);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+        }
+
+        .game-selector-header {
+            padding: 24px 24px 12px;
+        }
+
+        .game-selector-kicker {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 8px;
+        }
+
+        .game-selector-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .game-selector-header p {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.55;
+            max-width: 620px;
+        }
+
+        .game-selector-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 24px 18px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--sidenav-icon-btn-border);
+            background: var(--sidenav-icon-btn-bg);
+        }
+
+        .game-selector-search .material-icons {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        .game-selector-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font: inherit;
+            outline: none;
+        }
+
+        .game-selector-input::placeholder {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .game-selector-list {
+            display: grid;
+            gap: 10px;
+            padding: 0 18px 20px;
+            overflow-y: auto;
+        }
+
+        .game-selector-option {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px;
+            border-radius: 18px;
+            border: 1px solid var(--sidenav-menu-item-border);
+            background: var(--sidenav-menu-item-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+            text-align: left;
+        }
+
+        .game-selector-option:hover {
+            transform: translateY(-2px);
+            background: var(--sidenav-menu-item-bg-hover);
+            border-color: var(--sidenav-menu-item-border-hover);
+        }
+
+        .game-selector-option img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid var(--sidenav-icon-btn-border);
+            background: rgba(0, 0, 0, 0.22);
+            flex-shrink: 0;
+        }
+
+        .game-selector-option-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .game-selector-option-title {
+            font-size: 1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .game-selector-option-meta {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-selector-option-badge {
+            flex-shrink: 0;
+            padding: 7px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--sidenav-icon-btn-border);
+            background: var(--sidenav-icon-btn-bg);
+            color: rgba(255, 255, 255, 0.76);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .game-selector-empty {
+            padding: 20px;
+            border-radius: 18px;
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.68);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .game-selector-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 0 24px 24px;
         }
 
         .loading-backdrop {
@@ -318,7 +488,7 @@
         .loading-stage {
             position: relative;
             z-index: 2;
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -484,11 +654,11 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .hud-wrap {
-                bottom: 20px;
+                bottom: calc(14px + env(safe-area-inset-bottom));
             }
 
             .hud-pill {
-                width: min(420px, 92vw);
+                width: min(420px, calc(100vw - 16px));
                 padding: 5px 12px;
                 height: 44px;
                 gap: 8px;
@@ -535,6 +705,11 @@
                 bottom: 0;
             }
 
+            .loading-actions {
+                flex-wrap: wrap;
+                padding: 0 10px 10px;
+            }
+
             .loading-option {
                 padding: 7px 9px;
                 font-size: 0.72rem;
@@ -545,6 +720,7 @@
             .hud-pill {
                 gap: 6px;
                 height: 40px;
+                padding: 4px 10px;
             }
 
             .controls-group {
@@ -616,6 +792,7 @@
             .loading-actions {
                 gap: 6px;
                 margin-bottom: 8px;
+                padding: 0 8px 8px;
             }
 
             .loading-option {
@@ -669,8 +846,8 @@
         .controller-modal {
             position: relative;
             z-index: 2;
-            width: min(680px, 92vw);
-            max-height: 85vh;
+            width: min(680px, calc(100vw - 20px));
+            max-height: min(85dvh, 760px);
             background: linear-gradient(180deg, var(--sidenav-bg-start) 0%, var(--sidenav-bg-end) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -1442,6 +1619,18 @@
             .help-problem-action {
                 width: 100%;
             }
+
+            .game-selector-card {
+                max-height: 86vh;
+            }
+
+            .game-selector-option {
+                align-items: flex-start;
+            }
+
+            .game-selector-option-badge {
+                align-self: center;
+            }
         }
     </style>
 </head>
@@ -1538,6 +1727,30 @@
 
                 <div class="progress-bar-container">
                     <div class="progress-fill" id="progbar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-selector-overlay" id="game-selector-overlay" hidden>
+            <div class="game-selector-card" role="dialog" aria-modal="true" aria-labelledby="game-selector-title">
+                <div class="game-selector-header">
+                    <div class="game-selector-kicker">Player Lookup</div>
+                    <h2 id="game-selector-title">Select your game</h2>
+                    <p id="game-selector-message">We could not find an exact catalog match. Search for your game below or choose one of the closest results.</p>
+                </div>
+
+                <label class="game-selector-search" for="game-selector-input">
+                    <span class="material-icons">search</span>
+                    <input id="game-selector-input" class="game-selector-input" type="search" placeholder="Search games">
+                </label>
+
+                <div class="game-selector-list" id="game-selector-list"></div>
+
+                <div class="game-selector-footer">
+                    <a class="controller-action-btn secondary" href="../index.html">
+                        <span class="material-icons">home</span>
+                        <span>Return Home</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1813,6 +2026,7 @@
     </div>
 
  
+    <script src="../globalscripts/game-catalog.js"></script>
     <script src="./game-runtime.js"></script>
     <script src="../globalscripts/game-main-core.js"></script>
     <script src="../globalscripts/game-main-loading.js"></script>

@@ -3,14 +3,50 @@
 
   function getGameParams() {
     const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
     const game = params.get('game');
+    const name = params.get('name');
     let type = params.get('type');
 
     if (type === 'null' || type === null) {
       type = 'unset';
     }
 
-    return { params, game, type };
+    return { params, id, game, name, type };
+  }
+
+  function sanitizeGameType(type) {
+    return type === 'flash' || type === 'unity' || type === 'html'
+      ? type
+      : 'html';
+  }
+
+  async function getResolvedGameContext() {
+    if (window.QZGamePage && typeof window.QZGamePage.resolveRequestedGame === 'function') {
+      const resolvedContext = await window.QZGamePage.resolveRequestedGame();
+      if (!resolvedContext || !resolvedContext.game || !resolvedContext.game.link) {
+        return null;
+      }
+
+      return {
+        url: resolvedContext.game.link,
+        type: sanitizeGameType(resolvedContext.game.type),
+        id: resolvedContext.id,
+        name: resolvedContext.game.name
+      };
+    }
+
+    const { game, type } = getGameParams();
+    if (!game) {
+      return null;
+    }
+
+    return {
+      url: game,
+      type: sanitizeGameType(type),
+      id: null,
+      name: null
+    };
   }
 
   function backhome() {
@@ -185,20 +221,25 @@
     }
   }
 
-  function init() {
+  async function init() {
     if (window.__qzGamePlayerInitialized) {
       return;
     }
 
     window.__qzGamePlayerInitialized = true;
 
-    const { game, type } = getGameParams();
-    if (game) {
-      initGame(game, type === 'html' || type === 'flash' || type === 'unity' ? type : 'html');
+    const resolvedGame = await getResolvedGameContext();
+    if (resolvedGame && resolvedGame.url) {
+      initGame(resolvedGame.url, resolvedGame.type);
       return;
     }
 
-    console.warn('no param found');
+    if (window.QZGamePage && typeof window.QZGamePage.resolveRequestedGame === 'function') {
+      console.warn('No matching catalog game was resolved for this player request.');
+      return;
+    }
+
+    console.warn('No game parameter found');
     initGame('error.html', 'html');
   }
 

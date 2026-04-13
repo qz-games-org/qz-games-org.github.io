@@ -67,6 +67,31 @@
         }
     }
 
+    function shouldLoadWeatherSystem() {
+        try {
+            return window.localStorage.getItem('weather_enabled') !== 'false';
+        } catch (error) {
+            return true;
+        }
+    }
+
+    async function initHomepageWeather() {
+        if (!shouldLoadWeatherSystem()) {
+            const greetingBanner = document.getElementById('greeting-banner');
+            if (greetingBanner) {
+                greetingBanner.style.display = 'none';
+            }
+            return;
+        }
+
+        try {
+            await loadScript('./weather-widget.js', 'weather-widget-script');
+            await loadScript('./greeting-banner.js', 'greeting-banner-script');
+        } catch (error) {
+            console.error('Failed to initialize homepage weather system.', error);
+        }
+    }
+
     function getChangelogElements() {
         return {
             button: document.getElementById('changelogButton'),
@@ -202,11 +227,22 @@
 
         initChangelog();
         initHomepageBackground();
+
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(() => {
+                initHomepageWeather();
+            }, { timeout: 1200 });
+        } else {
+            window.setTimeout(() => {
+                initHomepageWeather();
+            }, 500);
+        }
     }
 
     window.QZHomepageInit = {
         init,
         initHomepageBackground,
+        initHomepageWeather,
         openChangelog,
         closeChangelog
     };

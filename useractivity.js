@@ -161,7 +161,7 @@ function formatGameData(gameData) {
  * Track activity when element is clicked
  */
 function trackActivity(event) {
-    const elementId = event.currentTarget.id;
+    const elementId = event.currentTarget.dataset.gameId || event.currentTarget.id;
 
     if (DEBUG_MODE) {
         alert(`Element ID: ${elementId}`);
@@ -253,18 +253,33 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Auto-start tracking on game page
-(function() {
+(async function initGameActivityTracking() {
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', arguments.callee);
+        document.addEventListener('DOMContentLoaded', initGameActivityTracking, { once: true });
         return;
     }
 
     // Clean up any duplicate entries on load
     mergeDuplicates();
 
-    // Check if on game page (use ?name= parameter)
+    // Check if on game page (prefer catalog id, then fall back to older params)
     const params = new URLSearchParams(window.location.search);
-    let gameKey = params.get('name');
+    let gameKey = params.get('id');
+
+    if (!gameKey && window.QZGamePage && typeof window.QZGamePage.resolveRequestedGame === 'function') {
+        try {
+            const resolvedGame = await window.QZGamePage.resolveRequestedGame();
+            if (resolvedGame && resolvedGame.id) {
+                gameKey = resolvedGame.id;
+            }
+        } catch (error) {
+            console.error('Error resolving game id for activity tracking:', error);
+        }
+    }
+
+    if (!gameKey) {
+        gameKey = params.get('name');
+    }
 
     // If name not found, fallback to extracting from ?game= path
     if (!gameKey) {

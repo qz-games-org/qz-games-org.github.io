@@ -16,13 +16,15 @@
             latitude: 40.7128,
             longitude: -74.0060
         },
+        CACHE_TTL: 600000,
         STORAGE_KEYS: {
             LOCATION: 'weather_location',
             TEMP_UNIT: 'weather_temp_unit',
             LAST_UPDATE: 'weather_last_update',
             LOCATION_METHOD: 'weather_location_method',
             ENABLED: 'weather_enabled',
-            EXPANDED_STATE: 'weather_expanded'
+            EXPANDED_STATE: 'weather_expanded',
+            WEATHER_CACHE: 'weather_cached_payload'
         }
     };
 
@@ -125,6 +127,16 @@
     function loadWeatherByMethod() {
         const method = getLocationMethod();
         const savedLocation = getSavedLocation();
+        const cachedWeather = getFreshWeatherCache();
+
+        if (cachedWeather && cachedWeather.method === method) {
+            updateWeatherDisplay(cachedWeather.data, cachedWeather.locationName);
+            showLoading(false);
+
+            if (Date.now() - cachedWeather.timestamp < CONFIG.CACHE_TTL / 2) {
+                return;
+            }
+        }
 
         switch(method) {
             case 'geolocation':
@@ -325,6 +337,12 @@
             const data = await response.json();
 
             if (data.current) {
+                saveWeatherCache({
+                    method: getLocationMethod(),
+                    locationName,
+                    data: data.current,
+                    timestamp: Date.now()
+                });
                 updateWeatherDisplay(data.current, locationName);
                 saveLastUpdate();
             } else {
@@ -497,6 +515,38 @@
             localStorage.setItem(CONFIG.STORAGE_KEYS.LAST_UPDATE, Date.now().toString());
         } catch (e) {
             console.error('Failed to save last update:', e);
+        }
+    }
+
+    function saveWeatherCache(payload) {
+        try {
+            localStorage.setItem(CONFIG.STORAGE_KEYS.WEATHER_CACHE, JSON.stringify(payload));
+        } catch (e) {
+            console.error('Failed to save weather cache:', e);
+        }
+    }
+
+    function getFreshWeatherCache() {
+        try {
+            const raw = localStorage.getItem(CONFIG.STORAGE_KEYS.WEATHER_CACHE);
+            if (!raw) {
+                return null;
+            }
+
+            const payload = JSON.parse(raw);
+            if (!payload || !payload.timestamp || !payload.data) {
+                return null;
+            }
+
+            if (Date.now() - payload.timestamp > CONFIG.CACHE_TTL) {
+                localStorage.removeItem(CONFIG.STORAGE_KEYS.WEATHER_CACHE);
+                return null;
+            }
+
+            return payload;
+        } catch (e) {
+            console.error('Failed to read weather cache:', e);
+            return null;
         }
     }
 

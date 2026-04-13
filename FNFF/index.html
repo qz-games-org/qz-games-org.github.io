@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="../styles/default.css" id="theme-stylesheet">
     <link rel="stylesheet" href="../FNFF/style.css">
+    <script defer src="../GlobalSettings.js"></script>
 
     <script>
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && localStorage.getItem('cacheEnabled') === 'true') {
             navigator.serviceWorker.register('../service-worker.js');
         }
     </script>

@@ -71,15 +71,18 @@
         gameTitle.style.opacity = '0';
       }
 
-      const response = await fetch(getGameJsonUrl());
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const gamesData = window.GameCatalog && typeof window.GameCatalog.fetchGamesData === 'function'
+        ? await window.GameCatalog.fetchGamesData(getGameJsonUrl())
+        : await fetch(getGameJsonUrl()).then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-      const gamesData = await response.json();
+          return response.json();
+        });
       const gameName = (getUrlParameter('name') || '').toLowerCase();
       if (!gameName) {
-        showError('No game parameter found in URL. Add ?name=your-game-name to the URL.');
+        showError('No game id found in URL. Add ?id=your-game-id to the URL.');
         return;
       }
 

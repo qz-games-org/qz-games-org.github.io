@@ -193,11 +193,14 @@
     },
     "rocket league": {
         "cover": "rocketl.png",
-        "name": "Rocket League (fix in progress)",
+        "name": "Rocket League",
         "gradient": "blue",
         "catagory": "casual driver",
         "link": "../Games01/Rocket-League",
-        "type": "html"   
+        "type": "html",
+        "status": "broken",
+        "statusMessage": "Fails to load at all",
+        "statusUpdated": "2026-04-12"
     },
     "tactical weapon pack 2": {
         "cover": "twp.png",
@@ -801,11 +804,15 @@
     },
     "super smash flash 2": {
         "cover": "ssf2.png",
-        "name": "Super Smash Flash 2 (fix in progress)",
+        "name": "Super Smash Flash 2",
         "gradient": "grey",
         "catagory": "casual",
         "link": "../Games04/Repo4/super-smash-flash-2.swf",
-        "type": "flash"   
+        "type": "flash",   
+        "status": "broken",
+        "statusMessage": "",
+        "statusUpdated": "2026-04-12"
+
     },
     "chrome dino": {
         "cover": "cdno.png",

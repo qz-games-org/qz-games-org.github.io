@@ -38,6 +38,138 @@ function pickItems(data, count, seedString) {
     return chosen;
 }
 
+function normalizeFeaturedGameId(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/[._-]+/g, ' ')
+        .replace(/[^a-z0-9() ]+/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function escapeFeaturedHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function isFeaturedStatusFlagEnabled(value) {
+    if (value === true || value === 1) {
+        return true;
+    }
+
+    if (typeof value === 'string') {
+        return ['true', '1', 'yes', 'y', 'on'].includes(value.trim().toLowerCase());
+    }
+
+    return false;
+}
+
+const FEATURED_GAME_STATUS_DETAILS = {
+    bugged: {
+        label: 'Bugged',
+        message: 'This game may have loading or gameplay issues.'
+    },
+    broken: {
+        label: 'Broken',
+        message: 'This game is currently not working correctly.'
+    },
+    maintenance: {
+        label: 'Fixing',
+        message: 'This game is being worked on and may change soon.'
+    }
+};
+
+const FEATURED_GAME_STATUS_ALIASES = {
+    issue: 'bugged',
+    issues: 'bugged',
+    buggy: 'bugged',
+    unstable: 'bugged',
+    down: 'broken',
+    disabled: 'broken',
+    unavailable: 'broken',
+    wip: 'maintenance',
+    repair: 'maintenance'
+};
+
+function getFeaturedGameStatus(game) {
+    if (window.GameCatalog && typeof window.GameCatalog.getGameStatus === 'function') {
+        return window.GameCatalog.getGameStatus(game);
+    }
+
+    const rawStatus = String(game && game.status || '').trim().toLowerCase().replace(/[\s_]+/g, '-');
+    const statusKey = FEATURED_GAME_STATUS_ALIASES[rawStatus] || rawStatus;
+    let normalizedStatus = '';
+
+    if (statusKey && statusKey !== 'ok' && statusKey !== 'working' && FEATURED_GAME_STATUS_DETAILS[statusKey]) {
+        normalizedStatus = statusKey;
+    } else if (game && (isFeaturedStatusFlagEnabled(game.gameisbroken) || isFeaturedStatusFlagEnabled(game.isBroken))) {
+        normalizedStatus = 'broken';
+    } else if (game && (isFeaturedStatusFlagEnabled(game.gameisbugged) || isFeaturedStatusFlagEnabled(game.isBugged))) {
+        normalizedStatus = 'bugged';
+    } else if (game && isFeaturedStatusFlagEnabled(game.maintenance)) {
+        normalizedStatus = 'maintenance';
+    }
+
+    const statusDetails = FEATURED_GAME_STATUS_DETAILS[normalizedStatus];
+
+    if (!statusDetails) {
+        return null;
+    }
+
+    return {
+        key: normalizedStatus,
+        label: game.statusLabel || statusDetails.label,
+        message: game.statusMessage || game.brokenMessage || statusDetails.message,
+        updated: game.statusUpdated || ''
+    };
+}
+
+function createFeaturedGameStatusBadgeMarkup(status) {
+    if (!status) {
+        return '';
+    }
+
+    const message = status.updated ? `${status.message} Updated ${status.updated}.` : status.message;
+
+    return `
+        <span
+            class="game-status-badge game-status-badge--${escapeFeaturedHtml(status.key)}"
+            title="${escapeFeaturedHtml(message)}"
+            aria-label="${escapeFeaturedHtml(`${status.label}: ${message}`)}"
+        >
+            <span class="game-status-badge-mark" aria-hidden="true">!</span>
+            <span class="game-status-badge-label">${escapeFeaturedHtml(status.label)}</span>
+        </span>
+    `;
+}
+
+function buildFeaturedGameLink(game) {
+    if (!game) {
+        return '#';
+    }
+
+    if (game.customlink) {
+        return game.link;
+    }
+
+    const gameId = game.id || game.catalogId || game.key || normalizeFeaturedGameId(game.name);
+
+    if (game.type === 'buckshot') {
+        return `./Games/Buckshot-Roulette.html?id=${encodeURIComponent(gameId)}`;
+    }
+
+    if (game.type === 'html' || game.type === 'unity' || game.type === 'flash') {
+        return `./Games/game.html?id=${encodeURIComponent(gameId)}`;
+    }
+
+    return game.link || '#';
+}
+
 // Configuration variables for gradient generation
 const GRADIENT_CONFIG = {
     // Sampling configuration
@@ -171,18 +303,23 @@ function createSlide(game, index, isActive = false) {
     slide.dataset.index = index;
 
     // Determine the link URL based on whether it's a custom link or game link
-    const linkUrl = game.customlink
-        ? game.link
-        : `./Games/game.html?game=${game.link}&type=${game.type}&name=${game.name.toLowerCase()}`;
+    const linkUrl = buildFeaturedGameLink(game);
+    const status = getFeaturedGameStatus(game);
+    if (status) {
+        slide.classList.add('has-game-status', `game-status-card--${status.key}`);
+        slide.dataset.gameStatus = status.key;
+        slide.title = `${status.label}: ${status.message}`;
+    }
 
     slide.innerHTML = `
         <div class="game-info">
-            <h2 class="game-name">${game.name}</h2>
-            <p class="game-category">${game.catagory}</p>
-            <a href="${linkUrl}" class="play-button">Play Now</a>
+            <h2 class="game-name">${escapeFeaturedHtml(game.name)}</h2>
+            <p class="game-category">${escapeFeaturedHtml(game.catagory)}</p>
+            ${createFeaturedGameStatusBadgeMarkup(status)}
+            <a href="${escapeFeaturedHtml(linkUrl)}" class="play-button">Play Now</a>
         </div>
         <div class="game-cover">
-            <img src="./covers/${game.cover}" alt="${game.name}" class="cover-image">
+            <img src="./covers/${escapeFeaturedHtml(game.cover)}" alt="${escapeFeaturedHtml(game.name)}" class="cover-image">
         </div>
     `;
 
@@ -330,7 +467,13 @@ async function loadFeaturedGames() {
                             cover: game.cover,
                             videoBackground: game.videoBackground || null, // Optional video background
                             customlink: game.customlink || false, // Check if it's a custom link
-                            key: game.name.toLowerCase().replace(/\s+/g, '-'),
+                            status: game.status || '',
+                            statusLabel: game.statusLabel || '',
+                            statusMessage: game.statusMessage || game.brokenMessage || '',
+                            statusUpdated: game.statusUpdated || '',
+                            gameisbroken: game.gameisbroken !== undefined ? game.gameisbroken : game.isBroken || false,
+                            gameisbugged: game.gameisbugged !== undefined ? game.gameisbugged : game.isBugged || false,
+                            key: game.key || normalizeFeaturedGameId(game.name),
                             isManual: true
                         }));
                     console.log('Loaded manual featured games (present: true):', manualGames);
@@ -343,6 +486,11 @@ async function loadFeaturedGames() {
         // Always load auto-selected games
         const response = await fetch('games.json');
         const gamesData = await response.json();
+        Object.entries(gamesData).forEach(([key, game]) => {
+            if (game && !game.key) {
+                game.key = key;
+            }
+        });
 
         const seed = getYearWeek();
         // If there's a manual game (present: true), show 4 total games (1 manual + 3 auto)

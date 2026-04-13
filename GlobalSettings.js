@@ -40,6 +40,8 @@
   const base = getBootstrapBase();
   const helperScripts = [
     `${base}globalscripts/globalsettings-page-guards.js`,
+    `${base}globalscripts/globalsettings-cache.js`,
+    `${base}globalscripts/tab-cloak.js`,
     `${base}globalscripts/globalsettings-translate.js`
   ];
 

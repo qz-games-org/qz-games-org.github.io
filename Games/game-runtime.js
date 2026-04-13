@@ -150,6 +150,19 @@ function reportIssue() {
     window.open('https://forms.gle/yLyC7rFkY1xeNk3TA', '_blank', 'noopener');
 }
 
+function setPageTitle(title) {
+    if (!title) {
+        return;
+    }
+
+    if (window.QZTabCloak && typeof window.QZTabCloak.applyPageTitle === 'function') {
+        window.QZTabCloak.applyPageTitle(title);
+        return;
+    }
+
+    document.title = title;
+}
+
 function toggleHud() {
     const wrap = document.getElementById('hud-wrap');
     if (wrap) {
@@ -261,66 +274,353 @@ const progressInterval = setInterval(() => {
     }
 }, 280);
 
-const urlParams = new URLSearchParams(window.location.search);
-const gameName = urlParams.get('name');
-const gameUrl = urlParams.get('game');
-const gameType = urlParams.get('type');
+const gameSelectorState = {
+    entries: [],
+    suggestions: [],
+    inputBound: false
+};
 
-if (gameName && gameName.trim() !== '') {
-    const loadingTitleEl = document.getElementById('loading-title');
-    if (loadingTitleEl) {
-        loadingTitleEl.textContent = gameName;
+let resolvedGameContext = null;
+let resolvedGamePromise = null;
+
+function safeDecodeGameValue(value) {
+    if (typeof value !== 'string') {
+        return value || '';
+    }
+
+    try {
+        return decodeURIComponent(value);
+    } catch (error) {
+        return value;
     }
 }
 
-if (gameName && gameName.trim() !== '') {
-    fetch('../games.json')
-        .then(response => response.json())
-        .then(gamesData => {
-            const gameKey = Object.keys(gamesData).find(key =>
-                key.toLowerCase() === gameName.toLowerCase()
-            );
-
-            if (gameKey && gamesData[gameKey]) {
-                const gameData = gamesData[gameKey];
-                const displayName = gameData.name;
-                const coverPath = `../covers/${gameData.cover}`;
-
-                const gameNameEl = document.getElementById('game-name');
-                const hudCoverEl = document.getElementById('hud-cover');
-                if (gameNameEl) gameNameEl.textContent = displayName;
-                if (hudCoverEl) hudCoverEl.src = coverPath;
-
-                const loadingTitleEl = document.getElementById('loading-title');
-                const loadingGameNameEl = document.getElementById('loading-game-name');
-                const loadingCoverEl = document.getElementById('loading-cover');
-                const loadingBackgroundEl = document.getElementById('loading-background');
-                const gameCoverEl = document.getElementById('gameCover');
-                if (loadingTitleEl) loadingTitleEl.textContent = displayName;
-                if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-                if (loadingCoverEl) loadingCoverEl.src = coverPath;
-                if (loadingBackgroundEl) loadingBackgroundEl.src = coverPath;
-                if (gameCoverEl) gameCoverEl.src = coverPath;
-
-                document.title = 'Qz Games | ' + displayName;
-            } else {
-                const gameNameEl = document.getElementById('game-name');
-                const loadingTitleEl = document.getElementById('loading-title');
-                const loadingGameNameEl = document.getElementById('loading-game-name');
-                if (gameNameEl) gameNameEl.textContent = gameName;
-                if (loadingTitleEl) loadingTitleEl.textContent = gameName;
-                if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-                document.title = 'Qz Games | ' + gameName;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading game data:', error);
-            const gameNameEl = document.getElementById('game-name');
-            const loadingTitleEl = document.getElementById('loading-title');
-            const loadingGameNameEl = document.getElementById('loading-game-name');
-            if (gameNameEl) gameNameEl.textContent = gameName;
-            if (loadingTitleEl) loadingTitleEl.textContent = gameName;
-            if (loadingGameNameEl) loadingGameNameEl.textContent = 'Preparing your session';
-            document.title = 'Qz Games | ' + gameName;
-        });
+function getRequestedGameReference() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        id: params.get('id'),
+        name: params.get('name'),
+        link: params.get('game'),
+        type: params.get('type')
+    };
 }
+
+function getRequestedGameLabel(reference = getRequestedGameReference()) {
+    return safeDecodeGameValue(
+        reference.id
+        || reference.name
+        || (reference.link ? reference.link.split('/').pop() : '')
+        || 'Getting ready'
+    )
+        .replace(/[-_]+/g, ' ')
+        .trim();
+}
+
+function setElementText(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function setElementSource(id, value) {
+    const element = document.getElementById(id);
+    if (element && value) {
+        element.src = value;
+    }
+}
+
+function replaceWithCanonicalGameId(gameId) {
+    if (!gameId || !window.history || typeof window.history.replaceState !== 'function') {
+        return;
+    }
+
+    const nextUrl = new URL(window.location.href);
+    nextUrl.search = '';
+    nextUrl.searchParams.set('id', gameId);
+    window.history.replaceState({}, '', nextUrl);
+}
+
+function stopLoadingProgress() {
+    clearInterval(progressInterval);
+
+    if (progressAnimationFrame) {
+        cancelAnimationFrame(progressAnimationFrame);
+        progressAnimationFrame = null;
+    }
+
+    progress = 100;
+    progressTarget = 100;
+
+    const progressFill = document.getElementById('progbar');
+    if (progressFill) {
+        progressFill.style.width = '100%';
+    }
+}
+
+function applyResolvedGamePresentation(context) {
+    if (!context || !context.game) {
+        return;
+    }
+
+    const displayName = context.game.name || context.id;
+    const coverPath = window.GameCatalog && typeof window.GameCatalog.getGameCoverLink === 'function'
+        ? window.GameCatalog.getGameCoverLink(context.game)
+        : `../covers/${context.game.cover}`;
+
+    setElementText('game-name', displayName);
+    setElementSource('hud-cover', coverPath);
+
+    setElementText('loading-title', displayName);
+    setElementText('loading-game-name', 'Preparing your session');
+    setElementText(
+        'loading-subtitle',
+        context.matchedBy === 'fuzzy'
+            ? `Closest catalog match for "${context.query}"`
+            : 'Setting up your gaming experience'
+    );
+
+    setElementSource('loading-cover', coverPath);
+    setElementSource('loading-background', coverPath);
+    setElementSource('gameCover', coverPath);
+
+    setPageTitle(`Qz Games | ${displayName}`);
+    replaceWithCanonicalGameId(context.id);
+}
+
+function getGameSelectorRefs() {
+    return {
+        overlay: document.getElementById('game-selector-overlay'),
+        message: document.getElementById('game-selector-message'),
+        input: document.getElementById('game-selector-input'),
+        list: document.getElementById('game-selector-list')
+    };
+}
+
+function scoreSelectorEntry(entry, query) {
+    const catalog = window.GameCatalog;
+    if (!catalog) {
+        return 0;
+    }
+
+    const normalizedQuery = catalog.normalizeGameLookup(query);
+    if (!normalizedQuery) {
+        return 0;
+    }
+
+    const normalizedName = catalog.normalizeGameLookup(entry.game.name);
+    const normalizedId = catalog.normalizeGameLookup(entry.id);
+    const containsScore = normalizedName.includes(normalizedQuery) || normalizedId.includes(normalizedQuery)
+        ? 0.92
+        : 0;
+
+    return Math.max(
+        containsScore,
+        catalog.calculateSimilarity(normalizedQuery, normalizedName),
+        catalog.calculateSimilarity(normalizedQuery, normalizedId)
+    );
+}
+
+function navigateToGameSelection(entry) {
+    if (!entry || !window.GameCatalog) {
+        return;
+    }
+
+    window.location.href = window.GameCatalog.getGameLink(entry.game, {
+        gameId: entry.id
+    });
+}
+
+function renderGameSelectorEntries(query = '') {
+    const refs = getGameSelectorRefs();
+    if (!refs.list) {
+        return;
+    }
+
+    const trimmedQuery = query.trim();
+    let entriesToRender = gameSelectorState.entries.slice();
+
+    if (trimmedQuery) {
+        entriesToRender = entriesToRender
+            .map((entry) => ({
+                ...entry,
+                searchScore: scoreSelectorEntry(entry, trimmedQuery)
+            }))
+            .filter((entry) => entry.searchScore >= 0.38)
+            .sort((left, right) => right.searchScore - left.searchScore || left.game.name.localeCompare(right.game.name))
+            .slice(0, 36);
+    } else {
+        entriesToRender = entriesToRender.slice(0, 28);
+    }
+
+    refs.list.innerHTML = '';
+
+    if (!entriesToRender.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'game-selector-empty';
+        emptyState.textContent = 'No matching games found. Try a different search.';
+        refs.list.appendChild(emptyState);
+        return;
+    }
+
+    entriesToRender.forEach((entry) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'game-selector-option';
+        button.addEventListener('click', () => navigateToGameSelection(entry));
+
+        const cover = document.createElement('img');
+        cover.src = window.GameCatalog.getGameCoverLink(entry.game);
+        cover.alt = `${entry.game.name} cover`;
+
+        const copy = document.createElement('div');
+        copy.className = 'game-selector-option-copy';
+
+        const title = document.createElement('div');
+        title.className = 'game-selector-option-title';
+        title.textContent = entry.game.name;
+
+        const meta = document.createElement('div');
+        meta.className = 'game-selector-option-meta';
+        meta.textContent = entry.game.catagory || entry.id;
+
+        copy.appendChild(title);
+        copy.appendChild(meta);
+
+        const badge = document.createElement('div');
+        badge.className = 'game-selector-option-badge';
+        badge.textContent = entry.isSuggested ? 'Suggested' : (entry.game.type || 'game');
+
+        button.appendChild(cover);
+        button.appendChild(copy);
+        button.appendChild(badge);
+
+        refs.list.appendChild(button);
+    });
+}
+
+function bindGameSelectorInput() {
+    const refs = getGameSelectorRefs();
+    if (!refs.input || gameSelectorState.inputBound) {
+        return;
+    }
+
+    gameSelectorState.inputBound = true;
+    refs.input.addEventListener('input', () => {
+        renderGameSelectorEntries(refs.input.value);
+    });
+}
+
+function showGameSelector(resolution, gamesData) {
+    const refs = getGameSelectorRefs();
+    if (!refs.overlay || !window.GameCatalog) {
+        return;
+    }
+
+    const suggestedEntries = (resolution && resolution.suggestions ? resolution.suggestions : []).map((entry) => ({
+        id: entry.id,
+        game: entry.game,
+        isSuggested: true
+    }));
+
+    const allEntries = window.GameCatalog.getCatalogEntries(gamesData)
+        .sort((left, right) => left.game.name.localeCompare(right.game.name))
+        .map((entry) => ({
+            ...entry,
+            isSuggested: false
+        }));
+
+    const mergedEntries = new Map();
+    suggestedEntries.forEach((entry) => mergedEntries.set(entry.id, entry));
+    allEntries.forEach((entry) => {
+        if (!mergedEntries.has(entry.id)) {
+            mergedEntries.set(entry.id, entry);
+        }
+    });
+
+    gameSelectorState.entries = Array.from(mergedEntries.values());
+    gameSelectorState.suggestions = suggestedEntries;
+
+    setElementText('game-name', 'Select a game');
+    setPageTitle('Qz Games | Select your game');
+    stopLoadingProgress();
+
+    if (typeof window.doneloading === 'function') {
+        window.doneloading();
+    }
+
+    refs.message.textContent = resolution && resolution.query
+        ? `We could not find an exact catalog match for "${resolution.query}". Search for your game or choose one of the closest results below.`
+        : 'No game was specified. Search for your game below or pick one from the catalog.';
+
+    refs.overlay.hidden = false;
+    refs.overlay.classList.add('active');
+    bindGameSelectorInput();
+    refs.input.value = resolution && resolution.query ? resolution.query : '';
+    renderGameSelectorEntries(refs.input.value);
+
+    window.setTimeout(() => {
+        refs.input.focus();
+        refs.input.select();
+    }, 80);
+}
+
+function setInitialRequestedGameLabel() {
+    const initialLabel = getRequestedGameLabel();
+    if (!initialLabel) {
+        return;
+    }
+
+    setElementText('loading-title', initialLabel);
+    setElementText('game-name', initialLabel);
+    setPageTitle(`Qz Games | ${initialLabel}`);
+}
+
+async function resolveRequestedGame() {
+    if (resolvedGamePromise) {
+        return resolvedGamePromise;
+    }
+
+    resolvedGamePromise = (async () => {
+        const reference = getRequestedGameReference();
+        const catalog = window.GameCatalog;
+
+        if (!catalog || typeof catalog.fetchGamesData !== 'function' || typeof catalog.resolveGameReference !== 'function') {
+            return null;
+        }
+
+        const gamesData = await catalog.fetchGamesData('../games.json');
+        const resolution = catalog.resolveGameReference(reference, gamesData);
+
+        if (!resolution.entry) {
+            showGameSelector(resolution, gamesData);
+            return null;
+        }
+
+        resolvedGameContext = {
+            id: resolution.entry.id,
+            game: resolution.entry.game,
+            matchedBy: resolution.matchedBy,
+            query: resolution.query,
+            gamesData
+        };
+
+        applyResolvedGamePresentation(resolvedGameContext);
+        return resolvedGameContext;
+    })().catch((error) => {
+        console.error('Error resolving game from catalog:', error);
+        showErrorNotification();
+        return null;
+    });
+
+    return resolvedGamePromise;
+}
+
+window.QZGamePage = {
+    resolveRequestedGame,
+    getResolvedGameContext: () => resolvedGameContext,
+    showGameSelector
+};
+
+setInitialRequestedGameLabel();
+resolveRequestedGame();

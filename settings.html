@@ -7,13 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap">
+  <link id="themecss" rel="stylesheet" href="./styles/default.css">
   <link rel="stylesheet" href="./styles/settings.css">
   <link rel="stylesheet" href="./animations.css">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js');
-    }
-  </script>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J246XWP5WQ"></script>
   <script>
@@ -24,6 +20,7 @@
       gtag('config', 'G-J246XWP5WQ');
   </script>
   <script src="./cookieshandle.js"></script>
+  <script src="./themeshandler.js"></script>
   <script src="./GlobalSettings.js"></script>
 </head>
 <body>
@@ -84,8 +81,52 @@
                 <span class="slider"></span>
               </label>
             </div>
-            
-          
+
+            <div class="info-container tab-cloak-panel">
+              <div class="section-subheader">
+                <h3>Tab Cloaking</h3>
+                <p>Make the tab look like a school tool by changing its title and icon.</p>
+              </div>
+
+              <div class="form-group">
+                <label for="tabCloakProfile">Preset</label>
+                <select id="tabCloakProfile">
+                  <option value="default">Default</option>
+                  <option value="classroom">Google Classroom</option>
+                  <option value="drive">Google Drive</option>
+                  <option value="docs">Google Docs</option>
+                  <option value="canvas">Canvas</option>
+                  <option value="schoology">Schoology</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="tabCloakTitle">Custom Title</label>
+                <input id="tabCloakTitle" type="text" placeholder="Leave blank to use the preset title">
+              </div>
+
+              <div class="form-group">
+                <label for="tabCloakFavicon">Custom Favicon URL</label>
+                <input id="tabCloakFavicon" type="text" placeholder="Leave blank to use the preset icon">
+              </div>
+
+              <div class="info-row compact">
+                <span class="info-label">Current Cloak</span>
+                <span class="info-value" id="tabCloakCurrent">Disabled</span>
+              </div>
+
+              <div class="action-buttons-group compact">
+                <button class="action-btn" id="applyTabCloakBtn">
+                  <span class="material-icons">visibility_off</span>
+                  Apply Cloak
+                </button>
+                <button class="action-btn secondary" id="resetTabCloakBtn">
+                  <span class="material-icons">restart_alt</span>
+                  Reset Cloak
+                </button>
+              </div>
+            </div>
+
             <div class="toggle-container">
               <div class="toggle-info">
                 <span class="toggle-label">Sound Effects</span>
@@ -354,6 +395,121 @@
               </div>
               <div class="theme-info">
                 <h3>Light</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="aurora" data-theme="aurora">
+              <div class="theme-preview aurora-theme">
+                <div class="preview-nav"></div>
+                <div class="aurora-band aurora-band-one"></div>
+                <div class="aurora-band aurora-band-two"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Aurora</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="obsidian-gold" data-theme="obsidian-gold">
+              <div class="theme-preview obsidian-gold-theme">
+                <div class="preview-nav"></div>
+                <div class="obsidian-gold-core"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Obsidian Gold</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="rose-noir" data-theme="rose-noir">
+              <div class="theme-preview rose-noir-theme">
+                <div class="preview-nav"></div>
+                <div class="rose-noir-glow"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Rose Noir</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="matcha" data-theme="matcha">
+              <div class="theme-preview matcha-theme">
+                <div class="preview-nav"></div>
+                <div class="matcha-orb"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Matcha Mist</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="sunset" data-theme="sunset">
+              <div class="theme-preview sunset-theme">
+                <div class="preview-nav"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Sunset Ember</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="oceanic" data-theme="oceanic">
+              <div class="theme-preview oceanic-theme">
+                <div class="preview-nav"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Oceanic</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="frostbyte" data-theme="frostbyte">
+              <div class="theme-preview frostbyte-theme">
+                <div class="preview-nav"></div>
+                <div class="frostbyte-sheen"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Frostbyte</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="crimson-core" data-theme="crimson-core">
+              <div class="theme-preview crimson-core-theme">
+                <div class="preview-nav"></div>
+                <div class="crimson-core-pulse"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Crimson Core</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="terminal" data-theme="terminal">
+              <div class="theme-preview terminal-theme">
+                <div class="preview-nav"></div>
+                <div class="terminal-grid"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Terminal Flux</h3>
+              </div>
+            </div>
+
+            <div class="theme-option" id="moonstone" data-theme="moonstone">
+              <div class="theme-preview moonstone-theme">
+                <div class="preview-nav"></div>
+                <div class="moonstone-orb"></div>
+              </div>
+              <div class="theme-info">
+                <h3>Moonstone</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="theme-variant-panel" id="auroraVariantPanel" hidden>
+            <div class="toggle-container theme-variant-container">
+              <div class="toggle-info">
+                <span class="toggle-label">Aurora Variant</span>
+                <span class="toggle-description">Simple keeps the current static look. Simulated adds a live animated aurora sky on supported pages.</span>
+              </div>
+              <div class="form-group theme-variant-select">
+                <label for="auroraVariantSelect">Mode</label>
+                <select id="auroraVariantSelect">
+                  <option value="simple">Simple</option>
+                  <option value="simulated">Simulated</option>
+                </select>
               </div>
             </div>
           </div>

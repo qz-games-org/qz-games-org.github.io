@@ -132,6 +132,61 @@
         pointer-events: none;
       }
 
+      .game-status-badge {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        max-width: calc(100% - 24px);
+        padding: 5px 9px 5px 6px;
+        border: 1px solid rgba(255, 170, 70, 0.34);
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(255, 130, 35, 0.24), rgba(205, 145, 0, 0.2));
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        line-height: 1;
+        text-transform: uppercase;
+        pointer-events: none;
+      }
+
+      .game-status-badge-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        flex: 0 0 14px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        font-size: 0.62rem;
+        line-height: 1;
+      }
+
+      .game-status-badge-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .game-status-badge--broken {
+        border-color: rgba(255, 80, 80, 0.42);
+        background: linear-gradient(135deg, rgba(255, 60, 60, 0.24), rgba(130, 10, 10, 0.28));
+      }
+
+      .game-status-badge--maintenance {
+        border-color: rgba(120, 180, 255, 0.38);
+        background: linear-gradient(135deg, rgba(75, 140, 255, 0.22), rgba(20, 70, 160, 0.24));
+      }
+
       .game-body {
         padding: 1.25rem;
         flex: 1;

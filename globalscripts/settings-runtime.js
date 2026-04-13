@@ -1,7 +1,68 @@
 (function() {
+  function getThemeVariantStorageKey(themeName) {
+    return `themeVariant_${String(themeName).replace(/[^a-z0-9_-]/gi, '_')}`;
+  }
+
+  function getSavedThemeVariant(themeName) {
+    if (window.QZThemeManager && typeof window.QZThemeManager.getThemeVariant === 'function') {
+      return window.QZThemeManager.getThemeVariant(themeName);
+    }
+
+    const storageKey = getThemeVariantStorageKey(themeName);
+    return (typeof getCookie === 'function' && getCookie(storageKey))
+      || localStorage.getItem(storageKey)
+      || 'simple';
+  }
+
+  function syncAuroraVariantPanel(activeTheme) {
+    const panel = document.getElementById('auroraVariantPanel');
+    const select = document.getElementById('auroraVariantSelect');
+    if (!panel || !select) {
+      return;
+    }
+
+    const isAurora = activeTheme === 'aurora';
+    panel.hidden = !isAurora;
+    panel.classList.toggle('is-visible', isAurora);
+    select.value = getSavedThemeVariant('aurora');
+  }
+
+  function initThemeVariantControls(activeTheme) {
+    const select = document.getElementById('auroraVariantSelect');
+    if (!select || select.dataset.bound === 'true') {
+      syncAuroraVariantPanel(activeTheme);
+      return;
+    }
+
+    select.dataset.bound = 'true';
+    select.value = getSavedThemeVariant('aurora');
+    syncAuroraVariantPanel(activeTheme);
+
+    select.addEventListener('change', () => {
+      const selectedVariant = select.value || 'simple';
+
+      if (window.QZThemeManager && typeof window.QZThemeManager.setThemeVariant === 'function') {
+        window.QZThemeManager.setThemeVariant('aurora', selectedVariant);
+        return;
+      }
+
+      const storageKey = getThemeVariantStorageKey('aurora');
+      if (typeof setCookie === 'function') {
+        setCookie(storageKey, selectedVariant);
+      }
+
+      try {
+        localStorage.setItem(storageKey, selectedVariant);
+      } catch (error) {
+        console.error('Failed to store Aurora theme variant.', error);
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const sections = document.querySelectorAll('.section');
+    const navMenu = document.querySelector('.settings-nav');
 
     tabButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -10,21 +71,29 @@
         button.classList.add('active');
         const target = button.getAttribute('data-target');
         document.getElementById(target).classList.add('active');
+
+        if (window.innerWidth <= 768 && navMenu) {
+          navMenu.classList.remove('show');
+          const menuIcon = document.querySelector('.mobile-menu-toggle .material-icons');
+          if (menuIcon) {
+            menuIcon.textContent = 'menu';
+          }
+        }
       });
     });
 
-    const themeOptions = document.querySelectorAll('.theme-option');
+    const themeOptions = document.querySelectorAll('.theme-option[data-theme]');
     themeOptions.forEach(option => {
       option.addEventListener('click', () => {
         themeOptions.forEach(opt => opt.classList.remove('active'));
         option.classList.add('active');
-        setCookie('theme', option.getAttribute('data-theme'));
-        applyTheme(option.getAttribute('data-theme'));
+        const selectedTheme = option.getAttribute('data-theme');
+        syncAuroraVariantPanel(selectedTheme);
+        applyTheme(selectedTheme);
       });
     });
 
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const navMenu = document.querySelector('.settings-nav');
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', () => {
         navMenu.classList.toggle('show');
@@ -62,11 +131,55 @@
   });
 
   function applyTheme(theme) {
-    console.log(`Theme applied: ${theme}`);
+    if (!theme) {
+      return;
+    }
+
+    if (typeof setCookie === 'function') {
+      setCookie('theme', theme);
+    }
+
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {
+      console.error('Failed to persist theme preference.', error);
+    }
+
+    if (window.QZThemeManager && typeof window.QZThemeManager.applyThemeSelection === 'function') {
+      window.QZThemeManager.applyThemeSelection(theme);
+    }
   }
 
   function applyBackground(background) {
     console.log(`Background applied: ${background}`);
+  }
+
+  function notifyUser(title, description, close = true, type = 'note') {
+    if (typeof issuenote === 'function') {
+      issuenote(title, description, close, type);
+      return;
+    }
+
+    const note = document.getElementById('notafication');
+    const noteTitle = document.getElementById('titlenote');
+    const noteDesc = document.getElementById('descnote');
+    const noteClose = document.getElementById('closenote');
+
+    if (!note || !noteTitle || !noteDesc) {
+      console.log(`${title}: ${description}`);
+      return;
+    }
+
+    noteTitle.textContent = title;
+    noteDesc.textContent = description;
+    note.style.display = 'block';
+
+    if (noteClose) {
+      noteClose.style.display = close ? '' : 'none';
+      noteClose.onclick = () => {
+        note.style.display = 'none';
+      };
+    }
   }
 
   function enablePreventPageClose() {
@@ -113,14 +226,80 @@
     }
   }
 
-  function loadSavedPreferences() {
-    const savedTheme = getCookie('theme');
-    if (savedTheme) {
-      const themeElement = document.querySelector(`[data-theme="${savedTheme}"]`);
-      if (themeElement) {
-        themeElement.click();
-      }
+  function refreshTabCloakSummary() {
+    const summaryEl = document.getElementById('tabCloakCurrent');
+    if (!summaryEl) {
+      return;
     }
+
+    const currentConfig = window.QZTabCloak && typeof window.QZTabCloak.getCurrentConfig === 'function'
+      ? window.QZTabCloak.getCurrentConfig()
+      : null;
+
+    summaryEl.textContent = currentConfig ? (currentConfig.title || 'Custom cloak active') : 'Disabled';
+  }
+
+  function initTabCloakControls() {
+    const profileSelect = document.getElementById('tabCloakProfile');
+    const titleInput = document.getElementById('tabCloakTitle');
+    const faviconInput = document.getElementById('tabCloakFavicon');
+    const applyButton = document.getElementById('applyTabCloakBtn');
+    const resetButton = document.getElementById('resetTabCloakBtn');
+
+    if (!profileSelect || !titleInput || !faviconInput || !applyButton || !resetButton) {
+      return;
+    }
+
+    if (!window.QZTabCloak) {
+      applyButton.disabled = true;
+      resetButton.disabled = true;
+      return;
+    }
+
+    const currentConfig = window.QZTabCloak.getCurrentConfig();
+    if (currentConfig) {
+      profileSelect.value = currentConfig.profile || 'default';
+      titleInput.value = currentConfig.title || '';
+      faviconInput.value = currentConfig.favicon || '';
+    }
+
+    refreshTabCloakSummary();
+
+    applyButton.addEventListener('click', () => {
+      const profile = profileSelect.value || 'default';
+      const title = titleInput.value.trim();
+      const favicon = faviconInput.value.trim();
+
+      if (profile === 'default' && !title && !favicon) {
+        window.QZTabCloak.clear();
+        refreshTabCloakSummary();
+        notifyUser('Tab Cloak Disabled', 'Your tab title and icon were restored.', true, 'success');
+        return;
+      }
+
+      window.QZTabCloak.setProfile(profile, { title, favicon });
+      refreshTabCloakSummary();
+      notifyUser('Tab Cloak Applied', 'Your selected cloak is now active.', true, 'success');
+    });
+
+    resetButton.addEventListener('click', () => {
+      profileSelect.value = 'default';
+      titleInput.value = '';
+      faviconInput.value = '';
+      window.QZTabCloak.clear();
+      refreshTabCloakSummary();
+      notifyUser('Tab Cloak Reset', 'The default site title and icon are back.', true, 'success');
+    });
+  }
+
+  function loadSavedPreferences() {
+    const savedTheme = (typeof getCookie === 'function' && getCookie('theme')) || localStorage.getItem('theme') || 'default';
+    document.querySelectorAll('.theme-option[data-theme]').forEach(option => {
+      option.classList.toggle('active', option.getAttribute('data-theme') === savedTheme);
+    });
+    initThemeVariantControls(savedTheme);
+
+    initTabCloakControls();
 
     const disab = document.getElementById('disab');
     if (disab) {
@@ -286,29 +465,51 @@
     const refreshCacheInfoBtn = document.getElementById('refreshCacheInfoBtn');
     const cacheSizeEl = document.getElementById('cacheSize');
     const swStatusEl = document.getElementById('swStatus');
+    const cacheManager = window.QZCacheControl || null;
 
-    const cacheEnabled = localStorage.getItem('cacheEnabled') === 'true';
+    const cacheEnabled = cacheManager
+      ? cacheManager.isCachingEnabled()
+      : localStorage.getItem('cacheEnabled') === 'true';
     if (enableCacheToggle) {
       enableCacheToggle.checked = cacheEnabled;
       enableCacheToggle.addEventListener('change', async () => {
         const enabled = enableCacheToggle.checked;
-        localStorage.setItem('cacheEnabled', enabled);
-        if (!enabled) {
-          await clearAllCaches();
-          updateCacheInfo();
-        }
+        enableCacheToggle.disabled = true;
 
-        issuenote(
-          enabled ? 'Caching Enabled' : 'Caching Disabled',
-          enabled ? 'Caching has been enabled. Reload the page to apply changes.' : 'Caching has been disabled and cache cleared.',
-          true,
-          'cache'
-        );
+        try {
+          if (cacheManager) {
+            await cacheManager.setCachingEnabled(enabled, { clearOnDisable: true });
+          } else {
+            localStorage.setItem('cacheEnabled', enabled);
+            if (!enabled) {
+              await clearAllCaches();
+            }
+          }
+
+          await updateCacheInfo();
+          notifyUser(
+            enabled ? 'Caching Enabled' : 'Caching Disabled',
+            enabled
+              ? 'Caching is now enabled for supported pages and assets.'
+              : 'Caching has been disabled and cached site data was cleared.',
+            true,
+            'cache'
+          );
+        } catch (error) {
+          enableCacheToggle.checked = !enabled;
+          notifyUser('Cache Error', `Could not update cache settings: ${error.message}`, true, 'error');
+        } finally {
+          enableCacheToggle.disabled = false;
+        }
       });
     }
 
     async function calculateCacheSize() {
       try {
+        if (cacheManager) {
+          return cacheManager.calculateCacheSize();
+        }
+
         if (!('caches' in window)) {
           return 'Not supported';
         }
@@ -339,6 +540,10 @@
 
     async function getServiceWorkerStatus() {
       try {
+        if (cacheManager) {
+          return cacheManager.getServiceWorkerStatus();
+        }
+
         if (!('serviceWorker' in navigator)) {
           return 'Not supported';
         }
@@ -371,8 +576,13 @@
 
     async function clearAllCaches() {
       try {
+        if (cacheManager) {
+          await cacheManager.clearAllCaches();
+          return true;
+        }
+
         if (!('caches' in window)) {
-          issuenote('Cache Not Supported', 'Cache API is not supported in your browser.', true, 'error');
+          notifyUser('Cache Not Supported', 'Cache API is not supported in your browser.', true, 'error');
           return false;
         }
 
@@ -380,7 +590,7 @@
         await Promise.all(cacheNames.map(name => caches.delete(name)));
         return true;
       } catch (error) {
-        issuenote('Error Clearing Cache', `An error occurred: ${error.message}`, true, 'error');
+        notifyUser('Error Clearing Cache', `An error occurred: ${error.message}`, true, 'error');
         return false;
       }
     }
@@ -396,7 +606,7 @@
 
         const success = await clearAllCaches();
         if (success) {
-          issuenote('Cache Cleared', 'All cached data has been successfully cleared.', true, 'success');
+          notifyUser('Cache Cleared', 'All cached data has been successfully cleared.', true, 'success');
           await updateCacheInfo();
         }
 
@@ -407,26 +617,29 @@
 
     if (updateSwBtn) {
       updateSwBtn.addEventListener('click', async () => {
+        updateSwBtn.disabled = true;
+        updateSwBtn.innerHTML = '<span class="material-icons">hourglass_empty</span>Updating...';
+
         try {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (!registration) {
-            issuenote('No Service Worker', 'No service worker is currently registered.', true, 'error');
+          if (cacheManager && !cacheManager.isCachingEnabled()) {
+            notifyUser('Caching Disabled', 'Enable caching first before forcing a service worker update.', true, 'error');
             return;
           }
 
-          updateSwBtn.disabled = true;
-          updateSwBtn.innerHTML = '<span class="material-icons">hourglass_empty</span>Updating...';
-          await registration.update();
+          const updated = cacheManager
+            ? await cacheManager.forceUpdate()
+            : false;
 
-          if (registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          if (!updated) {
+            notifyUser('No Service Worker', 'No service worker is currently registered.', true, 'error');
+            return;
           }
 
-          issuenote('Service Worker Updated', 'Service worker update initiated. Reload the page to apply changes.', true, 'success');
-          updateSwBtn.disabled = false;
-          updateSwBtn.innerHTML = '<span class="material-icons">update</span>Force Update Service Worker';
+          notifyUser('Service Worker Updated', 'The service worker update was triggered successfully.', true, 'success');
+          await updateCacheInfo();
         } catch (error) {
-          issuenote('Update Error', `Error updating service worker: ${error.message}`, true, 'error');
+          notifyUser('Update Error', `Error updating service worker: ${error.message}`, true, 'error');
+        } finally {
           updateSwBtn.disabled = false;
           updateSwBtn.innerHTML = '<span class="material-icons">update</span>Force Update Service Worker';
         }
@@ -557,7 +770,7 @@
           window.autoTranslate.resetToDefault();
           languageSelect.value = '';
           updateCurrentLangDisplay('en');
-          issuenote('Language Reset', 'Language has been reset to English.', true, 'success');
+          notifyUser('Language Reset', 'Language has been reset to English.', true, 'success');
         }
       });
     }
