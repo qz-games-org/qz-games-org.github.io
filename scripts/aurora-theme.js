@@ -19,6 +19,8 @@
         rafId: 0,
         lastFrameTime: 0,
         resizeTimer: 0,
+        viewportScale: 1,
+        supportsCanvasFilter: true,
         cleanup: [],
         mediaQuery: window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null,
         reducedMotion: false
@@ -80,9 +82,31 @@
 
         if (!state.ctx) {
             state.ctx = state.canvas.getContext('2d', { alpha: true });
+            state.supportsCanvasFilter = detectCanvasFilterSupport(state.ctx);
+            document.documentElement.setAttribute(
+                'data-qz-aurora-blur',
+                state.supportsCanvasFilter ? 'native' : 'fallback'
+            );
         }
 
         return state.canvas;
+    }
+
+    function detectCanvasFilterSupport(ctx) {
+        if (!ctx || typeof ctx.filter !== 'string') {
+            return false;
+        }
+
+        const previousFilter = ctx.filter;
+        try {
+            ctx.filter = 'blur(2px)';
+            const supported = String(ctx.filter || '').toLowerCase().indexOf('blur') !== -1;
+            ctx.filter = previousFilter;
+            return supported;
+        } catch (error) {
+            ctx.filter = previousFilter;
+            return false;
+        }
     }
 
     function randomBetween(min, max) {
@@ -92,7 +116,11 @@
     function rebuildScene() {
         state.reducedMotion = prefersReducedMotion();
 
-        const starCount = Math.max(22, Math.round((state.width * state.height) / (state.reducedMotion ? 42000 : 26000)));
+        const widthFactor = Math.max(0.78, Math.min(1.34, state.width / 1440));
+        const heightFactor = Math.max(0.82, Math.min(1.24, state.height / 900));
+        const zoomFactor = Math.max(0.84, Math.min(1.2, 1 / state.viewportScale));
+        const baseCount = state.reducedMotion ? 42 : 66;
+        const starCount = Math.max(24, Math.round(baseCount * widthFactor * heightFactor * zoomFactor));
         state.stars = Array.from({ length: starCount }, () => ({
             x: Math.random() * state.width,
             y: Math.pow(Math.random(), 0.72) * state.height * 0.76,
@@ -157,14 +185,26 @@
             return;
         }
 
+        state.reducedMotion = prefersReducedMotion();
         const mountPoint = getMountPoint();
+        const visualViewport = window.visualViewport;
+        state.viewportScale = visualViewport && Number.isFinite(visualViewport.scale)
+            ? Math.max(0.5, Math.min(visualViewport.scale, 3))
+            : 1;
         const rect = mountPoint && mountPoint !== document.body
             ? mountPoint.getBoundingClientRect()
-            : { width: window.innerWidth, height: window.innerHeight };
+            : {
+                width: visualViewport && visualViewport.width ? visualViewport.width : window.innerWidth,
+                height: visualViewport && visualViewport.height ? visualViewport.height : window.innerHeight
+            };
 
-        state.width = Math.max(1, Math.round(rect.width || window.innerWidth));
-        state.height = Math.max(1, Math.round(rect.height || window.innerHeight));
-        state.dpr = Math.min(window.devicePixelRatio || 1, state.reducedMotion ? 1.25 : 1.75);
+        state.width = Math.max(1, Math.round(rect.width || window.innerWidth || 1));
+        state.height = Math.max(1, Math.round(rect.height || window.innerHeight || 1));
+
+        const rawDpr = window.devicePixelRatio || 1;
+        const scaleCompensation = Math.max(0.74, Math.min(1.08, 1 / state.viewportScale));
+        const dprCap = state.reducedMotion ? 1.05 : 1.35;
+        state.dpr = Math.max(1, Math.min(rawDpr * scaleCompensation, dprCap));
 
         canvas.width = Math.round(state.width * state.dpr);
         canvas.height = Math.round(state.height * state.dpr);
@@ -179,7 +219,7 @@
         window.clearTimeout(state.resizeTimer);
         state.resizeTimer = window.setTimeout(() => {
             resizeCanvas();
-        }, 120);
+        }, 90);
     }
 
     function drawStars(time) {
@@ -251,8 +291,9 @@
         const segmentCount = state.reducedMotion ? 9 : 14;
         const points = [];
         const phase = time * band.speed + band.offset;
-        const amplitude = state.height * band.amplitude * scale;
-        const thickness = state.height * band.thickness * scale;
+        const zoomCompensation = Math.max(0.84, Math.min(1.18, 1 / state.viewportScale));
+        const amplitude = state.height * band.amplitude * scale * zoomCompensation;
+        const thickness = state.height * band.thickness * scale * zoomCompensation;
 
         for (let step = 0; step <= segmentCount; step += 1) {
             const progress = step / segmentCount;
@@ -278,10 +319,27 @@
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
         ctx.globalAlpha = scale > 1 ? 0.65 : 1;
-        ctx.filter = `blur(${Math.round((state.reducedMotion ? 16 : 24) * scale)}px)`;
         ctx.fillStyle = gradient;
-        buildRibbonPath(points, thickness);
-        ctx.fill();
+
+        if (state.supportsCanvasFilter) {
+            const blurAmount = Math.round((state.reducedMotion ? 16 : 24) * scale * zoomCompensation);
+            ctx.filter = `blur(${blurAmount}px)`;
+            buildRibbonPath(points, thickness);
+            ctx.fill();
+        } else {
+            ctx.filter = 'none';
+
+            buildRibbonPath(points, thickness);
+            ctx.fill();
+
+            ctx.globalAlpha *= 0.52;
+            buildRibbonPath(points, thickness * 1.38);
+            ctx.fill();
+
+            ctx.globalAlpha *= 0.58;
+            buildRibbonPath(points, thickness * 1.72);
+            ctx.fill();
+        }
         ctx.restore();
     }
 
@@ -395,6 +453,7 @@
         state.ctx = null;
         state.stars = [];
         state.bands = [];
+        document.documentElement.removeAttribute('data-qz-aurora-blur');
     }
 
     function bindEvents() {
@@ -420,6 +479,13 @@
         state.cleanup.push(() => window.removeEventListener('resize', scheduleResize));
         state.cleanup.push(() => window.removeEventListener('qz:theme-change', handleThemeChange));
         state.cleanup.push(() => document.removeEventListener('visibilitychange', handleVisibilityChange));
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', scheduleResize, { passive: true });
+            window.visualViewport.addEventListener('scroll', scheduleResize, { passive: true });
+            state.cleanup.push(() => window.visualViewport.removeEventListener('resize', scheduleResize));
+            state.cleanup.push(() => window.visualViewport.removeEventListener('scroll', scheduleResize));
+        }
 
         if (state.mediaQuery) {
             const handleMotionChange = () => {

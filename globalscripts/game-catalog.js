@@ -465,6 +465,8 @@
           class="gamecover loading"
           data-src="${escapeHtml(getGameCoverLink(game))}"
           alt="${escapeHtml(game.name)} Cover"
+          loading="lazy"
+          decoding="async"
         >
       </a>
     `;

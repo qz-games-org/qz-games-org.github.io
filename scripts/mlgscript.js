@@ -1,37 +1,48 @@
- const imageUrl = './scripts/assets/hitmarker.png'; 
- const soundUrl = './scripts/assets/hitmarker.mp3'; 
- const showDuration = 250; 
+(function () {
+  if (window.__qzMlgThemeInit) {
+    return;
+  }
+  window.__qzMlgThemeInit = true;
 
- // CreateI
- const img = document.createElement('img');
- img.src = imageUrl;
- img.classList.add('click-image');
- document.body.appendChild(img);
+  const imageUrl = './scripts/assets/hitmarker.png';
+  const soundUrl = './scripts/assets/hitmarker.mp3';
+  const logoUrl = './scripts/assets/mlg.jpg';
+  const showDuration = 250;
 
- // CreateA
- const audio = document.createElement('audio');
- audio.src = soundUrl;
- audio.classList.add('click-sound');
- audio.preload = 'auto';
- document.body.appendChild(audio);
+  const img = document.createElement('img');
+  img.src = imageUrl;
+  img.classList.add('click-image');
+  document.body.appendChild(img);
 
- document.addEventListener('click', (e) => {
-   img.style.left = e.pageX - 20 + 'px';
-   img.style.top  = e.pageY - 20 + 'px';
-   document.body.style.cursor = 'none'
-   img.style.display = 'block';
+  const audio = document.createElement('audio');
+  audio.src = soundUrl;
+  audio.classList.add('click-sound');
+  audio.preload = 'auto';
+  document.body.appendChild(audio);
 
-   audio.currentTime = 0.33;
-   audio.play().catch(() => {
-     
-   });
+  document.addEventListener('click', (event) => {
+    img.style.left = `${event.pageX - 20}px`;
+    img.style.top = `${event.pageY - 20}px`;
+    document.body.style.cursor = 'none';
+    img.style.display = 'block';
 
-   setTimeout(() => {
-    document.body.style.cursor = 'default'
-     img.style.display = 'none';
-   }, showDuration);
- });
+    audio.currentTime = 0.33;
+    audio.play().catch(() => {});
 
- document.getElementById('headericon').src = './scripts/assets/mlg.jpg'
- document.getElementById('navicon').src = './scripts/assets/mlg.jpg'
- document.getElementById('naviconside').src = './scripts/assets/mlg.jpg'
+    window.setTimeout(() => {
+      document.body.style.cursor = 'default';
+      img.style.display = 'none';
+    }, showDuration);
+  });
+
+  ['headericon', 'navicon', 'naviconside'].forEach((id) => {
+    const icon = document.getElementById(id);
+    if (icon) {
+      icon.src = logoUrl;
+    }
+  });
+
+  document.querySelectorAll('.brand-logo').forEach((logo) => {
+    logo.src = logoUrl;
+  });
+})();

@@ -37,10 +37,10 @@ function createAdElement() {
   const adContainer = document.createElement('div');
   adContainer.style.cssText = `
     position: relative;
-    width: 185px;
-    height: 185px;
-    max-width: 185px;
-    max-height: 185px;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -52,10 +52,10 @@ function createAdElement() {
   adElement.className = 'adsbygoogle ad-lazy';
   adElement.style.cssText = `
     display: block;
-    width: 185px;
-    height: 185px;
-    max-width: 185px !important;
-    max-height: 185px !important;
+    width: 100%;
+    height: 100%;
+    max-width: none !important;
+    max-height: none !important;
   `;
   adElement.setAttribute('data-ad-client', AD_CONFIG.client);
   adElement.setAttribute('data-ad-slot', AD_CONFIG.slot);
@@ -78,6 +78,157 @@ function loadAdSenseScript() {
   }
 }
 
+function publishCatalogCount(data) {
+  const count = data ? Object.keys(data).length : 0;
+  window.qzCatalogGameCount = count;
+  window.dispatchEvent(new CustomEvent('qz:catalog-count', {
+    detail: { count },
+  }));
+}
+
+function markCardVisible(gameItem) {
+  if (!gameItem) {
+    return;
+  }
+
+  gameItem.classList.remove('hide');
+  gameItem.classList.add('is-visible');
+}
+
+function revealGameImage(img, observer) {
+  if (!img || img.dataset.revealed === 'true') {
+    return;
+  }
+
+  img.dataset.revealed = 'true';
+  markCardVisible(img.closest('.gameitem'));
+
+  const source = img.getAttribute('data-src');
+  const finishLoading = () => img.classList.remove('loading');
+  img.addEventListener('load', finishLoading, { once: true });
+  img.addEventListener('error', finishLoading, { once: true });
+
+  if (source && img.getAttribute('src') !== source) {
+    img.src = source;
+  }
+
+  if (img.complete) {
+    finishLoading();
+  }
+
+  if (observer) {
+    observer.unobserve(img);
+  }
+}
+
+function revealAd(adElement, observer) {
+  if (!adElement || adElement.dataset.revealed === 'true') {
+    return;
+  }
+
+  adElement.dataset.revealed = 'true';
+  markCardVisible(adElement.closest('.gameitem'));
+
+  setTimeout(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      console.log('AdSense ad loaded');
+    } catch (error) {
+      console.error('AdSense error:', error);
+    }
+  }, 100);
+
+  if (observer) {
+    observer.unobserve(adElement);
+  }
+}
+
+function revealNearViewport(container, observer) {
+  const viewportPadding = 700;
+  const topLimit = -viewportPadding;
+  const bottomLimit = window.innerHeight + viewportPadding;
+
+  container.querySelectorAll('.gamecover[data-src]').forEach(img => {
+    const card = img.closest('.gameitem') || img;
+    const rect = card.getBoundingClientRect();
+    if (rect.bottom >= topLimit && rect.top <= bottomLimit) {
+      revealGameImage(img, observer);
+    }
+  });
+
+  container.querySelectorAll('.ad-lazy').forEach(ad => {
+    const card = ad.closest('.gameitem') || ad;
+    const rect = card.getBoundingClientRect();
+    if (rect.bottom >= topLimit && rect.top <= bottomLimit) {
+      revealAd(ad, observer);
+    }
+  });
+}
+
+function isFeedGameVisible(gameItem) {
+  return Boolean(
+    gameItem
+    && !gameItem.hidden
+    && gameItem.style.display !== 'none'
+  );
+}
+
+function getOrderedVisibleGames(container) {
+  const games = Array.from(container.querySelectorAll('.gameitem:not(.ad-item)'));
+  const domOrder = new Map(games.map((game, index) => [game, index]));
+
+  return games
+    .filter(isFeedGameVisible)
+    .sort((left, right) => {
+      const leftOrder = Number.parseFloat(left.style.order);
+      const rightOrder = Number.parseFloat(right.style.order);
+      const leftHasOrder = Number.isFinite(leftOrder);
+      const rightHasOrder = Number.isFinite(rightOrder);
+
+      if (leftHasOrder && rightHasOrder) {
+        return leftOrder - rightOrder || domOrder.get(left) - domOrder.get(right);
+      }
+
+      if (leftHasOrder) return -1;
+      if (rightHasOrder) return 1;
+      return domOrder.get(left) - domOrder.get(right);
+    });
+}
+
+function redistributeFeedAds() {
+  const container = document.getElementById('games');
+  if (!container) {
+    return;
+  }
+
+  const visibleGames = getOrderedVisibleGames(container);
+  const ads = Array.from(container.querySelectorAll('.gameitem.ad-item'));
+  const visibleAdCount = visibleGames.length > 0
+    ? Math.min(ads.length, Math.ceil(visibleGames.length / AD_CONFIG.frequency))
+    : 0;
+
+  visibleGames.forEach((game, index) => {
+    game.style.order = String(index * 2);
+  });
+
+  ads.forEach((ad, index) => {
+    if (index >= visibleAdCount) {
+      ad.style.display = 'none';
+      ad.style.order = '';
+      return;
+    }
+
+    const insertAfterGameCount = Math.min(
+      (index + 1) * AD_CONFIG.frequency,
+      visibleGames.length
+    );
+    ad.style.display = '';
+    ad.style.order = String((insertAfterGameCount * 2) - 1);
+  });
+
+  window.requestAnimationFrame(() => revealNearViewport(container));
+}
+
 function renderGames(data, isSearch = false) {
   const container = document.getElementById('games');
   if (!container || !window.GameCatalog) {
@@ -97,6 +248,7 @@ function renderGames(data, isSearch = false) {
       onClick: typeof trackActivity === 'function' ? trackActivity : null,
     });
 
+    gameItem.dataset.originalOrder = String(gameCount);
     fragment.appendChild(gameItem);
     gameCount++;
 
@@ -111,43 +263,40 @@ function renderGames(data, isSearch = false) {
     initializeGameSearch();
   }
 
+  if (!('IntersectionObserver' in window)) {
+    container.querySelectorAll('.gamecover[data-src]').forEach(img => revealGameImage(img));
+    if (!isSearch) {
+      container.querySelectorAll('.ad-lazy').forEach(ad => revealAd(ad));
+    }
+    return;
+  }
+
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
 
       if (entry.target.classList.contains('gamecover')) {
-        const img = entry.target;
-        img.parentElement.parentElement.classList.remove('hide');
-        img.parentElement.parentElement.style.animation = 'showGame 0.5s';
-        img.addEventListener('load', () => img.classList.remove('loading'), { once: true });
-        img.src = img.getAttribute('data-src');
-        obs.unobserve(img);
+        revealGameImage(entry.target, obs);
       }
 
       if (entry.target.classList.contains('ad-lazy')) {
-        const adElement = entry.target;
-        const gameItem = adElement.closest('.gameitem');
-        gameItem.classList.remove('hide');
-        gameItem.style.animation = 'showGame 0.5s';
-
-        setTimeout(() => {
-          try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-            console.log('AdSense ad loaded');
-          } catch (error) {
-            console.error('AdSense error:', error);
-          }
-        }, 100);
-
-        obs.unobserve(adElement);
+        revealAd(entry.target, obs);
       }
     });
-  }, { threshold: 0.1 });
+  }, {
+    rootMargin: '600px 0px',
+    threshold: 0.01,
+  });
 
-  document.querySelectorAll('.gamecover').forEach(img => observer.observe(img));
+  container.querySelectorAll('.gamecover').forEach(img => observer.observe(img));
   if (!isSearch) {
-    document.querySelectorAll('.ad-lazy').forEach(ad => observer.observe(ad));
+    container.querySelectorAll('.ad-lazy').forEach(ad => observer.observe(ad));
   }
+
+  window.requestAnimationFrame(() => revealNearViewport(container, observer));
+  window.setTimeout(() => revealNearViewport(container, observer), 350);
+  window.redistributeFeedAds = redistributeFeedAds;
+  window.requestAnimationFrame(redistributeFeedAds);
 }
 
 function fetchGames() {
@@ -159,6 +308,7 @@ function fetchGames() {
     .then(data => {
       gamesData = data;
       window.GameCatalog.setGamesData(data);
+      publishCatalogCount(data);
       renderGames(data);
       return data;
     })
@@ -186,3 +336,5 @@ window.restoreAds = function() {
     renderGames(gamesData, false);
   }
 };
+
+window.redistributeFeedAds = redistributeFeedAds;

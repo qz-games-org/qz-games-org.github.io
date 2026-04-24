@@ -482,6 +482,15 @@
       });
     }
 
+    const pageLoadingTransitions = document.getElementById('pageLoadingTransitions');
+    if (pageLoadingTransitions) {
+      const savedTransitionPreference = localStorage.getItem('pageLoadingTransitions');
+      pageLoadingTransitions.checked = savedTransitionPreference !== 'false';
+      pageLoadingTransitions.addEventListener('change', () => {
+        localStorage.setItem('pageLoadingTransitions', pageLoadingTransitions.checked);
+      });
+    }
+
     const customBackgrounds = document.getElementById('customBackgrounds');
     if (customBackgrounds) {
       customBackgrounds.checked = getCookie('customBackgrounds') !== 'false';

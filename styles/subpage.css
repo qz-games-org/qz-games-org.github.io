@@ -1,0 +1,145 @@
+/* Shared shell for secondary pages using the refreshed homepage UI. */
+
+body.qz-subpage {
+  min-height: 100vh;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.subpage-shell {
+  padding-top: 34px;
+}
+
+.subpage-nav .nav-inner {
+  height: 60px;
+}
+
+.subpage-nav .brand {
+  text-decoration: none;
+}
+
+.subpage-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(740px 260px at 82% -18%, var(--accent-soft), transparent 68%),
+    linear-gradient(180deg, var(--panel), var(--bg-2));
+  box-shadow: var(--shadow-2);
+  padding: clamp(24px, 4vw, 42px);
+  margin-bottom: 18px;
+}
+
+.subpage-hero::after {
+  content: "";
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  width: 180px;
+  height: 180px;
+  transform: translateY(-50%);
+  background: url("../Q-BIG.png") center / contain no-repeat;
+  opacity: 0.08;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.subpage-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.subpage-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.subpage-title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+
+.subpage-subtitle {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 0;
+  max-width: 720px;
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.subpage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.subpage-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.subpage-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--sidenav-icon-btn-bg, rgba(255,255,255,0.05));
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+}
+
+.subpage-back-link:hover {
+  background: var(--sidenav-icon-btn-bg-hover, rgba(255,255,255,0.09));
+  border-color: var(--line-2);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 760px) {
+  .subpage-shell {
+    width: calc(100% - 28px);
+    padding-top: 24px;
+  }
+
+  .subpage-nav .btn-primary {
+    display: none;
+  }
+
+  .subpage-hero::after {
+    width: 120px;
+    height: 120px;
+    right: 18px;
+    opacity: 0.06;
+  }
+}

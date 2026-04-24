@@ -1,9 +1,3 @@
-function removeAds() {
-    document.querySelectorAll('.ad-item').forEach(ad => ad.remove());
-  }
-  
-  
-
 class GameSearchEngine {
     constructor(containerSelector = '#games') {
         this.container = document.querySelector(containerSelector);
@@ -22,7 +16,7 @@ class GameSearchEngine {
 
     // Index all games for searching
     indexGames() {
-        const gameElements = this.container.querySelectorAll('.gameitem');
+        const gameElements = this.container.querySelectorAll('.gameitem:not(.ad-item)');
         this.games = Array.from(gameElements).map(element => {
             // Store original display state
             this.originalDisplay.set(element, element.style.display || '');
@@ -32,7 +26,9 @@ class GameSearchEngine {
                 id: element.id || '',
                 name: this.extractGameName(element),
                 tags: this.extractTags(element),
-                link: element.querySelector('a')?.href || ''
+                link: element.querySelector('a')?.href || '',
+                cover: this.extractCover(element),
+                status: this.extractStatus(element)
             };
         });
     }
@@ -61,6 +57,17 @@ class GameSearchEngine {
             // For backward compatibility with space-separated single words
             return tagsAttr.split(' ').map(tag => tag.trim().toLowerCase());
         }
+    }
+
+    extractCover(element) {
+        const img = element.querySelector('.gamecover, img');
+        if (!img) return '';
+        return img.getAttribute('src') || img.getAttribute('data-src') || '';
+    }
+
+    extractStatus(element) {
+        const label = element.querySelector('.game-status-badge-label');
+        return label ? label.textContent.trim() : '';
     }
 
     // Calculate similarity between two strings (Levenshtein distance based)
@@ -108,12 +115,8 @@ class GameSearchEngine {
         return 1 - (matrix[len1][len2] / maxLen);
     }
 
-    // Search games by name with fuzzy matching
-    searchByName(query, threshold = 0.6) {
-        if (!query || query.trim() === '') {
-            return this.showAllGames();
-        }
-
+    findByName(query, threshold = 0.6) {
+        if (!query || query.trim() === '') return [];
         query = query.trim();
         const results = [];
 
@@ -133,7 +136,16 @@ class GameSearchEngine {
 
         // Sort by score (highest first)
         results.sort((a, b) => b.score - a.score);
-        
+        return results;
+    }
+
+    // Search games by name with fuzzy matching
+    searchByName(query, threshold = 0.6) {
+        if (!query || query.trim() === '') {
+            return this.showAllGames();
+        }
+
+        const results = this.findByName(query, threshold);
         this.displayResults(results.map(r => r.element));
         return results;
     }
@@ -206,12 +218,17 @@ class GameSearchEngine {
             game.element.style.display = this.originalDisplay.get(game.element) || '';
             game.element.style.order = '';
         });
+
+        if (typeof redistributeFeedAds === 'function') {
+            redistributeFeedAds();
+        }
+
         return this.games;
     }
 
     // Display search results
     displayResults(elements) {
-        // Hide all games first
+        // Hide indexed game cards only. Ad cards stay in the feed.
         this.games.forEach(game => {
             game.element.style.display = 'none';
         });
@@ -221,6 +238,10 @@ class GameSearchEngine {
             element.style.display = this.originalDisplay.get(element) || '';
             element.style.order = index; // Maintain search result order
         });
+
+        if (typeof redistributeFeedAds === 'function') {
+            redistributeFeedAds();
+        }
     }
 
     // Get all available tags
@@ -297,23 +318,7 @@ function createGameSearchEngine() {
     
     // Simple name search with fuzzy matching
     window.searchGames = function(query) {
-        removeAds()
-        const results = searchEngine.searchByName(query);
-    
-        // Hide everything first
-        gameSearchEngine.games.forEach(game => {
-            // Only hide if it's not an ad
-            if (!game.element.classList.contains('ad-item')) {
-                game.element.style.display = 'none';
-            }
-        });
-    
-        // Show matched results
-        results.forEach(result => {
-            result.element.style.display = '';
-        });
-    
-        return results;
+        return searchEngine.findByName(query);
     };
     
     
@@ -329,9 +334,6 @@ function createGameSearchEngine() {
     
     // Clear search
     window.clearGameSearch = function() {
-        if (gamesData) {
-            renderGames(gamesData, false); // full render with ads
-        }
         return searchEngine.clearSearch();
     };
     
@@ -433,22 +435,10 @@ class SearchBarHandler {
         if (!this.options.showSuggestions) return;
         
         this.suggestionsContainer = document.createElement('div');
-        this.suggestionsContainer.className = 'search-suggestions';
-        this.suggestionsContainer.style.cssText = `
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        `;
+        this.suggestionsContainer.className = 'search-suggestions qz-search-results';
+        this.suggestionsContainer.hidden = true;
+        this.suggestionsContainer.setAttribute('role', 'listbox');
+        this.suggestionsContainer.setAttribute('aria-label', 'Game search results');
         
         // Make search input container relative if not already
         const parent = this.searchInput.parentElement;
@@ -474,7 +464,25 @@ class SearchBarHandler {
             }
         });
 
-     
+        this.searchInput.addEventListener('focus', () => {
+            const query = this.searchInput.value.trim();
+            if (query.length >= this.options.minLength) {
+                this.performSearch(query);
+            }
+        });
+
+        this.handleDocumentClick = (event) => {
+            if (
+                event.target === this.searchInput
+                || this.searchInput.parentElement?.contains(event.target)
+                || this.suggestionsContainer?.contains(event.target)
+            ) {
+                return;
+            }
+
+            this.hideSuggestions();
+        };
+        document.addEventListener('click', this.handleDocumentClick);
 
         // Optional: Clear button functionality
         const clearButton = document.querySelector('.search-clear-btn');
@@ -495,7 +503,8 @@ class SearchBarHandler {
         // Handle empty input
         if (query.trim() === '') {
             if (this.options.clearOnEmpty) {
-                this.performSearch('');
+                this.hideSuggestions();
+                this.updateSearchStats('', 0);
             }
           
             return;
@@ -523,21 +532,99 @@ class SearchBarHandler {
         }
         
         if (query === '') {
-            // Clear search
-            clearGameSearch();
+            this.hideSuggestions();
+            this.updateSearchStats('', 0);
         } else {
-            // Perform search
             const results = searchGames(query);
-
-            // Optional: Log search results
             console.log(`Search for "${query}" returned ${results.length} results`);
-           
-            // Optional: Update UI with search stats
+            this.renderSearchResults(query, results);
             this.updateSearchStats(query, results.length);
         }
     }
 
     // Show search suggestions
+    renderSearchResults(query, results) {
+        if (!this.suggestionsContainer) return;
+
+        const visibleResults = results.slice(0, 8);
+        this.suggestionsContainer.innerHTML = '';
+
+        const header = document.createElement('div');
+        header.className = 'search-results-header';
+
+        const title = document.createElement('span');
+        title.textContent = query;
+
+        const count = document.createElement('strong');
+        count.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`;
+
+        header.append(title, count);
+        this.suggestionsContainer.appendChild(header);
+
+        if (visibleResults.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'search-results-empty';
+            empty.textContent = 'No matching games found.';
+            this.suggestionsContainer.appendChild(empty);
+            this.showSuggestions();
+            return;
+        }
+
+        visibleResults.forEach((result) => {
+            const item = document.createElement('a');
+            item.className = 'search-result-item';
+            item.href = result.link || '#';
+            item.setAttribute('role', 'option');
+
+            const coverWrap = document.createElement('span');
+            coverWrap.className = 'search-result-cover';
+
+            if (result.cover) {
+                const img = document.createElement('img');
+                img.src = result.cover;
+                img.alt = `${result.name} cover`;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                coverWrap.appendChild(img);
+            }
+
+            const text = document.createElement('span');
+            text.className = 'search-result-text';
+
+            const name = document.createElement('span');
+            name.className = 'search-result-name';
+            name.textContent = result.name;
+
+            const meta = document.createElement('span');
+            meta.className = 'search-result-meta';
+            meta.textContent = result.status ? result.status : 'Play game';
+
+            text.append(name, meta);
+            item.append(coverWrap, text);
+            this.suggestionsContainer.appendChild(item);
+        });
+
+        if (results.length > visibleResults.length) {
+            const more = document.createElement('div');
+            more.className = 'search-results-more';
+            more.textContent = `Showing ${visibleResults.length} of ${results.length}`;
+            this.suggestionsContainer.appendChild(more);
+        }
+
+        this.showSuggestions();
+    }
+
+    showSuggestions() {
+        if (!this.suggestionsContainer) return;
+        this.suggestionsContainer.hidden = false;
+        this.suggestionsContainer.classList.add('is-visible');
+    }
+
+    hideSuggestions() {
+        if (!this.suggestionsContainer) return;
+        this.suggestionsContainer.hidden = true;
+        this.suggestionsContainer.classList.remove('is-visible');
+    }
 
 
     // Update search statistics (optional)
@@ -556,11 +643,7 @@ class SearchBarHandler {
     clearSearch() {
         this.searchInput.value = '';
         this.hideSuggestions();
-        
-        if (typeof clearGameSearch === 'function') {
-            clearGameSearch();
-        }
-        
+
         // Clear search stats
         const statsElement = document.querySelector('.search-stats');
         if (statsElement) {
@@ -581,6 +664,10 @@ class SearchBarHandler {
         
         if (this.suggestionsContainer) {
             this.suggestionsContainer.remove();
+        }
+
+        if (this.handleDocumentClick) {
+            document.removeEventListener('click', this.handleDocumentClick);
         }
     }
 }

@@ -301,6 +301,11 @@ function createSlide(game, index, isActive = false) {
     const slide = document.createElement('div');
     slide.className = `carousel-slide${isActive ? ' active' : ''}`;
     slide.dataset.index = index;
+    const isManualPick = game.isManual === true || game.featuredSource === 'manual';
+    const kickerLabel = isManualPick ? 'Promoted' : 'Weekly pick';
+    if (isManualPick) {
+        slide.classList.add('is-promoted-featured');
+    }
 
     // Determine the link URL based on whether it's a custom link or game link
     const linkUrl = buildFeaturedGameLink(game);
@@ -313,9 +318,15 @@ function createSlide(game, index, isActive = false) {
 
     slide.innerHTML = `
         <div class="game-info">
+            <div class="featured-kicker">
+                <span class="featured-kicker-dot" aria-hidden="true"></span>
+                <span>${kickerLabel}</span>
+            </div>
             <h2 class="game-name">${escapeFeaturedHtml(game.name)}</h2>
-            <p class="game-category">${escapeFeaturedHtml(game.catagory)}</p>
-            ${createFeaturedGameStatusBadgeMarkup(status)}
+            <div class="featured-meta">
+                <p class="game-category">${escapeFeaturedHtml(game.catagory)}</p>
+                ${createFeaturedGameStatusBadgeMarkup(status)}
+            </div>
             <a href="${escapeFeaturedHtml(linkUrl)}" class="play-button">Play Now</a>
         </div>
         <div class="game-cover">
@@ -474,6 +485,7 @@ async function loadFeaturedGames() {
                             gameisbroken: game.gameisbroken !== undefined ? game.gameisbroken : game.isBroken || false,
                             gameisbugged: game.gameisbugged !== undefined ? game.gameisbugged : game.isBugged || false,
                             key: game.key || normalizeFeaturedGameId(game.name),
+                            featuredSource: 'manual',
                             isManual: true
                         }));
                     console.log('Loaded manual featured games (present: true):', manualGames);

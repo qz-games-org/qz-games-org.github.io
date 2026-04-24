@@ -101,6 +101,39 @@ function showErrorNotification() {
     document.body.appendChild(overlay);
 }
 
+if (window.QZPageTransition && typeof window.QZPageTransition.consumeIncomingToken === 'function') {
+    window.QZPageTransition.consumeIncomingToken();
+}
+
+function hidePlayerLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay') || document.getElementById('loadingcont');
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.add('hidden');
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 600);
+}
+
+function finishPlayerLoading() {
+    const transition = window.QZPageTransition;
+    const completion = transition && typeof transition.completeIncoming === 'function'
+        ? transition.completeIncoming()
+        : null;
+
+    if (completion && typeof completion.then === 'function') {
+        hidePlayerLoadingOverlay();
+        completion.catch((error) => {
+            console.error('Page transition completion failed:', error);
+        });
+        return;
+    }
+
+    hidePlayerLoadingOverlay();
+}
+
 (function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingcont = document.getElementById('loadingcont');
@@ -109,10 +142,7 @@ function showErrorNotification() {
         Object.defineProperty(loadingcont.style, 'display', {
             set: function(value) {
                 if (value === 'none') {
-                    loadingOverlay.classList.add('hidden');
-                    setTimeout(() => {
-                        loadingOverlay.style.display = 'none';
-                    }, 600);
+                    finishPlayerLoading();
                 }
             },
             get: function() {
@@ -123,15 +153,7 @@ function showErrorNotification() {
 })();
 
 if (typeof window.doneloading === 'undefined') {
-    window.doneloading = function() {
-        const overlay = document.getElementById('loading-overlay') || document.getElementById('loadingcont');
-        if (overlay) {
-            overlay.classList.add('hidden');
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 600);
-        }
-    };
+    window.doneloading = finishPlayerLoading;
 }
 
 function ToggleFullscreen() {
@@ -426,9 +448,23 @@ function navigateToGameSelection(entry) {
         return;
     }
 
-    window.location.href = window.GameCatalog.getGameLink(entry.game, {
+    const link = window.GameCatalog.getGameLink(entry.game, {
         gameId: entry.id
     });
+
+    if (
+        window.QZPageTransition
+        && typeof window.QZPageTransition.startOutgoingNavigation === 'function'
+        && window.QZPageTransition.startOutgoingNavigation(link, {
+            gameId: entry.id,
+            gameName: entry.game.name,
+            cover: window.GameCatalog.getGameCoverLink(entry.game)
+        })
+    ) {
+        return;
+    }
+
+    window.location.href = link;
 }
 
 function renderGameSelectorEntries(query = '') {

@@ -165,7 +165,17 @@
     }
   }
 
+  async function waitForIncomingPageTransition() {
+    if (!window.QZPageTransition || typeof window.QZPageTransition.consumeIncomingToken !== 'function') {
+      return;
+    }
+
+    await window.QZPageTransition.consumeIncomingToken();
+  }
+
   async function initGame(url, type) {
+    await waitForIncomingPageTransition();
+
     const container = document.getElementById('maingamestuff');
     const modernShell = isModernGameShell();
 

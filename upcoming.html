@@ -4,14 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upcoming Games - QZ Games</title>
-    <script defer src="./GlobalSettings.js"></script>
-    <link rel="stylesheet" href="upcoming.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link id="themecss" rel="stylesheet" href="./styles/default.css">
+    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./home.css">
+    <link rel="stylesheet" href="./styles/subpage.css">
+    <link rel="stylesheet" href="./upcoming.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" type="image/png" href="./Q.png">
+    <script src="./cookieshandle.js"></script>
+    <script src="./themeshandler.js"></script>
+    <script defer src="./GlobalSettings.js"></script>
 </head>
-<body>
-    <!-- Main Container -->
-    <div class="upcoming-container">
+<body class="qz-subpage upcoming-page">
+    <div class="bg-stage" aria-hidden="true">
+        <div class="grid-bg"></div>
+        <div class="glow"></div>
+        <div class="glow b"></div>
+    </div>
+
+    <nav class="nav subpage-nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a class="brand" href="./index.html" aria-label="Qz Games home">
+                <div class="brand-mark" aria-hidden="true">
+                    <img src="./Q.png" class="brand-logo" alt="">
+                </div>
+                <div class="brand-name">Qz Games</div>
+                <span class="brand-tag">Beta</span>
+            </a>
+
+            <div class="nav-links">
+                <a class="nav-link" href="./index.html">Home</a>
+                <a class="nav-link" href="./index.html#games-section">Games</a>
+                <a class="nav-link is-active" href="./upcoming.html">Upcoming</a>
+                <a class="nav-link" href="./activity.html">Activity</a>
+            </div>
+
+            <div class="nav-spacer"></div>
+
+            <a class="btn-primary" href="https://discord.gg/9ZYn9bf4SU" target="_blank" rel="noopener" aria-label="Join Discord server">
+                <span class="material-icons notranslate" aria-hidden="true">sports_esports</span>
+                Discord
+            </a>
+        </div>
+    </nav>
+
+    <main class="shell subpage-shell">
+        <section class="subpage-hero" aria-labelledby="upcoming-title">
+            <div class="subpage-kicker">Release tracker</div>
+            <h1 class="subpage-title" id="upcoming-title">Upcoming Games</h1>
+            <p class="subpage-subtitle">See what games are coming soon to QZ Games. Requested games usually release on weekends, with occasional weekday drops.</p>
+            <div class="subpage-actions">
+                <a href="./index.html" class="subpage-back-link">
+                    <span class="material-icons notranslate" aria-hidden="true">arrow_back</span>
+                    Back to Home
+                </a>
+                <a href="https://forms.gle/ZePL2go47CXFLnbH9" class="btn-primary" target="_blank" rel="noopener">
+                    <span class="material-icons notranslate" aria-hidden="true">add</span>
+                    Request a Game
+                </a>
+            </div>
+        </section>
+
+        <!-- Main Container -->
+        <div class="upcoming-container subpage-panel">
         <!-- Back Button -->
         <a href="./index.html" class="back-button">
             <span class="back-arrow">←</span>
@@ -39,7 +97,8 @@
                 <span>Request a Game</span>
             </a>
         </div>
-    </div>
+        </div>
+    </main>
 
     <!-- Details Modal -->
     <div id="details-modal" class="modal">

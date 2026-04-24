@@ -1,6 +1,13 @@
-2026-04-12
+2026-04-23
 
-Changelog coming soon.
+Updates
+- Refined ad styling on the homepage feed by removing the inner glow look and legacy ad badge treatment.
+- Expanded the ad slot between Featured and All Games so it properly spans the full container width.
+- Improved Aurora (Simulated) rendering for zoomed views and added a cleaner fallback path when canvas blur support is limited.
+- Updated MLG theme behavior to better align with the refreshed homepage background stage.
+- Added version syncing from `version.txt` so the homepage version labels stay in sync from one source.
+- Added a lightweight browser compatibility notice that recommends Chrome for best effect support.
+- Added a new hero "Jump back in" area that appears when activity exists and shows recent games with time-since-played.
 
 2026-04-08
 
@@ -9,7 +16,7 @@ Updates
 - Added an in-site changelog viewer that loads directly from this file.
 - Improved the recommendation engine with stronger personalization and reranking.
 - Continued internal cleanup work across the homepage and shared scripts.
-- Resumed game requests. Expect new games this Friday.
+- Resumed game requests.
 - Updated the game player UI.
 - Shipped performance improvements.
 - Started testing parts of a broader UI refresh.

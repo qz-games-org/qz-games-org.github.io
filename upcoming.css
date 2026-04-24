@@ -1,31 +1,33 @@
 /* Upcoming Games Page Styles - Matching Sidenav Menu */
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: rgb(34, 34, 34);
+body.upcoming-page {
+    font-family: var(--font-ui) !important;
     min-height: 100vh;
-    padding: 20px;
+    padding: 0 !important;
     overflow-x: hidden;
 }
 
 /* Main Container */
 .upcoming-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(13, 13, 13, 0.95) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    max-width: none;
+    margin: 0;
+    padding: clamp(16px, 2.5vw, 24px);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
     animation: fadeIn 0.6s ease;
+}
+
+.upcoming-container > .back-button,
+.upcoming-container > .upcoming-header {
+    display: none !important;
 }
 
 @keyframes fadeIn {
@@ -102,7 +104,7 @@ body {
 .games-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     overflow: visible;
 }
 
@@ -111,15 +113,16 @@ body {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
+    padding: 14px 16px;
+    background: var(--sidenav-menu-item-bg, rgba(255, 255, 255, 0.03));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--sidenav-menu-item-border, rgba(255, 255, 255, 0.06));
+    border-radius: var(--radius);
     position: relative;
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     animation: slideIn 0.5s ease backwards;
+    color: var(--ink);
 }
 
 @keyframes slideIn {
@@ -152,14 +155,14 @@ body {
 }
 
 .game-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateX(4px);
+    background: var(--sidenav-menu-item-bg-hover, rgba(255, 255, 255, 0.08));
+    border-color: var(--line-2);
+    transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .game-card:active {
-    transform: translateX(2px) scale(0.98);
+    transform: translateY(0) scale(0.99);
 }
 
 /* Staggered animation */
@@ -174,11 +177,11 @@ body {
 
 /* Game Cover - Smaller size */
 .game-cover {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
     object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--line);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     flex-shrink: 0;
     transition: transform 0.3s ease;
@@ -204,8 +207,8 @@ body {
 
 .game-name {
     font-size: 15px;
-    font-weight: 500;
-    color: #ffffff;
+    font-weight: 700;
+    color: var(--ink);
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -885,4 +888,53 @@ body {
     .step-label {
         color: #fff;
     }
+}
+
+/* Refreshed homepage-aligned overrides. */
+.upcoming-page .modal-overlay {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.upcoming-page .modal-content {
+    background: linear-gradient(180deg, var(--panel), var(--bg-2));
+    border-color: var(--line);
+    border-radius: var(--radius-lg);
+}
+
+.upcoming-page .modal-header,
+.upcoming-page .request-section {
+    border-color: var(--line);
+}
+
+.upcoming-page .modal-title,
+.upcoming-page .modal-game-name {
+    color: var(--ink);
+}
+
+.upcoming-page .modal-reason,
+.upcoming-page .request-text,
+.upcoming-page .loading,
+.upcoming-page .empty-state {
+    color: var(--ink-3);
+}
+
+.upcoming-page .modal-close,
+.upcoming-page .request-button {
+    background: var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.05));
+    border-color: var(--line);
+    color: var(--ink-2);
+}
+
+.upcoming-page .modal-close:hover,
+.upcoming-page .request-button:hover {
+    background: var(--sidenav-icon-btn-bg-hover, rgba(255, 255, 255, 0.1));
+    border-color: var(--line-2);
+    color: var(--ink);
+}
+
+.upcoming-page .request-button {
+    font-family: var(--font-ui);
+    font-weight: 700;
 }

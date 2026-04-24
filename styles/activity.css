@@ -1,0 +1,171 @@
+/* Activity page alignment with the refreshed homepage shell. */
+
+body.activity-page {
+  font-family: var(--font-ui) !important;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  padding: 0 !important;
+}
+
+.activity-page .container {
+  max-width: none;
+  margin: 0;
+}
+
+.activity-panel {
+  padding: clamp(16px, 2.5vw, 24px);
+}
+
+.activity-page .title {
+  margin: 0 0 18px;
+  text-align: left;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  letter-spacing: -0.03em;
+}
+
+.activity-page #gameList {
+  gap: 10px;
+}
+
+.activity-page .game-item {
+  padding: 14px 16px;
+  gap: 16px;
+  color: var(--ink);
+  background: var(--sidenav-menu-item-bg, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--sidenav-menu-item-border, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius);
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.activity-page .game-item::before {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 0.2s ease, transform 0.45s ease;
+}
+
+.activity-page .game-item:hover::before {
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+.activity-page .game-item:hover {
+  transform: translateY(-2px);
+  background: var(--sidenav-menu-item-bg-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--line-2);
+  box-shadow: 0 14px 28px -24px rgba(0, 0, 0, 0.8);
+}
+
+.activity-page .game-cover {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--ink-4);
+}
+
+.activity-page .game-name {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.activity-page .game-playtime,
+.activity-page .game-info > div[style*="font-size: 12px"] {
+  color: var(--ink-3) !important;
+}
+
+.activity-page .action-btn {
+  background: var(--sidenav-icon-btn-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink-2);
+  font-family: var(--font-ui);
+}
+
+.activity-page .action-btn:hover {
+  background: var(--sidenav-icon-btn-bg-hover, rgba(255, 255, 255, 0.1));
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+.activity-page .action-btn.delete,
+.activity-page .clear-all-btn {
+  background: color-mix(in srgb, #ff6b6b 14%, transparent);
+  border-color: color-mix(in srgb, #ff6b6b 40%, transparent);
+  color: #ff8f8f;
+}
+
+.activity-page .action-btn.delete:hover,
+.activity-page .clear-all-btn:hover {
+  background: color-mix(in srgb, #ff6b6b 22%, transparent);
+  border-color: color-mix(in srgb, #ff6b6b 58%, transparent);
+}
+
+.activity-page .clear-all-container {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.activity-page .clear-all-btn {
+  margin-bottom: 0;
+  font-family: var(--font-ui);
+}
+
+.activity-page .loading,
+.activity-page .no-data {
+  color: var(--ink-3);
+  background: var(--sidenav-menu-item-bg, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.activity-page .loading::before {
+  border-color: var(--line);
+  border-top-color: var(--accent-ink);
+}
+
+.activity-page .error {
+  background: color-mix(in srgb, #ff6b6b 14%, transparent);
+  border-color: color-mix(in srgb, #ff6b6b 42%, transparent);
+  color: #ff8f8f;
+}
+
+@media (max-width: 640px) {
+  .activity-page .game-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .activity-page .game-cover {
+    width: 58px;
+    height: 58px;
+  }
+
+  .activity-page .game-actions {
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-page .game-item {
+    flex-wrap: wrap;
+  }
+
+  .activity-page .game-info {
+    min-width: 0;
+    flex: 1 1 calc(100% - 78px);
+  }
+
+  .activity-page .game-actions {
+    width: 100%;
+  }
+}
