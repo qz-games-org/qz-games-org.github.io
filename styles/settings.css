@@ -643,6 +643,81 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: linear-gradient(90deg, rgba(89, 255, 198, 0), rgba(122, 218, 255, 0.55), rgba(178, 255, 125, 0));
 }
 
+.cyberpunk-theme {
+  background:
+    linear-gradient(135deg, #080d12 0%, #0b1218 54%, #111920 100%);
+}
+
+.cyberpunk-theme::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 238, 50, 0.06), transparent 34%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 0,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+  opacity: 0.58;
+}
+
+.cyberpunk-preview-nav {
+  background:
+    linear-gradient(90deg, rgba(22, 28, 36, 0.96), rgba(34, 42, 52, 0.88)) !important;
+  border: 1px solid rgba(255, 238, 50, 0.16);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.cyberpunk-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(4, 246, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(4, 246, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at center, rgba(255, 238, 50, 0.6) 0 1px, transparent 1.5px);
+  background-size: 24px 24px, 24px 24px, 66px 66px;
+  opacity: 0.52;
+}
+
+.cyberpunk-panel {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  width: 72%;
+  height: 54px;
+  background:
+    linear-gradient(135deg, rgba(255, 236, 44, 0.92), rgba(215, 189, 11, 0.9));
+  border: 1px solid rgba(255, 250, 210, 0.32);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.cyberpunk-accent-line {
+  position: absolute;
+  right: 14px;
+  top: 34px;
+  width: 32%;
+  height: 88px;
+  background:
+    linear-gradient(180deg, rgba(255, 41, 90, 0.0), rgba(255, 41, 90, 0.72), rgba(255, 41, 90, 0.14));
+  filter: blur(0.4px);
+  opacity: 0.82;
+}
+
+.cyberpunk-chip {
+  position: absolute;
+  left: 26px;
+  bottom: 34px;
+  width: 42px;
+  height: 8px;
+  border-radius: 999px;
+  background: #0b0f14;
+  box-shadow: 58px 0 0 rgba(11, 15, 20, 0.82), 0 0 0 1px rgba(4, 246, 255, 0.18);
+}
+
 .obsidian-gold-theme {
   background: linear-gradient(135deg, #0f0d0b, #1c1813 56%, #30220f);
 }

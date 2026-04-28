@@ -22,6 +22,17 @@
   }
 
   async function getResolvedGameContext() {
+    // Dev fallback: skip catalog UI entirely on localhost when no game/id param is present.
+    const _h = location.hostname;
+    const isLocalhost = _h === 'localhost' || _h === '[::1]' || /^\d+\.\d+\.\d+\.\d+$/.test(_h);
+    if (isLocalhost) {
+      const { id, game } = getGameParams();
+      if (!id && !game) {
+        console.info('[QZ Dev] Localhost with no game param — loading Slope as dev fallback');
+        return { url: '../Games/Slope.html', type: 'html', id: null, name: 'Slope (dev)' };
+      }
+    }
+
     if (window.QZGamePage && typeof window.QZGamePage.resolveRequestedGame === 'function') {
       const resolvedContext = await window.QZGamePage.resolveRequestedGame();
       if (!resolvedContext || !resolvedContext.game || !resolvedContext.game.link) {
@@ -240,6 +251,12 @@
 
     const resolvedGame = await getResolvedGameContext();
     if (resolvedGame && resolvedGame.url) {
+      const selectorOverlay = document.getElementById('game-selector-overlay');
+      if (selectorOverlay) {
+        selectorOverlay.classList.remove('active');
+        selectorOverlay.hidden = true;
+        selectorOverlay.style.display = 'none';
+      }
       initGame(resolvedGame.url, resolvedGame.type);
       return;
     }

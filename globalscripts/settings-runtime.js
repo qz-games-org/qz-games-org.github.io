@@ -1,5 +1,17 @@
 (function() {
   const SETTINGS_ROOT_BASE = getSettingsRootBase();
+  const THEME_VARIANT_CONTROLS = {
+    aurora: {
+      panelId: 'auroraVariantPanel',
+      selectId: 'auroraVariantSelect',
+      defaultVariant: 'simple'
+    },
+    cyberpunk: {
+      panelId: 'cyberpunkVariantPanel',
+      selectId: 'cyberpunkVariantSelect',
+      defaultVariant: 'static'
+    }
+  };
 
   function getSettingsRootBase() {
     const currentScript = document.currentScript;
@@ -16,6 +28,10 @@
     return `themeVariant_${String(themeName).replace(/[^a-z0-9_-]/gi, '_')}`;
   }
 
+  function getDefaultThemeVariant(themeName) {
+    return (THEME_VARIANT_CONTROLS[themeName] && THEME_VARIANT_CONTROLS[themeName].defaultVariant) || 'default';
+  }
+
   function getSavedThemeVariant(themeName) {
     if (window.QZThemeManager && typeof window.QZThemeManager.getThemeVariant === 'function') {
       return window.QZThemeManager.getThemeVariant(themeName);
@@ -24,52 +40,60 @@
     const storageKey = getThemeVariantStorageKey(themeName);
     return (typeof getCookie === 'function' && getCookie(storageKey))
       || localStorage.getItem(storageKey)
-      || 'simple';
+      || getDefaultThemeVariant(themeName);
   }
 
-  function syncAuroraVariantPanel(activeTheme) {
-    const panel = document.getElementById('auroraVariantPanel');
-    const select = document.getElementById('auroraVariantSelect');
-    if (!panel || !select) {
-      return;
-    }
-
-    const isAurora = activeTheme === 'aurora';
-    panel.hidden = !isAurora;
-    panel.classList.toggle('is-visible', isAurora);
-    select.value = getSavedThemeVariant('aurora');
-  }
-
-  function initThemeVariantControls(activeTheme) {
-    const select = document.getElementById('auroraVariantSelect');
-    if (!select || select.dataset.bound === 'true') {
-      syncAuroraVariantPanel(activeTheme);
-      return;
-    }
-
-    select.dataset.bound = 'true';
-    select.value = getSavedThemeVariant('aurora');
-    syncAuroraVariantPanel(activeTheme);
-
-    select.addEventListener('change', () => {
-      const selectedVariant = select.value || 'simple';
-
-      if (window.QZThemeManager && typeof window.QZThemeManager.setThemeVariant === 'function') {
-        window.QZThemeManager.setThemeVariant('aurora', selectedVariant);
+  function syncThemeVariantPanels(activeTheme) {
+    Object.entries(THEME_VARIANT_CONTROLS).forEach(([themeName, config]) => {
+      const panel = document.getElementById(config.panelId);
+      const select = document.getElementById(config.selectId);
+      if (!panel || !select) {
         return;
       }
 
-      const storageKey = getThemeVariantStorageKey('aurora');
-      if (typeof setCookie === 'function') {
-        setCookie(storageKey, selectedVariant);
+      const isActive = activeTheme === themeName;
+      panel.hidden = !isActive;
+      panel.classList.toggle('is-visible', isActive);
+      select.value = getSavedThemeVariant(themeName);
+    });
+  }
+
+  function initThemeVariantControls(activeTheme) {
+    Object.entries(THEME_VARIANT_CONTROLS).forEach(([themeName, config]) => {
+      const select = document.getElementById(config.selectId);
+      if (!select) {
+        return;
       }
 
-      try {
-        localStorage.setItem(storageKey, selectedVariant);
-      } catch (error) {
-        console.error('Failed to store Aurora theme variant.', error);
+      if (select.dataset.bound === 'true') {
+        return;
       }
+
+      select.dataset.bound = 'true';
+      select.value = getSavedThemeVariant(themeName);
+
+      select.addEventListener('change', () => {
+        const selectedVariant = select.value || config.defaultVariant;
+
+        if (window.QZThemeManager && typeof window.QZThemeManager.setThemeVariant === 'function') {
+          window.QZThemeManager.setThemeVariant(themeName, selectedVariant);
+          return;
+        }
+
+        const storageKey = getThemeVariantStorageKey(themeName);
+        if (typeof setCookie === 'function') {
+          setCookie(storageKey, selectedVariant);
+        }
+
+        try {
+          localStorage.setItem(storageKey, selectedVariant);
+        } catch (error) {
+          console.error(`Failed to store ${themeName} theme variant.`, error);
+        }
+      });
     });
+
+    syncThemeVariantPanels(activeTheme);
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -101,7 +125,7 @@
         themeOptions.forEach(opt => opt.classList.remove('active'));
         option.classList.add('active');
         const selectedTheme = option.getAttribute('data-theme');
-        syncAuroraVariantPanel(selectedTheme);
+        syncThemeVariantPanels(selectedTheme);
         applyTheme(selectedTheme);
       });
     });

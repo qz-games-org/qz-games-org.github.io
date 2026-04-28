@@ -64,6 +64,13 @@
                 src: 'scripts/aurora-theme.js'
             }
         },
+        cyberpunk: {
+            css: 'styles/cyberpunk.css',
+            script: {
+                id: 'theme-script-cyberpunk',
+                src: 'scripts/cyberpunk-theme.js'
+            }
+        },
         'obsidian-gold': { css: 'styles/obsidian-gold.css' },
         'rose-noir': { css: 'styles/rose-noir.css' },
         matcha: { css: 'styles/matcha.css' },
@@ -77,7 +84,8 @@
     };
 
     const THEME_VARIANTS = {
-        aurora: ['simple', 'simulated']
+        aurora: ['simple', 'simulated'],
+        cyberpunk: ['static', 'video']
     };
 
     const BACKGROUND_MAP = {
@@ -237,12 +245,29 @@
         }
     }
 
+    function isNoteElementVisible(noteContainer) {
+        if (!noteContainer) {
+            return false;
+        }
+
+        return window.getComputedStyle(noteContainer).display !== 'none';
+    }
+
     function isThemeLoadingNoteVisible() {
         const noteContainer = document.getElementById('notafication');
         return Boolean(
             noteContainer
             && noteContainer.dataset.noteStyle === 'theme-loading'
-            && noteContainer.style.display !== 'none'
+            && isNoteElementVisible(noteContainer)
+        );
+    }
+
+    function isNonThemeNoteVisible() {
+        const noteContainer = document.getElementById('notafication');
+        return Boolean(
+            noteContainer
+            && noteContainer.dataset.noteStyle !== 'theme-loading'
+            && isNoteElementVisible(noteContainer)
         );
     }
 
@@ -259,14 +284,20 @@
                 return;
             }
 
-            if (typeof closeNote === 'function') {
-                closeNote();
+            if (!isThemeLoadingNoteVisible()) {
+                return;
+            }
+
+            if (window.QZNote && typeof window.QZNote.closeType === 'function') {
+                window.QZNote.closeType('theme-loading');
+            } else if (typeof closeNote === 'function') {
+                closeNote({ type: 'theme-loading', confirmCookie: false });
             }
         }, 1000);
     }
 
     function showThemeLoadingNote() {
-        if (isThemeLoadingNoteVisible()) {
+        if (isThemeLoadingNoteVisible() || isNonThemeNoteVisible()) {
             return;
         }
 

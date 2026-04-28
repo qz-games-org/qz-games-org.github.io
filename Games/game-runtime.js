@@ -633,6 +633,24 @@ async function resolveRequestedGame() {
             return null;
         }
 
+        if (typeof catalog.getGameLink === 'function') {
+            const resolvedLink = catalog.getGameLink(resolution.entry.game, {
+                gameId: resolution.entry.id
+            });
+
+            try {
+                const resolvedUrl = new URL(resolvedLink, window.location.href);
+                const isSharedPlayerTarget = /\/Games\/(?:game|Buckshot-Roulette)\.html$/i.test(resolvedUrl.pathname);
+
+                if (!isSharedPlayerTarget) {
+                    window.location.replace(resolvedUrl.href);
+                    return null;
+                }
+            } catch (error) {
+                // Ignore invalid redirect targets and continue with normal player flow.
+            }
+        }
+
         resolvedGameContext = {
             id: resolution.entry.id,
             game: resolution.entry.game,
@@ -659,4 +677,16 @@ window.QZGamePage = {
 };
 
 setInitialRequestedGameLabel();
-resolveRequestedGame();
+
+(function() {
+    const h = location.hostname;
+    const isLocalhostDev = h === 'localhost' || h === '[::1]' || /^\d+\.\d+\.\d+\.\d+$/.test(h);
+    if (isLocalhostDev) {
+        const ref = getRequestedGameReference();
+        if (!ref.id && !ref.link) {
+            console.info('[QZ Dev] Localhost with no game ref — skipping catalog resolution and selector');
+            return;
+        }
+    }
+    resolveRequestedGame();
+}());

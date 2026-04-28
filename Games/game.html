@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Qz Games | Game</title>
     <meta name="theme-color" content="#181a1f">
     <link rel="icon" href="../Q.png">
@@ -25,6 +25,12 @@
     </script>
 
     <style>
+        /* Mobile auto-scale variables — set by updateMobileScale() in JS */
+        :root {
+            --hud-scale: 1;          /* HUD pill scale factor (1 = full, 0.7 = 70%) */
+            --touch-bottom: 76px;    /* Touch zone bottom clearance, tracks HUD height */
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -68,13 +74,14 @@
             position: fixed;
             left: 50%;
             bottom: calc(20px + env(safe-area-inset-bottom));
-            transform: translateX(-50%);
+            transform: translateX(-50%) scale(var(--hud-scale));
+            transform-origin: bottom center;
             z-index: 1000;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hud-wrap.hud-hidden {
-            transform: translateX(-50%) translateY(120%);
+            transform: translateX(-50%) scale(var(--hud-scale)) translateY(120%);
             opacity: 0;
             pointer-events: none;
         }
@@ -807,6 +814,171 @@
                 transition: none !important;
                 animation: none !important;
             }
+        }
+
+        /* Touch settings select */
+        .touch-select {
+            padding: 8px 12px;
+            background: var(--sidenav-icon-btn-bg);
+            border: 1px solid var(--sidenav-icon-btn-border);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .touch-select:hover {
+            background: var(--sidenav-icon-btn-bg-hover);
+            border-color: var(--sidenav-icon-btn-border-hover);
+        }
+
+        .touch-select option {
+            background: #14181e;
+            color: #fff;
+        }
+
+        /* ===== TOUCH CONTROLS OVERLAY ===== */
+        .touch-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .touch-overlay.hidden { display: none; }
+
+        /* Left and right anchor zones */
+        .touch-zone {
+            position: absolute;
+            /* Tracks the scaled HUD height so joysticks never overlap the pill */
+            bottom: calc(var(--touch-bottom) + env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .touch-zone-left {
+            left: calc(12px + env(safe-area-inset-left));
+            align-items: flex-start;
+            flex-direction: column-reverse; /* joystick on bottom, row on top */
+        }
+
+        .touch-zone-right {
+            right: calc(12px + env(safe-area-inset-right));
+            align-items: flex-end;
+            flex-direction: column-reverse;
+        }
+
+        /* Shoulder + face button top row */
+        .touch-top-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        /* Face button pair (Y/X or A/B) */
+        .touch-face-pair {
+            display: flex;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        /* Joystick circular touch zones — fluid: 108px max, scales with viewport */
+        .touch-joystick-zone {
+            width: min(108px, 22vw);
+            height: min(108px, 22vw);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.14);
+            position: relative;
+            pointer-events: auto;
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Centre dot hint */
+        .touch-joystick-zone::after {
+            content: '';
+            position: absolute;
+            width: min(14px, 3vw);
+            height: min(14px, 3vw);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+            pointer-events: none;
+        }
+
+        .touch-stick-base {
+            position: absolute;
+            width: min(60px, 12vw);
+            height: min(60px, 12vw);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+            border: 2px solid rgba(255, 255, 255, 0.28);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+        }
+
+        .touch-stick-knob {
+            position: absolute;
+            width: min(30px, 6vw);
+            height: min(30px, 6vw);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+            border: 2px solid rgba(255, 255, 255, 0.80);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+        }
+
+        /* Face buttons (A B X Y) — fluid: 46px max, scales with viewport */
+        .touch-btn {
+            width: min(46px, 9.5vw);
+            height: min(46px, 9.5vw);
+            border-radius: 50%;
+            background: rgba(28, 28, 40, 0.60);
+            border: 2px solid rgba(255, 255, 255, 0.30);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.92);
+            font-weight: 700;
+            font-size: min(12px, 2.5vw);
+            font-family: 'Poppins', sans-serif;
+            pointer-events: auto;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: pointer;
+            transition: background 0.07s ease, transform 0.07s ease, border-color 0.07s ease;
+        }
+
+        /* Shoulder buttons (L1/R1) — pill shape, fluid */
+        .touch-btn-shoulder {
+            width: min(40px, 8.5vw);
+            height: min(28px, 5.8vw);
+            border-radius: 8px;
+            font-size: min(10px, 2.2vw);
+        }
+
+        .touch-btn.active {
+            background: rgba(255, 255, 255, 0.30);
+            border-color: rgba(255, 255, 255, 0.72);
+            transform: scale(0.88);
+        }
+
+        /* HUD toggle active state */
+        .btn.touch-active {
+            border-color: var(--sidenav-icon-btn-border-hover);
+            background: var(--sidenav-icon-btn-bg-hover);
         }
 
         /* ===== CONTROLLER SETTINGS MODAL ===== */
@@ -1644,6 +1816,24 @@
         <!-- Flash Game Container (Ruffle) -->
         <div id="maingamestuff" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000;"></div>
 
+        <!-- Touch Controls Overlay -->
+        <div class="touch-overlay hidden" id="touch-overlay">
+            <!-- Left zone: L1 + [Y,X] top row (built by GameTouch.js), then left joystick -->
+            <div class="touch-zone touch-zone-left" id="touch-zone-left">
+                <div class="touch-joystick-zone" id="touch-joystick-zone">
+                    <div class="touch-stick-base" id="touch-stick-base"></div>
+                    <div class="touch-stick-knob" id="touch-stick-knob"></div>
+                </div>
+            </div>
+            <!-- Right zone: [A,B] + R1 top row (built by GameTouch.js), then right joystick -->
+            <div class="touch-zone touch-zone-right" id="touch-zone-right">
+                <div class="touch-joystick-zone" id="touch-joystick-zone-right">
+                    <div class="touch-stick-base" id="touch-stick-base-right"></div>
+                    <div class="touch-stick-knob" id="touch-stick-knob-right"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- HUD Widget -->
         <div class="hud-wrap" id="hud-wrap">
             <div class="hud-pill" role="region" aria-label="Game controls">
@@ -1673,6 +1863,9 @@
                     </button>
                     <button class="btn" onclick="toggleHelpWindow()" aria-label="Help" title="Help">
                         <span class="material-icons">help_outline</span>
+                    </button>
+                    <button class="btn" id="touch-toggle-btn" onclick="window.QZGameTouchInput && window.QZGameTouchInput.toggle()" aria-label="Touch controls" title="Touch controls" hidden style="display: none;">
+                        <span class="material-icons">touch_app</span>
                     </button>
                     <button class="btn" onclick="toggleControllerSettings()" aria-label="Settings" title="Settings">
                         <span class="material-icons">settings</span>
@@ -1799,6 +1992,10 @@
                         <span class="material-icons">gamepad</span>
                         <span>Button Bindings</span>
                     </button>
+                    <button class="controller-tab" data-tab="touch" onclick="switchTab('touch')" hidden style="display: none;">
+                        <span class="material-icons">touch_app</span>
+                        <span>Touch Controls</span>
+                    </button>
                 </div>
 
                 <!-- Tab Content -->
@@ -1860,6 +2057,75 @@
 
                             <div class="bindings-grid" id="controller-bindings">
                                 <!-- Populated by GameInput.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Touch Controls Tab -->
+                    <div class="controller-tab-content" id="touch-tab" hidden style="display: none;">
+                        <div class="settings-section">
+                            <h3 class="section-title">
+                                <span class="material-icons">touch_app</span>
+                                Touch Display
+                            </h3>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label class="setting-label" for="touch-enable-select">Enable Touch Controls</label>
+                                    <span class="setting-description">When to display the on-screen overlay</span>
+                                </div>
+                                <select id="touch-enable-select" class="touch-select">
+                                    <option value="auto">Auto (touch devices only)</option>
+                                    <option value="on">Always On</option>
+                                    <option value="off">Always Off</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label class="setting-label">Overlay Opacity</label>
+                                    <span class="setting-description">Transparency of the touch controls</span>
+                                </div>
+                                <div class="setting-control-group">
+                                    <input type="range" id="touch-opacity" class="setting-slider" min="0.2" max="1.0" step="0.05" value="0.65">
+                                    <span class="setting-value" id="touch-opacity-value">65%</span>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label class="setting-label">Virtual Joystick</label>
+                                    <span class="setting-description">Show the floating joystick (WASD movement)</span>
+                                </div>
+                                <label class="setting-toggle">
+                                    <input type="checkbox" id="touch-joystick-toggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label class="setting-label">Action Buttons</label>
+                                    <span class="setting-description">Show A / B / X / Y and shoulder buttons</span>
+                                </div>
+                                <label class="setting-toggle">
+                                    <input type="checkbox" id="touch-buttons-toggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section" style="margin-top: 20px;">
+                            <h3 class="section-title">
+                                <span class="material-icons">gamepad</span>
+                                Button Mappings
+                            </h3>
+                            <p class="section-hint">
+                                <span class="material-icons">info</span>
+                                Click <strong>Rebind</strong> then press any key or mouse button. Press <kbd>Esc</kbd> to cancel.
+                            </p>
+                            <div class="bindings-grid" id="touch-bindings">
+                                <!-- Populated by GameTouch.js -->
                             </div>
                         </div>
                     </div>
@@ -2026,6 +2292,24 @@
     </div>
 
  
+    <script>
+        // Auto-scale the HUD pill and touch-zone clearance for small screens.
+        // Scales linearly: 100% at 480 px+ down to 70% at 308 px (smallest phones).
+        (function() {
+            var root = document.documentElement;
+            function updateMobileScale() {
+                var w = window.innerWidth;
+                // scale: 1.0 at >=480px, 0.70 at <=308px
+                var scale = Math.min(1, Math.max(0.70, (w - 308) / (480 - 308)));
+                // clearance = scaled HUD height + margin (HUD pill ~48px * scale + ~28px gap)
+                var clearance = Math.round(Math.max(56, (48 * scale) + 28));
+                root.style.setProperty('--hud-scale', scale.toFixed(3));
+                root.style.setProperty('--touch-bottom', clearance + 'px');
+            }
+            updateMobileScale();
+            window.addEventListener('resize', updateMobileScale);
+        }());
+    </script>
     <script src="../globalscripts/game-catalog.js"></script>
     <script src="../globalscripts/page-transition.js"></script>
     <script src="./game-runtime.js"></script>

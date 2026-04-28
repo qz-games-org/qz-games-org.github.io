@@ -830,6 +830,15 @@
         "link": "../Games02/tiny-fishing",
         "type": "html"   
     },
+    "friday night funkin'": {
+        "cover": "fnf.png",
+        "name": "Friday Night Funkin'",
+        "gradient": "grey",
+        "catagory": "casual",
+        "link": "./FNFF/index.html",
+        "type": "html",   
+        "isexternal": "true"
+    },
     "five nights at epsteins": {
         "cover": "fnae.png",
         "name": "Five Nights At Epsteins",

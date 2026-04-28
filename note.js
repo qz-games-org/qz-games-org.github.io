@@ -4,7 +4,9 @@
         queue: [],
         busy: false,
         cookieNote: false,
-        initialized: false
+        initialized: false,
+        currentType: null,
+        closing: false
     };
 
     function getRefs() {
@@ -48,16 +50,22 @@
         const refs = getRefs();
         if (!refs) {
             state.busy = false;
+            state.currentType = null;
+            state.closing = false;
             return;
         }
 
         if (state.queue.length === 0) {
             state.busy = false;
+            state.currentType = null;
+            state.closing = false;
             return;
         }
 
         state.busy = true;
-        const { title, desc, close, type, showLearnMore } = state.queue.shift();
+        const { title, desc, close, type, showLearnMore, options } = state.queue.shift();
+        state.currentType = type || 'note';
+        state.closing = false;
 
         resetNoteStyle(refs);
 
@@ -100,28 +108,46 @@
         }
 
         if (refs.noteClose) {
-            refs.noteClose.onclick = closeNote;
+            refs.noteClose.onclick = () => closeNote({ userInitiated: true });
         }
 
         refs.noteContainer.style.display = 'block';
         refs.noteContainer.style.animation = 'noteshow 0.5s';
+
+        if (options && typeof options.onShow === 'function') {
+            try {
+                options.onShow();
+            } catch (error) {
+                console.error('Notification onShow callback failed.', error);
+            }
+        }
     }
 
-    function issueNote(title, desc, close, type, showLearnMore) {
-        state.queue.push({ title, desc, close, type, showLearnMore });
+    function issueNote(title, desc, close, type, showLearnMore, options) {
+        state.queue.push({ title, desc, close, type, showLearnMore, options });
         if (!state.busy) {
             showNextNote();
         }
     }
 
-    function closeNote() {
+    function closeNote(options = {}) {
         const refs = getRefs();
         if (!refs) {
             state.busy = false;
             return;
         }
 
-        if (state.cookieNote && typeof setCookie === 'function') {
+        if (options && options.type && options.type !== state.currentType) {
+            return false;
+        }
+
+        if (state.closing) {
+            return false;
+        }
+
+        state.closing = true;
+
+        if (state.cookieNote && options.confirmCookie !== false && typeof setCookie === 'function') {
             setCookie('confirmedcookie', 'true');
             state.cookieNote = false;
         }
@@ -132,10 +158,26 @@
             resetNoteStyle(refs);
             refs.noteContainer.style.display = 'none';
             refs.noteContainer.removeEventListener('animationend', handleAnimationEnd);
+            state.currentType = null;
+            state.cookieNote = false;
+            state.closing = false;
             showNextNote();
         }
 
         refs.noteContainer.addEventListener('animationend', handleAnimationEnd);
+        return true;
+    }
+
+    function closeNoteType(type) {
+        return closeNote({ type, confirmCookie: false });
+    }
+
+    function isShowing(type) {
+        if (type) {
+            return state.currentType === type && state.busy && !state.closing;
+        }
+
+        return state.busy && !state.closing;
     }
 
     function checkConfirmedCookie() {
@@ -169,7 +211,9 @@
     window.QZNote = {
         init,
         issue: issueNote,
-        close: closeNote
+        close: closeNote,
+        closeType: closeNoteType,
+        isShowing
     };
 
     if (document.readyState === 'loading') {

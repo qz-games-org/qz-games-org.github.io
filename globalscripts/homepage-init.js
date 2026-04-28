@@ -4,6 +4,7 @@
     const CHANGELOG_SOURCE = './chnglog.txt';
     const VERSION_SOURCE = './version.txt';
     const BROWSER_NOTICE_STORAGE_KEY = 'qzBrowserNoticeDismissed';
+    const CDN_FIX_NOTICE_STORAGE_KEY = 'qzCdnFixNotice_2026_04_28_v2';
     const changelogState = {
         initialized: false,
         isOpen: false,
@@ -216,6 +217,41 @@
         nav.insertAdjacentElement('afterend', recommendation);
     }
 
+    function initCdnFixNotice() {
+        const hasNotificationHost = document.getElementById('notafication');
+        const issueNotification = window.QZNote?.issue || window.issuenote;
+        if (!hasNotificationHost || typeof issueNotification !== 'function') {
+            return;
+        }
+
+        try {
+            if (window.localStorage.getItem(CDN_FIX_NOTICE_STORAGE_KEY) === 'shown') {
+                return;
+            }
+        } catch (error) {
+            // If storage is blocked, still show the update once for this page load.
+        }
+
+        window.setTimeout(() => {
+            issueNotification(
+                'Game fixes are live',
+                'UZG, Five Nights At Epstiens, and Buckshot Roulette should now load correctly after the CDN update.',
+                true,
+                'site-update',
+                false,
+                {
+                    onShow: () => {
+                        try {
+                            window.localStorage.setItem(CDN_FIX_NOTICE_STORAGE_KEY, 'shown');
+                        } catch (error) {
+                            // Ignore storage failures; the notice has still displayed.
+                        }
+                    }
+                }
+            );
+        }, 900);
+    }
+
     function getChangelogElements() {
         return {
             button: document.getElementById('changelogButton'),
@@ -351,6 +387,7 @@
 
         syncVersionLabels();
         initBrowserRecommendation();
+        initCdnFixNotice();
         initChangelog();
         initHomepageBackground();
 

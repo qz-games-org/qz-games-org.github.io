@@ -118,6 +118,38 @@
     return pathname.includes('/games/') ? './' : './Games/';
   }
 
+  function getSiteRootBasePath() {
+    const pathname = (window.location.pathname || '').replace(/\\/g, '/').toLowerCase();
+    return pathname.includes('/games/') ? '../' : './';
+  }
+
+  function resolveSiteLink(link) {
+    const value = String(link || '').trim();
+    if (!value) {
+      return '#';
+    }
+
+    try {
+      return new URL(value, new URL(getSiteRootBasePath(), window.location.href)).href;
+    } catch (error) {
+      return value;
+    }
+  }
+
+  function hasExternalLaunch(game) {
+    if (!game) {
+      return false;
+    }
+
+    const hasLegacyFlag = Object.prototype.hasOwnProperty.call(game, 'isexternal');
+    const hasModernFlag = Object.prototype.hasOwnProperty.call(game, 'isExternal');
+
+    return (
+      (hasLegacyFlag && isEnabledFlag(game.isexternal))
+      || (hasModernFlag && isEnabledFlag(game.isExternal))
+    );
+  }
+
   function getCoversBasePath() {
     const pathname = (window.location.pathname || '').replace(/\\/g, '/').toLowerCase();
     return pathname.includes('/games/') ? '../covers/' : './covers/';
@@ -353,6 +385,14 @@
     }
 
     const gameId = options.gameId || findGameIdForGame(game);
+
+    if (hasExternalLaunch(game)) {
+      return resolveSiteLink(game.link);
+    }
+
+    if (game.detailsPage && !options.directLaunch && !options.skipDetailsPage) {
+      return resolveSiteLink(game.detailsPage);
+    }
 
     if (game.type === 'html' || game.type === 'unity' || game.type === 'flash') {
       return getPlayerGameUrl(gameId, 'game.html');
