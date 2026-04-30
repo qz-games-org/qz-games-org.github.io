@@ -846,6 +846,14 @@
         "catagory": "casual",
         "link": "../Games04/fnae/",
         "type": "html"   
+    },
+    "rally racer dirt": {
+        "cover": "rrdirt.png",
+        "name": "Rally Racer Dirt",
+        "gradient": "grey",
+        "catagory": "casual driver",
+        "link": "../Games04/rally-racer-dirt/",
+        "type": "html"   
     }
 }
 
